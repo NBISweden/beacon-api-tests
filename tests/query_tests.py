@@ -1,10 +1,16 @@
 """ Example tests. Check that they work and that we get the expected output """
 # TODO to be updated to actually use test suite. Currently using the swedish beacon as standard
 
-from .basequery import base
+from tests.basequery import base
+from utils.validate import validate_query
 
 
+@validate_query(200, path='/')
+def info():
+    return {}, {}
 
+
+@validate_query(200)
 def test_deletion():
     """ Test variantTypes deletion """
     query = base()
@@ -29,6 +35,7 @@ def test_deletion():
     return query, resp
 
 
+@validate_query(200)
 def test_insertion():
     """ Test variantTypes insertion """
     query = base()
@@ -47,11 +54,12 @@ def test_insertion():
                "referenceBases": "G",
                "alternateBases": "GT",
                "variantType": "INS",
-               "frequeryuency": 0.0005
+               "frequency": 0.0005
             }]}
     return query, resp
 
 
+@validate_query(200)
 def test_snp():
     """ Test variantTypes snp """
     query = base()
@@ -83,6 +91,3 @@ def test_snp():
 #     query['endMin'] = N+M
 #     query['endMax'] = N+M
 #     return query
-
-
-tests = [test_deletion, test_insertion, test_snp]

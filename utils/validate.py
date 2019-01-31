@@ -5,15 +5,33 @@ Comparisions of the status code and the result data
 """
 import json
 import logging
-import sys
 import urllib.request
 import urllib.parse
-import yaml
 
-from openapi_core import create_spec
 from openapi_core.shortcuts import RequestValidator, ResponseValidator
 from openapi_core.wrappers.base import BaseOpenAPIRequest, BaseOpenAPIResponse
 from werkzeug.datastructures import ImmutableMultiDict
+
+import utils.setup
+
+
+def validate_query(code, path='query', test_query=False):
+    """ Decorator for test queries.
+        A function decorated with this should return a
+        query (dict) and an expected result (dict)
+    """
+    host, spec = utils.setup.setup()
+
+    def decorator(func):
+        query, resp = func()
+        logging.info('Testing %s', func.__name__, )
+        errors = validate_call(spec, host, path, query,
+                               test_query=test_query,
+                               code=code, gold=resp)
+        for error in errors:
+            logging.error(error)
+        logging.info('Done')
+    return decorator
 
 
 class BeaconRequest(BaseOpenAPIRequest):
@@ -26,7 +44,7 @@ class BeaconRequest(BaseOpenAPIRequest):
                  mimetype='application/json'):
         self.host_url = host
         self.path = path
-        self.path_pattern = path
+        self.path_pattern = path #parsed.path + path
         self.method = method.lower()
 
         self.parameters = {
@@ -38,9 +56,18 @@ class BeaconRequest(BaseOpenAPIRequest):
         self.body = data or ''
         self.mimetype = mimetype
 
+    @property
+    def full_url_pattern(self):
+        url = '/'+self.path_pattern
+        if url.endswith('//'):
+            url = url[:-1]
+        return url
+
     def open(self):
         """ Open the url """
-        url = '/'.join([self.host_url, self.path.strip('/')])
+        url = '/'.join([self.host_url, self.path_pattern])
+        if url.endswith('//'):
+            url = url[:-1]
         query = urllib.parse.urlencode(self.parameters['query'])
         if query:
             url += f'?{query}'
@@ -56,6 +83,7 @@ class BeaconResponse(BaseOpenAPIResponse):
     def __init__(self, request):
         try:
             response = request.open()
+            # pdb.set_trace()
             self.data = response.read()
             self.status_code = response.getcode()
             self.mimetype = response.info().get_content_type()
@@ -66,36 +94,11 @@ class BeaconResponse(BaseOpenAPIResponse):
             self.data = err.read()
 
 
-def parse_spec(inp_file):
-    """ Parse a yaml file into a specification object """
-    with open(inp_file) as stream:
-        y_spec = yaml.load(stream)
-    return create_spec(y_spec)
-
-
-def validate_info(spec, host):
-    """ Check that the beacon's info response is ok """
-    validator = RequestValidator(spec)
-    # TODO stupid handling of url, openapi_core won't accept eg
-    # https://swefreq-dev.nbis.se/api/beacon-elixir/
-    path = '' if host.endswith('/') else '/'
-    req = BeaconRequest(host, 'GET', path)
-    logging.info('Testing request...')
-    result = validator.validate(req)
-    print_errors(result)
-    logging.info('Testing response...')
-    resp = BeaconResponse(req)
-    validator = ResponseValidator(spec)
-    result = validator.validate(req, resp)
-    print_errors(result)
-    return result
-
-
-def validate_call(spec, host, query, validate_query=True, code='', gold={}):
+def validate_call(spec, host, path, query, test_query=True, code='', gold=None):
     """ Validate a query and its response """
-    req = BeaconRequest(host, 'GET', 'query', args=query)
+    req = BeaconRequest(host, 'GET', path, args=query)
     errors = []
-    if validate_query:
+    if test_query:
         # check that the query complies to the api spec
         validator = RequestValidator(spec)
         result = validator.validate(req)
@@ -108,6 +111,8 @@ def validate_call(spec, host, query, validate_query=True, code='', gold={}):
     if code and resp.status_code != code:
         errors += [f'Unexpected http code {resp.status_code}. Expected: {code}']
 
+    if gold is None:
+        gold = {}
     err = compare(gold, json.loads(resp.data))
     errors.extend(err)
     return errors
@@ -153,12 +158,3 @@ def compare_list(gold, clist):
             compare_list(item, clist[n])
         else:
             assert item in clist, '%s not in %s' % (item, clist)
-
-
-if __name__ == "__main__":
-    host_url = 'http://localhost:5050'
-    if len(sys.argv) > 1:
-        host_url = sys.argv[1]
-    spec_file = parse_spec('beacon.yaml')
-    if not validate_info(spec_file, host_url).errors:
-        logging.info('No errors')

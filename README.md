@@ -12,11 +12,63 @@ install dependencies:
 Get the [Beacon OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml)
 and add it to this directory.
 
-Then run
+Then run a chosen set of tests:
 
-`python3 tests.py`
+`python3 tests/beaconerror_tests.py`
 
-## Currently testing:
+This will test a local server running on your machine. To test the swedish beacon, run 
+
+`python3 tests/beaconerror_tests.py sv`
+
+See `config/hosts.py` for other alternatives.
+
+Other tests:
+`python3 tests/specerror_tests.py`
+
+`python3 tests/query_tests.py`
+
+`python3 tests/query_fi.py`
+
+
+
+## Create new tests:
+Create a python file with a function returning a test query together with a expected response.
+The expected response may be partial, and the real result must be a superset of this.
+The decorator `validate_query` takes the expected status code as input argument.
+
+**Example** `tests/my_test.py`:
+```py
+from utils.validate import validate_query
+
+@validate_query(200)
+def test_deletion():
+    """ Test variantTypes deletion """
+    query = {
+      'referenceName': 1,
+      'referenceBases': 'CT',
+      'assemblyId': 'GRCh37',
+      'start': 85177351,
+      'end': 85177353,
+      'includeDatasetResponses': 'HIT'
+      'variantType']: 'DEL'
+        }
+    resp = {"datasetAlleleResponses":
+             [{"datasetId": "GRCh37p13:SweGen:20180409",
+               "referenceName": "1",
+               "callCount": 2000,
+               "variantCount": 1,
+               "sampleCount": 1000,
+               "exists": True,
+               "referenceBases": "CT",
+               "alternateBases": "C",
+               "variantType": "DEL",
+               "frequency": 0.0005
+           }]}
+
+    return query, resp
+```
+
+## Current tests:
 - The `info` (`/`) endpoint aswer
 
 - Queries that are not allowed, but cannot be formally forbidden by OpenAPI,
@@ -25,16 +77,22 @@ Then run
 - That the beacon does not accept queries that are not allowed according to the api spec.
   See `tests/specerrors_tests.py`
 
-- The result counts of some specific queries (**TODO** currently using SweGen dat. Change to a real test dataset).
+- The result counts of some specific queries. See `tests/query_tests.py`.
+  (**TODO** currently using SweGen dat. Change to a real test dataset).
+
+- The result counts of some specific queries for the finnish beacon. See `tests/query_fi.py`.
+  (**TODO** for testing the testing only. Change to a real test dataset).
 
 ## TODO
 
 #### Overall
 - Create a test dataset from 1000 genomes.
 - General code cleanup
+- Better comparisons of responses
 
 ### Beacon api schema
 1. Structure of all items using `KeyValue` changed from:
+ **TODO** API changed in the the `develop` branch
 
 ```
     info:
@@ -66,4 +124,5 @@ Then run
       additionalProperties:
         type: string
    ```
-2. `BeaconAlleleResponse.exists` should nullable (on errors)
+
+2.  (**TODO** check if there is any issue/PR on this) `BeaconAlleleResponse.exists` should nullable (on errors)
