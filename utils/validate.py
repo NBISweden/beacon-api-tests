@@ -12,7 +12,9 @@ from openapi_core.shortcuts import RequestValidator, ResponseValidator
 from openapi_core.wrappers.base import BaseOpenAPIRequest, BaseOpenAPIResponse
 from werkzeug.datastructures import ImmutableMultiDict
 
+import config.config
 import utils.setup
+import utils.jsonschemas
 
 
 def validate_query(code, path='query', test_query=False):
@@ -81,6 +83,7 @@ class BeaconResponse(BaseOpenAPIResponse):
     Stores the response body, error code and the content type
     """
     def __init__(self, request):
+        self.error = False
         try:
             response = request.open()
             # pdb.set_trace()
@@ -92,6 +95,7 @@ class BeaconResponse(BaseOpenAPIResponse):
             self.status_code = err.getcode()
             self.mimetype = err.info().get_content_type()
             self.data = err.read()
+            self.error = True
 
 
 def validate_call(spec, host, path, query, test_query=True, code='', gold=None):
@@ -103,11 +107,18 @@ def validate_call(spec, host, path, query, test_query=True, code='', gold=None):
         validator = RequestValidator(spec)
         result = validator.validate(req)
         errors.extend(result.errors)
+        # validate against jsons schemas
+        errors.extend(utils.jsonschemas.validate(req.body, 'query'))
+
     # check that the response complies to the api spec
     resp = BeaconResponse(req)
     validator = ResponseValidator(spec)
     result = validator.validate(req, resp)
     errors.extend(result.errors)
+
+    # validate against json schemas
+    errors.extend(utils.jsonschemas.validate(resp.data, 'response', path, error=resp.error))
+
     if code and resp.status_code != code:
         errors += [f'Unexpected http code {resp.status_code}. Expected: {code}']
 
@@ -129,8 +140,8 @@ def compare(gold, obj):
     in the other """
     try:
         compare_obj(gold, obj)
-    except AssertionError as e:
-        return [str(e)]
+    except AssertionError as err:
+        return [str(err)]
     return []
 
 
@@ -142,6 +153,9 @@ def compare_obj(gold, obj):
             compare_obj(val, obj[key])
         elif isinstance(val, list):
             compare_list(val, obj[key])
+        elif isinstance(val, float):
+            assert round(val, config.config.PRECISION) == \
+                   round(obj[key], config.config.PRECISION), 'Bad value: %s != %s' % (val, obj[key])
         else:
             assert val == obj[key], 'Bad value: %s != %s' % (val, obj[key])
 
