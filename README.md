@@ -86,9 +86,16 @@ def test_deletion():
 ## TODO
 
 #### Overall
-- Create a test dataset from 1000 genomes.
-- General code cleanup
 - Better comparisons of responses
+
+- 0/1 based beacons? Can be set in `config/config.py` now.
+
+- Responses from bad queries does not always match the schema (try `beaconerrors_test.py` or `specerrors_test.py`)
+
+- Test other type of count (eg. `call cannot be made  => .|.`)?
+
+- Now using JSON schemas from CSCfi, how to link/refer properly?
+
 
 ### Beacon api schema
 1. Structure of all items using `KeyValue` changed from:
