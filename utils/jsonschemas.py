@@ -35,8 +35,12 @@ def validate(inp, inp_type, path='', error=False):
     else:
         # for query objects
         schema = inp_type
-    logging.info('validate json to schema %s', schema)
-    jschema = load_schema(schema)
+    try:
+        jschema = load_schema(schema)
+    except FileNotFoundError:
+        logging.warning('No JSON schema, not validating')
+        return []
+    logging.info('Validate JSON to schema %s', schema)
     if error:
         adapt_to_error(jschema)
     try:
