@@ -1,6 +1,5 @@
 """  Responsible for configuration """
 import argparse
-import logging
 
 import coloredlogs
 from openapi_core import create_spec
@@ -16,7 +15,6 @@ def setup():
     parser.add_argument('host', type=str, nargs='?', default='local')
     c_args = parser.parse_args()
     host = config.config.HOSTS.get(c_args.host, config.config.HOSTS.get('local'))
-    logging.info('Testing host %s', host)
 
     spec = parse_spec(config.config.SPEC)
     server = openapi_core.schema.servers.models.Server(host)
