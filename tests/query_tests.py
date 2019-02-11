@@ -7,7 +7,15 @@ from utils.validate import validate_query
 @validate_query(200, path='/')
 def info():
     """ The info (/) call """
-    return {}, {}
+    resp = {'datasets': [{
+        "id": "GRCh38:beacon_test:2030-01-01",
+        "assemblyId": "GRCh38",
+        "variantCount": 10,
+        "callCount": 9,
+        "sampleCount": 2504,
+    }]}
+    return {}, resp
+
 
 
 @validate_query(200)
@@ -141,7 +149,7 @@ def test_insertion_altbase():
 
 @validate_query(200)
 def test_multi_insertion():
-    """ Test variantTypes INS with two different variants """
+    """ Find a variantTypes INS at a position where there are two different variants """
     query = base()
     query['start'] = 16879601
     query['end'] = 16879602
@@ -224,10 +232,12 @@ def test_deletion():
 
 @validate_query(200)
 def test_deletion_2():
-    """ Test another variantTypes DEL """
+    """ Test variantTypes DEL with startMin/startMax """
     query = base()
-    query['start'] = 17301526
-    query['end'] = 17301536
+    query['startMin'] = 17301520
+    query['startMax'] = 17301530
+    query['endMin'] = 17301536
+    query['endMax'] = 17301536
     query['referenceBases'] = 'ATACATAGTC'
     del query['alternateBases']
     query['variantType'] = 'DEL'
