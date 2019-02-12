@@ -12,11 +12,14 @@ install dependencies:
 Get the [Beacon OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml)
 and add it to this directory.
 
+To verify against JSON schemas by CSCfi, download [these](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas) and
+save them in a directory `schemas`.
+
 Then run a chosen set of tests:
 
 `python3 tests/beaconerror_tests.py`
 
-This will test a local server running on your machine. To test the swedish beacon, run 
+This will test a local server running on your machine. To test the Swedish beacon, run 
 
 `python3 tests/beaconerror_tests.py sv`
 
@@ -86,9 +89,26 @@ def test_deletion():
 ## TODO
 
 #### Overall
-- Create a test dataset from 1000 genomes.
-- General code cleanup
-- Better comparisons of responses
+
+- 0/1 based beacons? Can be set in `config/config.py` now.
+
+- Responses from bad queries does not always match the schema (try `beaconerrors_test.py` or `specerrors_test.py`)
+   (see also https://github.com/ga4gh-beacon/specification/issues/252)
+
+- Test other type of count (eg. `call cannot be made  => .|.`)?
+
+- Now using JSON schemas from CSCfi, how to link/refer properly?
+
+- How exact should the `frequency` be? Rounding to more than 6 digits, will give errors for Swe vs. Fin.
+
+- Make sure the result we expect follow the specification [here](https://github.com/ga4gh-beacon/specification/wiki/Calculating-counters-in-BeaconDatasetAlleleResponse).
+
+
+#### Finnish vs. Swedish
+- Not always the same variantType (DEL/INS)
+
+- Different `callCount` vs. `sampleCount`
+
 
 ### Beacon api schema
 1. Structure of all items using `KeyValue` changed from:
