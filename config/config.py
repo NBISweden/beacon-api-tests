@@ -19,7 +19,7 @@ SCHEMAS = 'schemas'
 PRECISION = 6
 
 # Is the beacon 0 or 1 based?
-START_POS = 0  # 1 for swedish and 0 for finnish
+START_POS = 1  # 1 for swedish and 0 for finnish
 
 # Define what keys that should be used to sort lists of dictionaries
 SORT_BY = {'datasets': 'id', 'datasetAlleleResponses': 'frequency'}

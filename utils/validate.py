@@ -22,12 +22,11 @@ def validate_query(code, path='query', test_query=False):
         A function decorated with this should return a
         query (dict) and an expected result (dict)
     """
-    host, spec = utils.setup.setup()
 
     def decorator(func):
         query, resp = func()
-        logging.info('Testing %s\n %s', func.__name__, func.__doc__)
-        errs, warns = validate_call(spec, host, path, query,
+        logging.info('Testing %s\n      %s', func.__name__, func.__doc__.strip())
+        errs, warns = validate_call(path, query,
                                     test_query=test_query,
                                     code=code, gold=resp)
         for error in errs:
@@ -98,26 +97,27 @@ class BeaconResponse(BaseOpenAPIResponse):
             self.error = True
 
 
-def validate_call(spec, host, path, query, test_query=True, code='', gold=None):
+def validate_call(path, query, test_query=True, code='', gold=None):
     """ Validate a query and its response """
-    req = BeaconRequest(host, 'GET', path, args=query)
+    settings = utils.setup.Settings()
+    req = BeaconRequest(settings.host, 'GET', path, args=query)
     errors, warnings = [], []
-    if test_query:
+    if test_query and settings.openapi:
         # check that the query complies to the api spec
-        validator = RequestValidator(spec)
+        validator = RequestValidator(settings.openapi)
         result = validator.validate(req)
         warnings.extend(result.errors)
         # validate against jsons schemas
-        warnings.extend(utils.jsonschemas.validate(req.body, 'query'))
+        warnings.extend(utils.jsonschemas.validate(req.body, 'query', settings))
 
     # check that the response complies to the api spec
     resp = BeaconResponse(req)
-    validator = ResponseValidator(spec)
+    validator = ResponseValidator(settings.openapi)
     result = validator.validate(req, resp)
     warnings.extend(result.errors)
 
     # validate against json schemas
-    warnings.extend(utils.jsonschemas.validate(resp.data, 'response', path, error=resp.error))
+    warnings.extend(utils.jsonschemas.validate(resp.data, 'response', settings, path, error=resp.error))
 
     if code and resp.status_code != code:
         errors += [f'Unexpected http code {resp.status_code}. Expected: {code}']

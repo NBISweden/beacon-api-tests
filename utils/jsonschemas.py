@@ -3,23 +3,15 @@ Validates info objects, queries and responses.
 Needs to use jsonschema v2.6.0 because of opencore_api """
 import json
 import logging
-import os
 
 import jsonschema
-import config.config as config
 
 
-def load_schema(name):
-    """Load JSON schemas."""
-    with open(os.path.join(config.SCHEMAS, name+'.json'), 'r') as fp:
-        data = fp.read()
-    return json.loads(data)
-
-
-def validate(inp, inp_type, path='', error=False):
+def validate(inp, inp_type, settings, path='', error=False):
     """ Validate against a schema
     inp      - is a representation (dictionary or string) of a json object
     inp_type - is eithr `query` or `repsonse`
+    settings - is an object containing schemas and specs
     path     - is the url of the query (either '/' or 'query')
     Returns a list of error messages
     """
@@ -37,10 +29,12 @@ def validate(inp, inp_type, path='', error=False):
         # for query objects
         schema = inp_type
     try:
-        jschema = load_schema(schema)
-    except FileNotFoundError:
-        logging.warning('No JSON schema, not validating')
+        jschema = settings.json_schemas[schema]
+
+    except KeyError:
+        logging.warning('No JSON schema for %s, not validating', schema)
         return []
+
     validator = jsonschema.Draft4Validator(jschema)
     logging.info('Validate JSON to schema %s', schema)
     if error:
