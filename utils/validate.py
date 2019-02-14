@@ -27,11 +27,13 @@ def validate_query(code, path='query', test_query=False):
     def decorator(func):
         query, resp = func()
         logging.info('Testing %s\n %s', func.__name__, func.__doc__)
-        errors = validate_call(spec, host, path, query,
-                               test_query=test_query,
-                               code=code, gold=resp)
-        for error in errors:
+        errs, warns = validate_call(spec, host, path, query,
+                                    test_query=test_query,
+                                    code=code, gold=resp)
+        for error in errs:
             logging.error(error)
+        for warn in warns:
+            logging.warning(warn)
         logging.info('Done\n')
     return decorator
 
@@ -99,23 +101,23 @@ class BeaconResponse(BaseOpenAPIResponse):
 def validate_call(spec, host, path, query, test_query=True, code='', gold=None):
     """ Validate a query and its response """
     req = BeaconRequest(host, 'GET', path, args=query)
-    errors = []
+    errors, warnings = [], []
     if test_query:
         # check that the query complies to the api spec
         validator = RequestValidator(spec)
         result = validator.validate(req)
-        errors.extend(result.errors)
+        warnings.extend(result.errors)
         # validate against jsons schemas
-        errors.extend(utils.jsonschemas.validate(req.body, 'query'))
+        warnings.extend(utils.jsonschemas.validate(req.body, 'query'))
 
     # check that the response complies to the api spec
     resp = BeaconResponse(req)
     validator = ResponseValidator(spec)
     result = validator.validate(req, resp)
-    errors.extend(result.errors)
+    warnings.extend(result.errors)
 
     # validate against json schemas
-    errors.extend(utils.jsonschemas.validate(resp.data, 'response', path, error=resp.error))
+    warnings.extend(utils.jsonschemas.validate(resp.data, 'response', path, error=resp.error))
 
     if code and resp.status_code != code:
         errors += [f'Unexpected http code {resp.status_code}. Expected: {code}']
@@ -124,13 +126,7 @@ def validate_call(spec, host, path, query, test_query=True, code='', gold=None):
         gold = {}
     err = compare(gold, json.loads(resp.data))
     errors.extend(err)
-    return errors
-
-
-def print_errors(result):
-    """ Print errors """
-    for error in result.errors:
-        logging.error('\t%s', error)
+    return errors, warnings
 
 
 def make_offset(args):
