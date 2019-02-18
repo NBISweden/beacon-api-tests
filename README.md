@@ -1,8 +1,8 @@
 # Validation tests for beacon api 1.0.0
 
-This project contains tests that can be used for any Beacon implemention using api version 1.0.0.
+This project contains tests that can be used for any Beacon implemention using api version 1.
 The Beacon's responses are validated against the 
-[OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml).
+[GA4GH's OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml).
 and against JSON schemas by [CSCfi](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas).
 Apart from this, the counts returned by the beacon are also checked.
 
@@ -10,8 +10,15 @@ The project uses [openapi-core](https://github.com/p1c2u/openapi-core) and [json
 (version 2.6 for compatability with `openapi-core`).
 
 
-**To run**,
-install dependencies:
+## The test dataset
+
+The tests expect the beacon to have a dataset called `GRCh38:beacon_test:2030-01-01`.
+This should correspond to content of [the test vcf file](testdata). Before
+testing your beacon, load this into your database.
+
+
+## Running the test suite
+To run, install dependencies:
 
 `pip3 install -r requirements.txt`
 
@@ -19,11 +26,7 @@ Then run the tests:
 
 `python3 run.py`
 
-This test assumes a local server running on your machine. To test the Swedish beacon, run 
-
-`python3 run.py --host sv`
-
-See below for other alternatives.
+This test assumes a local server running on your machine. See below for other alternatives.
 
 
 ## Options
@@ -66,6 +69,7 @@ Other options:
 - `--only_warn`   Only print warnings and errors
 
 **Other**
+
 Default: Beacons are 0-based.
 
 Other options:
@@ -92,6 +96,16 @@ To use local versions, put them in a directory and specify it's path in `config/
 SCHEMAS = 'schemas'
 ```
 
+## Current tests:
+- The `info` (`/`) endpoint answer. Json validation and the dataset counts `variantCount`, `callCount` and `sampleCount`.
+
+
+- Queries that are not allowed. Check that these return code `400`.
+  See `tests/test_errors.py`
+
+- The structure and counts of some specific queries. See `tests/test_counts.py`.
+
+
 ## Create new tests:
 Create a python file and save it in the `tests` directory and put "test" in it's name, eg `tests/test_deletion.py`.
 
@@ -103,7 +117,7 @@ The decorator `validate_query` takes the expected status code as input argument.
 ```py
 from utils.validate import validate_query
 
-@validate_query(200)
+@validate_query(200)  # expect http code 200
 def test_deletion():
     """ Test variantTypes deletion """
     query = {
@@ -131,22 +145,10 @@ def test_deletion():
     return query, resp
 ```
 
-## Current tests:
-- The `info` (`/`) endpoint aswer
-
-- Queries that are not allowed, but cannot be formally forbidden by OpenAPI,
-  eg parameter dependencies and mutual exclusivness. See `tests/beaconerrors_tests.py`.
-
-- That the beacon does not accept queries that are not allowed according to the api spec.
-  See `tests/specerrors_tests.py`
-
-- The result counts of some specific queries. See `tests/query_tests.py`.
 
 ## TODO
 
 #### Overall
-
-- 0/1 based beacons. Should be 0-based, but can be set in `config/config.py` now.
 
 - Responses from bad queries does not always match the schema (try `beaconerrors_test.py` or `specerrors_test.py`)
    (see also https://github.com/ga4gh-beacon/specification/issues/252)
