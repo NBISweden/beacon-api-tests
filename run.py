@@ -23,11 +23,17 @@ def run():
 if __name__ == '__main__':
     coloredlogs.install(level='INFO', fmt='%(levelname)s: %(message)s')
     parser = argparse.ArgumentParser()
-    parser.add_argument('--host', type=str, nargs='?', default='local')
-    parser.add_argument('--no_openapi', action="store_true")
-    parser.add_argument('--no_json', action="store_true")
-    parser.add_argument('--only_structure', action="store_true")
-    parser.add_argument('--only_warn', action="store_true")
+    parser.add_argument('--host', type=str, nargs='?', default='local',
+                        help="Specify which beacon host to test")
+    parser.add_argument('--no_openapi', action="store_true",
+                        help="Don't validate against the OpenAPI specification")
+    parser.add_argument('--no_json', action="store_true",
+                        help="Don't validate against the JSON Schemas")
+    parser.add_argument('--only_structure', action="store_true",
+                        help="Don't validate the resulting counts, frequencies etc")
+    parser.add_argument('--only_warn', action="store_true",
+                        help="Only print warnings and errors")
+
     c_args = parser.parse_args()
     if c_args.only_warn:
         coloredlogs.install(level='WARNING', fmt='%(levelname)s: %(message)s')
