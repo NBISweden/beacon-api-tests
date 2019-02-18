@@ -13,6 +13,7 @@ from openapi_core.wrappers.base import BaseOpenAPIRequest, BaseOpenAPIResponse
 from werkzeug.datastructures import ImmutableMultiDict
 
 import config.config
+import utils.errors as err
 import utils.setup
 import utils.jsonschemas
 
@@ -77,7 +78,20 @@ class BeaconRequest(BaseOpenAPIRequest):
         if query:
             url += f'?{query}'
         logging.info('Open %s', url)
-        return urllib.request.urlopen(url)
+        try:
+            res = urllib.request.urlopen(url)
+        except ValueError:
+            logging.error('Url can not be opened: %s', url)
+            raise err.BeaconTestError()
+        except urllib.error.HTTPError as httperr:
+            # HTTPErrorr are let through, to be handled in BeaconResponse.
+            # The reason to catch them is that they are a subclass of URLError,
+            # but needs to be treated separately from other types of URLErrors.
+            return httperr
+        except urllib.error.URLError as urlerr:
+            logging.error('Url can not be opened: %s (%s)', url, urlerr.reason)
+            raise err.BeaconTestError()
+        return res
 
 
 class BeaconResponse(BaseOpenAPIResponse):
@@ -92,10 +106,10 @@ class BeaconResponse(BaseOpenAPIResponse):
             self.status_code = response.getcode()
             self.mimetype = response.info().get_content_type()
 
-        except urllib.error.HTTPError as err:
-            self.status_code = err.getcode()
-            self.mimetype = err.info().get_content_type()
-            self.data = err.read()
+        except urllib.error.HTTPError as error:
+            self.status_code = error.getcode()
+            self.mimetype = error.info().get_content_type()
+            self.data = error.read()
             self.error = True
 
 

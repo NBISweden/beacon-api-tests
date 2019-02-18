@@ -7,6 +7,7 @@ import os
 
 import coloredlogs
 
+import utils.errors as err
 import utils.setup
 
 
@@ -16,8 +17,11 @@ def run():
         module, _ = os.path.splitext(os.path.basename(path))
         if 'test' in module:
             logging.info('*** Running tests from %s', module)
-            importlib.import_module('tests.'+module)
-            logging.info('Module %s done ***\n', module)
+            try:
+                importlib.import_module('tests.'+module)
+                logging.info('Module %s done ***\n', module)
+            except err.BeaconTestError:
+                exit()
 
 
 if __name__ == '__main__':
