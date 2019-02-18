@@ -42,7 +42,17 @@ class Settings():
 
     def set_args(self, c_args):
         """ Set current host, read API specifications """
-        self.host = config.config.HOSTS.get(c_args.host, config.config.HOSTS.get('local'))
+
+        if c_args.host and c_args.host in config.config.HOSTS:
+            # use a known host
+            self.host = config.config.HOSTS.get(c_args.host)
+        elif c_args.host:
+            # use a given url
+            self.host = c_args.host
+        else:
+            # default, use local host
+            self.host = config.config.HOSTS.get('local')
+
         self.check_result = not c_args.only_structure
 
         if c_args.no_openapi:
