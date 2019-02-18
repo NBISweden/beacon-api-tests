@@ -5,11 +5,13 @@ import os
 import urllib.error
 import urllib.request
 
+import jsonschema.exceptions
 from openapi_core import create_spec
 import openapi_core.schema.servers.models
 import yaml
 
 import config.config
+import utils.errors as err
 
 
 spec_url = 'https://raw.githubusercontent.com/ga4gh-beacon/specification/master/beacon.yaml'
@@ -104,5 +106,10 @@ def load_local_schema(name):
 
 def parse_spec(inp_file):
     """ Parse a yaml file into a specification object """
-    y_spec = yaml.load(inp_file)
-    return create_spec(y_spec)
+    try:
+        y_spec = yaml.load(inp_file)
+        spec = create_spec(y_spec)
+    except jsonschema.exceptions.RefResolutionError:
+        logging.error("Could not load specification. Check your network or try again")
+        raise err.BeaconTestError()
+    return spec

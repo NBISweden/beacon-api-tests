@@ -41,5 +41,8 @@ if __name__ == '__main__':
     c_args = parser.parse_args()
     if c_args.only_warn:
         coloredlogs.install(level='WARNING', fmt='%(levelname)s: %(message)s')
-    utils.setup.Settings().set_args(c_args)
+    try:
+        utils.setup.Settings().set_args(c_args)
+    except err.BeaconTestError:
+        exit()
     run()
