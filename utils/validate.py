@@ -29,6 +29,8 @@ def validate_query(code, path='query', test_query=False):
         errs, warns = validate_call(path, query,
                                     test_query=test_query,
                                     code=code, gold=resp)
+        if errs or warns:
+            logging.error('\n      Test "%s" did not pass: """%s"""', func.__name__, func.__doc__.strip())
         for error in errs:
             logging.error(error)
         for warn in warns:
@@ -179,7 +181,7 @@ def compare_objlist(gold, clist, sorter, err):
             nextcomp = [obj for obj in clist if normalize(obj.get(sorter)) == list_id][0]
             compare_obj(item, nextcomp, err)
         except IndexError:
-            err.append(f'No matching object for {list_id} in {clist}')
+            err.append(f'Objects don\'t match. No matching object for {sorter} value {list_id} in {clist}')
 
 
 def compare_list(gold, clist, err, key=''):

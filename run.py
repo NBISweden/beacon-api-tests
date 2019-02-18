@@ -23,9 +23,13 @@ def run():
 if __name__ == '__main__':
     coloredlogs.install(level='INFO', fmt='%(levelname)s: %(message)s')
     parser = argparse.ArgumentParser()
-    parser.add_argument('host', type=str, nargs='?', default='local')
+    parser.add_argument('--host', type=str, nargs='?', default='local')
     parser.add_argument('--no_openapi', action="store_true")
     parser.add_argument('--no_json', action="store_true")
     parser.add_argument('--only_structure', action="store_true")
-    utils.setup.Settings().set_args(parser.parse_args())
+    parser.add_argument('--only_warn', action="store_true")
+    c_args = parser.parse_args()
+    if c_args.only_warn:
+        coloredlogs.install(level='WARNING', fmt='%(levelname)s: %(message)s')
+    utils.setup.Settings().set_args(c_args)
     run()
