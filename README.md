@@ -1,7 +1,13 @@
-# Tests for beacon api 1.0.0
+# Validation tests for beacon api 1.0.0
 
-This setup uses [openapi-core](https://github.com/p1c2u/openapi-core) to validate
-queries and answers against the Beacon's [OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml).
+This project contains tests that can be used for any Beacon implemention using api version 1.0.0.
+The Beacon's responses are validated against the 
+[OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml).
+and against JSON schemas by [CSCfi](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas).
+Apart from this, the counts returned by the beacon are also checked.
+
+The project uses [openapi-core](https://github.com/p1c2u/openapi-core) and [jsonschemas](https://python-jsonschema.readthedocs.io/en/latest/)
+(version 2.6 for compatability with `openapi-core`).
 
 
 **To run**,
@@ -9,33 +15,81 @@ install dependencies:
 
 `pip3 install -r requirements.txt`
 
-Get the [Beacon OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml)
-and add it to this directory.
+Then run the tests:
 
-To verify against JSON schemas by CSCfi, download [these](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas) and
-save them in a directory `schemas`.
+`python3 run.py`
 
-Then run a chosen set of tests:
+This test assumes a local server running on your machine. To test the Swedish beacon, run 
 
-`python3 tests/beaconerror_tests.py`
+`python3 run.py --host sv`
 
-This will test a local server running on your machine. To test the Swedish beacon, run 
-
-`python3 tests/beaconerror_tests.py sv`
-
-See `config/hosts.py` for other alternatives.
-
-Other tests:
-`python3 tests/specerror_tests.py`
-
-`python3 tests/query_tests.py`
-
-`python3 tests/query_fi.py`
+See below for other alternatives.
 
 
+## Options
+
+**Specifying a beacon to test**
+
+Default: use `localhost:5050`.
+
+Other options:
+
+- Use a host specified in `config/config.py`:
+
+  `python3 run.py --host sv`
+
+- Use a custom host:
+
+  `python3 run.py --host http://beacon.com`
+
+
+**Validation options**
+
+Default: validate against the OpenAPI spec, the JSON schemas and check that the results
+match (eg. that we get the correct counts).
+
+Other options:
+
+- `--no_openapi`  Don't validate against the OpenAPI specification
+
+- `--no_json`    Don't validate against the JSON Schemas
+
+- `--only_structure`  Don't validate the resulting counts, frequencies etc.
+
+
+**Output options**
+
+Default: show information, warnings and error messages.
+
+Other options:
+
+- `--only_warn`   Only print warnings and errors
+
+
+
+## Using local validation schemas
+The OpenAPI specification can be downloaded from
+[the GA4GH's GitHub repo](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml).
+To use a local version of it, specify it's path in `config/config.py`:
+
+```
+# Path to the OpenAPI spec
+SPEC = 'beacon.yaml'
+```
+
+The JSON schemas can be downloaded from
+[the CSCfi's  GitHub repo](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas).  
+To use local versions, put them in a directory and specify it's path in `config/config.py`:
+
+```
+# Directory containing JSON schemas
+SCHEMAS = 'schemas'
+```
 
 ## Create new tests:
-Create a python file with a function returning a test query together with a expected response.
+Create a python file and save it in the `tests` directory and put "test" in it's name, eg `tests/test_deletion.py`.
+
+Create a function returning a test query together with a expected response.
 The expected response may be partial, and the real result must be a superset of this.
 The decorator `validate_query` takes the expected status code as input argument.
 
@@ -53,7 +107,7 @@ def test_deletion():
       'start': 85177351,
       'end': 85177353,
       'includeDatasetResponses': 'HIT'
-      'variantType']: 'DEL'
+      'variantType': 'DEL'
         }
     resp = {"datasetAlleleResponses":
              [{"datasetId": "GRCh37p13:SweGen:20180409",
@@ -81,68 +135,16 @@ def test_deletion():
   See `tests/specerrors_tests.py`
 
 - The result counts of some specific queries. See `tests/query_tests.py`.
-  (**TODO** currently using SweGen dat. Change to a real test dataset).
-
-- The result counts of some specific queries for the finnish beacon. See `tests/query_fi.py`.
-  (**TODO** for testing the testing only. Change to a real test dataset).
 
 ## TODO
 
 #### Overall
 
-- 0/1 based beacons? Can be set in `config/config.py` now.
+- 0/1 based beacons. Should be 0-based, but can be set in `config/config.py` now.
 
 - Responses from bad queries does not always match the schema (try `beaconerrors_test.py` or `specerrors_test.py`)
    (see also https://github.com/ga4gh-beacon/specification/issues/252)
 
 - Test other type of count (eg. `call cannot be made  => .|.`)?
 
-- Now using JSON schemas from CSCfi, how to link/refer properly?
-
 - How exact should the `frequency` be? Rounding to more than 6 digits, will give errors for Swe vs. Fin.
-
-- Make sure the result we expect follow the specification [here](https://github.com/ga4gh-beacon/specification/wiki/Calculating-counters-in-BeaconDatasetAlleleResponse).
-
-
-#### Finnish vs. Swedish
-- Not always the same variantType (DEL/INS)
-
-- Different `callCount` vs. `sampleCount`
-
-
-### Beacon api schema
-1. Structure of all items using `KeyValue` changed from:
- **TODO** API changed in the the `develop` branch
-
-```
-    info:
-      description: 'Additional structured metadata, key-value pairs.'
-      type: array
-      items:
-         $ref: '#/components/schemas/KeyValuePair'
-
-    KeyValuePair:
-      type: object
-      required:
-        - key
-        - value
-      properties:
-        key:
-          type: string
-        value:
-          type: string
-```
- to:
-
-   ```
-    info:
-      description: 'Additional structured metadata, key-value pairs.'
-      $ref: '#/components/schemas/KeyValuePair'
-
-    KeyValuePair:
-      type: object
-      additionalProperties:
-        type: string
-   ```
-
-2.  (**TODO** check if there is any issue/PR on this) `BeaconAlleleResponse.exists` should nullable (on errors)
