@@ -35,6 +35,7 @@ class Settings():
 
     use_json_schemas = True
     check_result = True
+    start_pos = 0
     json_schemas = {}
     openapi = None
     host = None
@@ -56,6 +57,7 @@ class Settings():
             self.host = config.config.HOSTS.get('local')
 
         self.check_result = not c_args.only_structure
+        self.start_pos = int(c_args.one_based)
 
         if c_args.no_openapi:
             spec_path = ''

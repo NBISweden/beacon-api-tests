@@ -65,6 +65,12 @@ Other options:
 
 - `--only_warn`   Only print warnings and errors
 
+**Other**
+Default: Beacons are 0-based.
+
+Other options:
+
+- `--one_based`   Test a beacon that is 1-based
 
 
 ## Using local validation schemas

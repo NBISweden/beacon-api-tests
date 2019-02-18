@@ -37,6 +37,8 @@ if __name__ == '__main__':
                         help="Don't validate the resulting counts, frequencies etc")
     parser.add_argument('--only_warn', action="store_true",
                         help="Only print warnings and errors")
+    parser.add_argument('--one_based', action="store_true",
+                        help="Expect the beacon to be 1 based")
 
     c_args = parser.parse_args()
     if c_args.only_warn:

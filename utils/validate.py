@@ -152,9 +152,11 @@ def validate_call(path, query, test_query=True, code='', gold=None):
 
 
 def make_offset(args):
-    """ Shift start & end position to adjust for 0-based beacons """
+    """ Shift start & end position to adjust for beacons being 0-based """
+    settings = utils.setup.Settings()
     for key in ['start', 'end', 'startMin', 'startMax', 'endMin', 'endMax']:
-        if config.config.START_POS == 0:
+        # The testsuite allows one based beacons as well, so check the settings
+        if settings.start_pos == 0:
             if key in args:
                 args[key] = max(args[key]-1, 0)
 
