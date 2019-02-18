@@ -107,25 +107,31 @@ def validate_call(path, query, test_query=True, code='', gold=None):
         validator = RequestValidator(settings.openapi)
         result = validator.validate(req)
         warnings.extend(result.errors)
+
+    if test_query and settings.use_json_schemas:
         # validate against jsons schemas
         warnings.extend(utils.jsonschemas.validate(req.body, 'query', settings))
 
-    # check that the response complies to the api spec
     resp = BeaconResponse(req)
-    validator = ResponseValidator(settings.openapi)
-    result = validator.validate(req, resp)
-    warnings.extend(result.errors)
+    if settings.openapi:
+        # check that the response complies to the api spec
+        validator = ResponseValidator(settings.openapi)
+        result = validator.validate(req, resp)
+        warnings.extend(result.errors)
 
-    # validate against json schemas
-    warnings.extend(utils.jsonschemas.validate(resp.data, 'response', settings, path, error=resp.error))
+    if settings.use_json_schemas:
+        # validate against json schemas
+        warnings.extend(utils.jsonschemas.validate(resp.data, 'response',
+                                                   settings, path, error=resp.error))
 
     if code and resp.status_code != code:
         errors += [f'Unexpected http code {resp.status_code}. Expected: {code}']
 
     if gold is None:
         gold = {}
-    err = compare(gold, json.loads(resp.data))
-    errors.extend(err)
+    if settings.check_result:
+        err = compare(gold, json.loads(resp.data))
+        errors.extend(err)
     return errors, warnings
 
 
