@@ -62,7 +62,7 @@ class Settings():
         if c_args.no_openapi:
             spec_path = ''
         else:
-            if config.config.SPEC:
+            if os.path.isfile(config.config.SPEC):
                 logging.info('Using Beacon specification in %s', config.config.SPEC)
                 spec_path = config.config.SPEC
                 with open(spec_path) as stream:
@@ -85,7 +85,7 @@ class Settings():
         if c_args.no_json:
             self.use_json_schemas = False
         else:
-            if config.config.SCHEMAS:
+            if os.path.isdir(config.config.SCHEMAS):
                 logging.info('Using JSON schemas in %s', config.config.SCHEMAS)
                 self.json_schemas['response'] = load_local_schema('response')
                 self.json_schemas['query'] = load_local_schema('query')
