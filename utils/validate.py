@@ -5,7 +5,6 @@ Comparisions of the status code and the result data
 """
 import json
 import logging
-from operator import itemgetter
 import urllib.request
 import urllib.parse
 
@@ -14,6 +13,7 @@ from openapi_core.wrappers.base import BaseOpenAPIRequest, BaseOpenAPIResponse
 from werkzeug.datastructures import ImmutableMultiDict
 
 import config.config
+import utils.errors as err
 import utils.setup
 import utils.jsonschemas
 
@@ -23,16 +23,19 @@ def validate_query(code, path='query', test_query=False):
         A function decorated with this should return a
         query (dict) and an expected result (dict)
     """
-    host, spec = utils.setup.setup()
 
     def decorator(func):
         query, resp = func()
-        logging.info('Testing %s\n %s', func.__name__, func.__doc__)
-        errors = validate_call(spec, host, path, query,
-                               test_query=test_query,
-                               code=code, gold=resp)
-        for error in errors:
+        logging.info('Testing %s\n      %s', func.__name__, func.__doc__.strip())
+        errs, warns = validate_call(path, query,
+                                    test_query=test_query,
+                                    code=code, gold=resp)
+        if errs or warns:
+            logging.error('\n      Test "%s" did not pass: """%s"""', func.__name__, func.__doc__.strip())
+        for error in errs:
             logging.error(error)
+        for warn in warns:
+            logging.warning(warn)
         logging.info('Done\n')
     return decorator
 
@@ -75,7 +78,20 @@ class BeaconRequest(BaseOpenAPIRequest):
         if query:
             url += f'?{query}'
         logging.info('Open %s', url)
-        return urllib.request.urlopen(url)
+        try:
+            res = urllib.request.urlopen(url)
+        except ValueError:
+            logging.error('Url can not be opened: %s', url)
+            raise err.BeaconTestError()
+        except urllib.error.HTTPError as httperr:
+            # HTTPErrorr are let through, to be handled in BeaconResponse.
+            # The reason to catch them is that they are a subclass of URLError,
+            # but needs to be treated separately from other types of URLErrors.
+            return httperr
+        except urllib.error.URLError as urlerr:
+            logging.error('Url can not be opened: %s (%s)', url, urlerr.reason)
+            raise err.BeaconTestError()
+        return res
 
 
 class BeaconResponse(BaseOpenAPIResponse):
@@ -86,53 +102,63 @@ class BeaconResponse(BaseOpenAPIResponse):
         self.error = False
         try:
             response = request.open()
-            # pdb.set_trace()
             self.data = response.read()
             self.status_code = response.getcode()
             self.mimetype = response.info().get_content_type()
 
-        except urllib.error.HTTPError as err:
-            self.status_code = err.getcode()
-            self.mimetype = err.info().get_content_type()
-            self.data = err.read()
+        except urllib.error.HTTPError as error:
+            self.status_code = error.getcode()
+            self.mimetype = error.info().get_content_type()
+            self.data = error.read()
             self.error = True
 
 
-def validate_call(spec, host, path, query, test_query=True, code='', gold=None):
+def validate_call(path, query, test_query=True, code='', gold=None):
     """ Validate a query and its response """
-    req = BeaconRequest(host, 'GET', path, args=query)
-    errors = []
-    if test_query:
+    settings = utils.setup.Settings()
+    req = BeaconRequest(settings.host, 'GET', path, args=query)
+    errors, warnings = [], []
+    if test_query and settings.openapi:
         # check that the query complies to the api spec
-        validator = RequestValidator(spec)
+        validator = RequestValidator(settings.openapi)
         result = validator.validate(req)
-        errors.extend(result.errors)
+        warnings.extend(result.errors)
+
+    if test_query and settings.use_json_schemas:
         # validate against jsons schemas
-        errors.extend(utils.jsonschemas.validate(req.body, 'query'))
+        warnings.extend(utils.jsonschemas.validate(req.body, 'query', settings))
 
-    # check that the response complies to the api spec
     resp = BeaconResponse(req)
-    validator = ResponseValidator(spec)
-    result = validator.validate(req, resp)
-    errors.extend(result.errors)
+    if settings.openapi:
+        # check that the response complies to the api spec
+        validator = ResponseValidator(settings.openapi)
+        result = validator.validate(req, resp)
+        warnings.extend(result.errors)
 
-    # validate against json schemas
-    errors.extend(utils.jsonschemas.validate(resp.data, 'response', path, error=resp.error))
+    if settings.use_json_schemas:
+        # validate against json schemas
+        warnings.extend(utils.jsonschemas.validate(resp.data, 'response',
+                                                   settings, path, error=resp.error))
 
     if code and resp.status_code != code:
         errors += [f'Unexpected http code {resp.status_code}. Expected: {code}']
 
     if gold is None:
         gold = {}
-    err = compare(gold, json.loads(resp.data))
-    errors.extend(err)
-    return errors
+    if settings.check_result:
+        err = compare(gold, json.loads(resp.data))
+        errors.extend(err)
+    return errors, warnings
 
 
-def print_errors(result):
-    """ Print errors """
-    for error in result.errors:
-        logging.error('\t%s', error)
+def make_offset(args):
+    """ Shift start & end position to adjust for beacons being 0-based """
+    settings = utils.setup.Settings()
+    for key in ['start', 'end', 'startMin', 'startMax', 'endMin', 'endMax']:
+        # The testsuite allows one based beacons as well, so check the settings
+        if settings.start_pos == 0:
+            if key in args:
+                args[key] = max(args[key]-1, 0)
 
 
 def compare(gold, obj):
@@ -147,55 +173,59 @@ def compare(gold, obj):
 def compare_obj(gold, obj, err):
     """ Help function to compare(), compares objects """
     for key, val in gold.items():
-        if not key in obj:
+        if key not in obj:
             err.append(f'Value missing: {key}  {obj.keys()}')
         if isinstance(val, dict):
             compare_obj(val, obj[key], err)
         elif isinstance(val, list):
-            compare_list(sortlist(val, key), sortlist(obj[key], key), err)
-        elif isinstance(val, float):
-            if round(val, config.config.PRECISION) != round(obj[key], config.config.PRECISION):
-                err.append(f'Bad value {key}: {val} != {obj[key]}')
+            compare_list(val, obj[key], err, key)
         else:
-            if val != obj[key]:
+            if normalize(val) != normalize(obj[key]):
                 err.append(f'Bad value {key}: {val} != {obj[key]}')
 
 
-def compare_list(gold, clist, err):
-    """ Help function to compare(), compares lists
-        Assums that the two lists are ordered the same way
+def compare_objlist(gold, clist, sorter, err):
+    """ Help function to compare(), compares a list of objects
+        where each object can be identified by looking at a given key
     """
+    for item in gold:
+        if sorter not in item:
+            err.append(f'No value for {sorter} in {item}, cannot compare')
+            continue
+        try:
+            list_id = normalize(item[sorter])
+            nextcomp = [obj for obj in clist if normalize(obj.get(sorter)) == list_id][0]
+            compare_obj(item, nextcomp, err)
+        except IndexError:
+            err.append(f'Objects don\'t match. No matching object for {sorter} value {list_id} in {clist}')
+
+
+def compare_list(gold, clist, err, key=''):
+    """ Help function to compare(), compares lists
+        Assumes that the two lists are ordered the same way
+    """
+    if gold and isinstance(gold[0], dict):
+        # If this is a list of objects, and we know how to sort these,
+        # use the compare_objlist() instead
+        sorter = config.config.SORT_BY.get(key)
+        if sorter:
+            compare_objlist(gold, clist, sorter, err)
+            return
+
     for n, item in enumerate(gold):
         if len(clist) <= n:
             err.append(f'Result list too short. {item} not in {clist}')
             break
-        if isinstance(item, dict):
-            compare_obj(item, clist[n], err)
         elif isinstance(item, list):
-            compare_list(sortlist(item), sortlist(clist[n]), err)
+            compare_list(sorted(item), sorted(clist[n]), err, key)
         else:
             if item not in clist:
                 err.append(f'{item} not in {clist}')
 
 
-def sortlist(inp, key=''):
-    """ Sort lists
-    Lists of dictionaries will be sorted as defined in the configurations
-    Logs a warning if the list cannot be properly sorted
+def normalize(val):
+    """ Normalize a value before comparison to other values
     """
-    sorter = config.config.SORT_BY.get(key)
-    if sorter and inp and isinstance(inp[0], dict):
-        return sorted(inp, key=itemgetter(sorter))
-    if inp and isinstance(inp[0], dict):
-        logging.warning('Could not sort list %s', inp)
-        return inp
-
-    return sorted(inp)
-
-
-def make_offset(args):
-    """ Shift start & end position to adjust for 0-based beacons """
-    for key in ['start', 'end', 'startMin', 'startMax', 'endMin', 'endMax']:
-        if config.config.START_POS == 0:
-            if key in args:
-                args[key] = max(args[key]-1, 0)
+    if isinstance(val, float):
+        return round(val, config.config.PRECISION)
+    return val
