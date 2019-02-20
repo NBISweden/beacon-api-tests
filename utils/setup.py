@@ -8,6 +8,7 @@ import urllib.request
 import jsonschema.exceptions
 from openapi_core import create_spec
 import openapi_core.schema.servers.models
+import openapi_spec_validator
 import yaml
 
 import config.config
@@ -113,5 +114,8 @@ def parse_spec(inp_file):
         spec = create_spec(y_spec)
     except jsonschema.exceptions.RefResolutionError:
         logging.error("Could not load specification. Check your network or try again")
+        raise err.BeaconTestError()
+    except openapi_spec_validator.exceptions.OpenAPIValidationError:
+        logging.error("Could not read specification. Check tat your file is valid")
         raise err.BeaconTestError()
     return spec
