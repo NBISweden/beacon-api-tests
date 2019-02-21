@@ -83,11 +83,12 @@ class BeaconRequest(BaseOpenAPIRequest):
         except ValueError:
             logging.error('Url can not be opened: %s', url)
             raise err.BeaconTestError()
-        except urllib.error.HTTPError as httperr:
-            # HTTPErrorr are let through, to be handled in BeaconResponse.
-            # The reason to catch them is that they are a subclass of URLError,
-            # but needs to be treated separately from other types of URLErrors.
-            return httperr
+        except urllib.error.HTTPError:
+            # HTTPErrorr are passed on to BeaconResponse.
+            # Catch them here, since they are a subclass of URLError,
+            # but needs to be treated separately from other types of URLErrors
+            # catche below.
+            raise
         except urllib.error.URLError as urlerr:
             logging.error('Url can not be opened: %s (%s)', url, urlerr.reason)
             raise err.BeaconTestError()
