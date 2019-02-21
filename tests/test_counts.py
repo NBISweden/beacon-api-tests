@@ -254,3 +254,27 @@ def test_deletion_2():
          "frequency": 0.585463
         }]}
     return query, resp
+
+
+@validate_query(200)
+def test_mnp():
+    """ Test variantTypes MNP and multiple variations on one vcf line """
+    query = base()
+    query['start'] = 16577044
+    query['end'] = 16577046
+    query['referenceBases'] = 'TG'
+    del query['alternateBases']
+    query['variantType'] = 'MNP'
+    resp = {"datasetAlleleResponses": [
+        {"datasetId": "GRCh38:beacon_test:2030-01-01",
+         "referenceName": "22",
+         "callCount": 5008,
+         "variantCount": 17,
+         "sampleCount": 2504,
+         "exists": True,
+         "referenceBases": "TG",
+         "alternateBases": "AG",
+         "variantType": "MNP",
+         "frequency": 0.003394569
+        }]}
+    return query, resp
