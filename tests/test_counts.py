@@ -67,19 +67,20 @@ def test_snp():
 
 
 @validate_query(200)
-def test_no_end():
-    """ Test querying without an end position """
+def test_bad_end():
+    """ Test querying with an bad end position """
     query = base()
     query['start'] = 17300408
+    query['end'] = 17300410
     query['referenceBases'] = 'A'
     query['alternateBases'] = 'G'
-    resp = {"datasetAlleleResponses": []}
+    resp = {"exists": False}
     return query, resp
 
 
 @validate_query(200)
 def test_end():
-    """ Test the same query as `test_no_end()` but with an end position """
+    """ Test the same query as `test_bad_end()` but with the correct end position """
     query = base()
     query['start'] = 17300408
     query['end'] = 17300409
