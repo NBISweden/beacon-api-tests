@@ -32,10 +32,7 @@ def no_assembly():
 
 @validate_query(400, test_query=False)
 def no_alternate():
-    """ Check that either alternateBases or variantType is required
-    This query is allowed by the OpenAPI specification, but not according
-    to the finnish schemas.
-    """
+    """ Check that either alternateBases or variantType is required """
     query = base()
     del query['alternateBases']
     return query, {}
