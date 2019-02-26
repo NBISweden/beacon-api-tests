@@ -68,7 +68,7 @@ def test_snp():
 
 @validate_query(200)
 def test_bad_end():
-    """ Test querying with an bad end position """
+    """ Test querying with a bad end position """
     query = base()
     query['start'] = 17300408
     query['end'] = 17300410
