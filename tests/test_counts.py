@@ -10,8 +10,8 @@ def info():
     resp = {'datasets': [{
         "id": "GRCh38:beacon_test:2030-01-01",
         "assemblyId": "GRCh38",
-        "variantCount": 10,
-        "callCount": 9,
+        "variantCount": 12,
+        "callCount": 10,
         "sampleCount": 2504,
     }]}
     return {}, resp
@@ -67,19 +67,20 @@ def test_snp():
 
 
 @validate_query(200)
-def test_no_end():
-    """ Test querying without an end position """
+def test_bad_end():
+    """ Test querying with a bad end position """
     query = base()
     query['start'] = 17300408
+    query['end'] = 17300410
     query['referenceBases'] = 'A'
     query['alternateBases'] = 'G'
-    resp = {"datasetAlleleResponses": []}
+    resp = {"exists": False}
     return query, resp
 
 
 @validate_query(200)
 def test_end():
-    """ Test the same query as `test_no_end()` but with an end position """
+    """ Test the same query as `test_bad_end()` but with the correct end position """
     query = base()
     query['start'] = 17300408
     query['end'] = 17300409
@@ -234,6 +235,8 @@ def test_deletion():
 def test_deletion_2():
     """ Test variantTypes DEL with startMin/startMax """
     query = base()
+    del query['start']
+    del query['end']
     query['startMin'] = 17301520
     query['startMax'] = 17301530
     query['endMin'] = 17301536

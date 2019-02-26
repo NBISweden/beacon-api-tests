@@ -32,10 +32,28 @@ def no_assembly():
 
 @validate_query(400, test_query=False)
 def no_alternate():
-    """ Check that either alternateBases or variantType is required
-    This query is allowed by the OpenAPI specification, but not according
-    to the finnish schemas.
-    """
+    """ Check that either alternateBases or variantType is required """
     query = base()
     del query['alternateBases']
+    return query, {}
+
+
+@validate_query(400, test_query=False)
+def start_and_startMin():
+    """ Check that you cannot use start and startMin+startMax """
+    query = base()
+    query['startMin'] = 17301520
+    query['startMax'] = 17301530
+    query['endMin'] = 17301536
+    query['endMax'] = 17301536
+    query['referenceBases'] = 'A'
+    return query, {}
+
+
+@validate_query(400, test_query=False)
+def no_start():
+    """ Check that you cannot use start and startMin+startMax """
+    query = base()
+    del query['start']
+    query['referenceBases'] = 'A'
     return query, {}
