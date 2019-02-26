@@ -12001,7 +12001,7 @@ a.anchor-link {
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li>Run the test suite:
-<pre><code>python3 run.py --host "http://mybeacon.com"</code></pre>
+<pre><code>python3 beacon-api-tester.py --host "http://mybeacon.com"</code></pre>
 </li>
 </ul>
 
@@ -12013,7 +12013,7 @@ a.anchor-link {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Output:</p>
-<p><img src="img/run.png" alt="Bad varinanttype" style="width:1500px !important; max-width:200%; overflow-x:hidden !important"></p>
+<p><img src="img/run.png" alt="Bad varinanttype" style="width:900px !important; max-width:200%; overflow-x:hidden !important"></p>
 
 </div>
 </div>
@@ -12066,11 +12066,36 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Future:</p>
+<p>Not tested:</p>
 <ul>
-<li>add more test data?</li>
-<li>other types of checks?</li>
-<li>all contributions are welcome!</li>
+<li>other values than <code>HIT</code> for <code>includeDatasetResponses</code></li>
+<li>querying more than one dataset</li>
+</ul>
+
+</div>
+</div>
+</div><div class="fragment">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><p>other <code>variantTypes</code> than <code>DEL</code>, <code>INS</code>, <code>SNP</code>, <code>MNP</code></p>
+<p>(what if the dataset does not have anymore?)</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div></div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Span queries:</p>
+<ul>
+<li>the OpenAPI spec is not clear on how <code>start</code>, <code>end</code>, <code>startMin</code>, <code>startMax</code> etc can be used</li>
+<li>are queries for the whole chromosome allowed?</li>
 </ul>
 
 </div>
@@ -12080,9 +12105,12 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-
-<pre><code>python3 run.py -h</code></pre>
-<p><img src="img/help.png" alt="Help" style="max-width:200%"></p>
+<p>Future:</p>
+<ul>
+<li>add more test data?</li>
+<li>other types of checks?</li>
+<li>all contributions are welcome!</li>
+</ul>
 
 </div>
 </div>
