@@ -235,6 +235,8 @@ def test_deletion():
 def test_deletion_2():
     """ Test variantTypes DEL with startMin/startMax """
     query = base()
+    del query['start']
+    del query['end']
     query['startMin'] = 17301520
     query['startMax'] = 17301530
     query['endMin'] = 17301536
