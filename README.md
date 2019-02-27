@@ -1,6 +1,6 @@
-# Validation tests for beacon api 1.0.0
+# Validation tests for beacon api 1.0
 
-This project contains tests that can be used for any Beacon implemention using api version 1.
+This project contains tests that can be used for any Beacon implemention using api version 1.0
 The Beacon's responses are validated against the 
 [GA4GH's OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml).
 and against JSON schemas by [CSCfi](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas).
@@ -153,9 +153,6 @@ def test_deletion():
 
    - `exists` will be `null` instead of `boolean` (see also https://github.com/ga4gh-beacon/specification/issues/252).
 
-   - leaving out a required field (eg. `assemblyId`) gives answer which is also missing that field. 
-
 - Test other type of count (eg. `call cannot be made  => .|.`)?
 
 - How exact should the `frequency` be? Rounding to more than 6 digits, will give errors for Swe vs. Fin.
-
