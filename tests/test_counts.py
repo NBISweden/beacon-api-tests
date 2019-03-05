@@ -260,14 +260,14 @@ def test_deletion_2():
 
 
 @validate_query(200)
-def test_mnp():
-    """ Test variantTypes MNP and multiple variations on one vcf line """
+def test_snp():
+    """ Test variantTypes SNP and multiple variations from one vcf line """
     query = base()
     query['start'] = 16577044
     query['end'] = 16577046
     query['referenceBases'] = 'TG'
     del query['alternateBases']
-    query['variantType'] = 'MNP'
+    query['variantType'] = 'SNP'
     resp = {"datasetAlleleResponses": [
         {"datasetId": "GRCh38:beacon_test:2030-01-01",
          "referenceName": "22",
@@ -277,7 +277,7 @@ def test_mnp():
          "exists": True,
          "referenceBases": "TG",
          "alternateBases": "AG",
-         "variantType": "MNP",
+         "variantType": "SNP",
          "frequency": 0.003394569
         }]}
     return query, resp
