@@ -10,8 +10,8 @@ def info():
     resp = {'datasets': [{
         "id": "GRCh38:beacon_test:2030-01-01",
         "assemblyId": "GRCh38",
-        "variantCount": 12,
-        "callCount": 10,
+        "variantCount": 15,
+        "callCount": 11,
         "sampleCount": 2504,
     }]}
     return {}, resp
@@ -280,4 +280,50 @@ def test_mnp():
          "variantType": "MNP",
          "frequency": 0.003394569
         }]}
+    return query, resp
+
+
+@validate_query(200)
+def test_multi():
+    """ Test alternateBases=N and multiple variations from one vcf line (indel) """
+    query = base()
+    query['start'] = 19617927
+    query['referenceBases'] = 'GTCT'
+    query['alternateBases'] = 'N'
+    del query['end']
+    resp = {"datasetAlleleResponses": [
+        {"datasetId": "GRCh38:beacon_test:2030-01-01",
+         "referenceName": "22",
+         "callCount": 5008,
+         "variantCount": 17,
+         "sampleCount": 2504,
+         "exists": True,
+         "referenceBases": "GTCT",
+         "alternateBases": "GTCTTCTTCT",
+         "variantType": "INS",
+         "frequency": 0.00339457
+        },
+        {"datasetId": "GRCh38:beacon_test:2030-01-01",
+         "referenceName": "22",
+         "callCount": 5008,
+         "variantCount": 118,
+         "sampleCount": 2504,
+         "exists": True,
+         "referenceBases": "GTCT",
+         "alternateBases": "GTCTTCT",
+         "variantType": "INS",
+         "frequency": 0.0235623
+        },
+        {"datasetId": "GRCh38:beacon_test:2030-01-01",
+         "referenceName": "22",
+         "variantCount": 182,
+         "callCount": 5008,
+         "sampleCount": 2504,
+         "exists": True,
+         "referenceBases": "GTCT",
+         "alternateBases": "G",
+         "variantType": "DEL",
+         "frequency": 0.036341853
+         }
+        ]}
     return query, resp
