@@ -147,8 +147,8 @@ def validate_call(path, query, test_query=True, code='', gold=None):
     if gold is None:
         gold = {}
     if settings.check_result:
-        err = compare(gold, json.loads(resp.data))
-        errors.extend(err)
+        error = compare(gold, json.loads(resp.data))
+        errors.extend(error)
     return errors, warnings
 
 
@@ -171,38 +171,22 @@ def compare(gold, obj):
     return errs
 
 
-def compare_obj(gold, obj, err):
-    """ Help function to compare(), compares objects """
+def compare_obj(gold, obj, errors):
+    """Help function to compare(), compares objects"""
     for key, val in gold.items():
         if key not in obj:
-            err.append(f'Value missing: {key}  {obj.keys()}')
+            errors.append(f'Value missing: {key}  {obj.keys()}')
         if isinstance(val, dict):
-            compare_obj(val, obj[key], err)
+            compare_obj(val, obj[key], errors)
         elif isinstance(val, list):
-            compare_list(val, obj[key], err, key)
+            compare_list(val, obj[key], errors, key)
         else:
             if normalize(val) != normalize(obj[key]):
-                err.append(f'Bad value {key}: {val} != {obj[key]}')
+                errors.append(f'Bad value {key}: {val} != {obj[key]}')
 
 
-def compare_objlist(gold, clist, sorter, err):
-    """ Help function to compare(), compares a list of objects
-        where each object can be identified by looking at a given key
-    """
-    for item in gold:
-        if sorter not in item:
-            err.append(f'No value for {sorter} in {item}, cannot compare')
-            continue
-        try:
-            list_id = normalize(item[sorter])
-            nextcomp = [obj for obj in clist if normalize(obj.get(sorter)) == list_id][0]
-            compare_obj(item, nextcomp, err)
-        except IndexError:
-            err.append(f'Objects don\'t match. No matching object for {sorter} value {list_id} in {clist}')
-
-
-def compare_list(gold, clist, err, key=''):
-    """ Help function to compare(), compares lists
+def compare_list(gold, clist, errors, key=''):
+    """Help function to compare(), compares lists
         Assumes that the two lists are ordered the same way
     """
     if gold and isinstance(gold[0], dict):
@@ -210,22 +194,49 @@ def compare_list(gold, clist, err, key=''):
         # use the compare_objlist() instead
         sorter = config.config.SORT_BY.get(key)
         if sorter:
-            compare_objlist(gold, clist, sorter, err)
+            compare_objlist(gold, clist, sorter, errors)
             return
 
     for n, item in enumerate(gold):
         if len(clist) <= n:
-            err.append(f'Result list too short. {item} not in {clist}')
+            errors.append(f'Result list too short. {item} not in {clist}')
             break
         elif isinstance(item, list):
-            compare_list(sorted(item), sorted(clist[n]), err, key)
+            compare_list(sorted(item), sorted(clist[n]), errors, key)
         else:
             if item not in clist:
-                err.append(f'{item} not in {clist}')
+                errors.append(f'{item} not in {clist}')
+
+
+def compare_objlist(gold, clist, sorters, errors):
+    """Help function to compare(), compares a list of objects
+        where each object can be identified by looking at a given key
+    """
+
+    def find_best_match(alist):
+        """Sort by fst, return snd"""
+        return sorted(alist, key=lambda x: x[0])[0][1]
+
+    def get_sort_ids(obj):
+        """Sort by normalized key"""
+        return [normalize(obj.get(sorter)) for sorter in sorters]
+
+    def compare_identifiers(gold, cmp):
+        """Compare to objects by a given set of identifiers. Return the number of mismatches"""
+        gold_id = get_sort_ids(gold)
+        cmp_id = get_sort_ids(cmp)
+        if gold_id == cmp_id:
+            return 0
+        return len([1 for (g, c) in zip(gold_id, cmp_id) if g != c])
+
+    for golditem in gold:
+        nextcomp = find_best_match([(compare_identifiers(golditem, obj), obj) for obj in clist])
+        compare_obj(golditem, nextcomp, errors)
+        clist.remove(nextcomp)
 
 
 def normalize(val):
-    """ Normalize a value before comparison to other values
+    """Normalize a value before comparison to other values
     """
     if isinstance(val, float):
         return round(val, config.config.PRECISION)
