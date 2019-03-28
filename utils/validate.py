@@ -1,5 +1,5 @@
-"""
-Module responsible for validating queries and replies
+"""Module responsible for validating queries and replies.
+
 Uses openapi_core to validate against the api specification
 Comparisions of the status code and the result data
 """
@@ -19,11 +19,11 @@ import utils.jsonschemas
 
 
 def validate_query(code, path='query', test_query=False):
-    """ Decorator for test queries.
-        A function decorated with this should return a
-        query (dict) and an expected result (dict)
-    """
+    """Decorator for test queries.
 
+    A function decorated with this should return a
+    query (dict) and an expected result (dict)
+    """
     def decorator(func):
         query, resp = func()
         logging.info('Testing %s\n      %s', func.__name__, func.__doc__.strip())
@@ -41,16 +41,19 @@ def validate_query(code, path='query', test_query=False):
 
 
 class BeaconRequest(BaseOpenAPIRequest):
-    """ Wrapper for a Request
+    """Wrapper for a Request.
+
     The url can be opened using the open method
     """
+
     def __init__(self, host, method, path, args=None,
                  view_args=None, headers=None, data=None,
                  mimetype='application/json'):
+        """Set up a Request object."""
         make_offset(args)
         self.host_url = host
         self.path = path
-        self.path_pattern = path #parsed.path + path
+        self.path_pattern = path
         self.method = method.lower()
 
         self.parameters = {
@@ -64,13 +67,14 @@ class BeaconRequest(BaseOpenAPIRequest):
 
     @property
     def full_url_pattern(self):
+        """Get the full url."""
         url = '/'+self.path_pattern
         if url.endswith('//'):
             url = url[:-1]
         return url
 
     def open(self):
-        """ Open the url """
+        """Open the url."""
         url = '/'.join([self.host_url, self.path_pattern])
         if url.endswith('//'):
             url = url[:-1]
@@ -96,10 +100,13 @@ class BeaconRequest(BaseOpenAPIRequest):
 
 
 class BeaconResponse(BaseOpenAPIResponse):
-    """ Wrapper for a Response
+    """Wrapper for a Response.
+
     Stores the response body, error code and the content type
     """
+
     def __init__(self, request):
+        """Set up a response object."""
         self.error = False
         try:
             response = request.open()
@@ -115,7 +122,7 @@ class BeaconResponse(BaseOpenAPIResponse):
 
 
 def validate_call(path, query, test_query=True, code='', gold=None):
-    """ Validate a query and its response """
+    """Validate a query and its response."""
     settings = utils.setup.Settings()
     req = BeaconRequest(settings.host, 'GET', path, args=query)
     errors, warnings = [], []
@@ -153,7 +160,7 @@ def validate_call(path, query, test_query=True, code='', gold=None):
 
 
 def make_offset(args):
-    """ Shift start & end position to adjust for beacons being 0-based """
+    """Shift start & end position to adjust for beacons being 0-based."""
     settings = utils.setup.Settings()
     for key in ['start', 'end', 'startMin', 'startMax', 'endMin', 'endMax']:
         # The testsuite allows one based beacons as well, so check the settings
@@ -163,16 +170,14 @@ def make_offset(args):
 
 
 def compare(gold, obj):
-    """ Compare two objects to see that everything in the gold object is also
-    in the other
-    """
+    """Compare two objects to see that everything in the gold object is also in the other."""
     errs = []
     compare_obj(gold, obj, errs)
     return errs
 
 
 def compare_obj(gold, obj, errors):
-    """Help function to compare(), compares objects"""
+    """Help function to compare(), compares objects."""
     for key, val in gold.items():
         if key not in obj:
             errors.append(f'Value missing: {key}  {obj.keys()}')
@@ -186,8 +191,10 @@ def compare_obj(gold, obj, errors):
 
 
 def compare_list(gold, clist, errors, key=''):
-    """Help function to compare(), compares lists
-        Assumes that the two lists are ordered the same way
+    """
+    Help function to compare(), compares lists.
+
+    Assumes that the two lists are ordered the same way.
     """
     if gold and isinstance(gold[0], dict):
         # If this is a list of objects, and we know how to sort these,
@@ -209,20 +216,20 @@ def compare_list(gold, clist, errors, key=''):
 
 
 def compare_objlist(gold, clist, sorters, errors):
-    """Help function to compare(), compares a list of objects
-        where each object can be identified by looking at a given key
-    """
+    """Help function to compare(), compares a list of objects.
 
+    The objects with the (most) matching sort keys objects are compared to each other
+    """
     def find_best_match(alist):
-        """Sort by fst, return snd"""
+        """Sort by fst, return snd."""
         return sorted(alist, key=lambda x: x[0])[0][1]
 
     def get_sort_ids(obj):
-        """Sort by normalized key"""
+        """Sort by normalized key."""
         return [normalize(obj.get(sorter)) for sorter in sorters]
 
     def compare_identifiers(gold, cmp):
-        """Compare to objects by a given set of identifiers. Return the number of mismatches"""
+        """Compare to objects by a given set of identifiers. Return the number of mismatches."""
         gold_id = get_sort_ids(gold)
         cmp_id = get_sort_ids(cmp)
         if gold_id == cmp_id:
@@ -236,8 +243,7 @@ def compare_objlist(gold, clist, sorters, errors):
 
 
 def normalize(val):
-    """Normalize a value before comparison to other values
-    """
+    """Normalize a value before comparison to other values."""
     if isinstance(val, float):
         return round(val, config.config.PRECISION)
     return val

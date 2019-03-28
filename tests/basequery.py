@@ -1,7 +1,8 @@
-""" An example question """
+"""An standard question."""
+
 
 def base():
-    """ Standard question """
+    """Return a standard question."""
     # This must be a function so that it always returns a new object
     query = {'referenceName': 22,
              'referenceBases': 'GG',
@@ -11,5 +12,5 @@ def base():
              'end': 2,
              'includeDatasetResponses': 'HIT',
              'datasetIds': 'GRCh38:beacon_test:2030-01-01'
-            }
+             }
     return query
