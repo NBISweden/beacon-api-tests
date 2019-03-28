@@ -181,6 +181,7 @@ def compare_obj(gold, obj, errors):
     for key, val in gold.items():
         if key not in obj:
             errors.append(f'Value missing: {key}  {obj.keys()}')
+            continue
         if isinstance(val, dict):
             compare_obj(val, obj[key], errors)
         elif isinstance(val, list):
@@ -221,7 +222,9 @@ def compare_objlist(gold, clist, sorters, errors):
     The objects with the (most) matching sort keys objects are compared to each other
     """
     def find_best_match(alist):
-        """Sort by fst, return snd."""
+        """Sort by fst (identifier), return snd (an object)."""
+        if not alist:
+            return {}
         return sorted(alist, key=lambda x: x[0])[0][1]
 
     def get_sort_ids(obj):
@@ -236,7 +239,11 @@ def compare_objlist(gold, clist, sorters, errors):
             return 0
         return len([1 for (g, c) in zip(gold_id, cmp_id) if g != c])
 
+
     for golditem in gold:
+        if not clist:
+            errors.append(f'Too few elements, could not find {gold}')
+            return
         nextcomp = find_best_match([(compare_identifiers(golditem, obj), obj) for obj in clist])
         compare_obj(golditem, nextcomp, errors)
         clist.remove(nextcomp)
