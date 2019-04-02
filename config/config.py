@@ -1,4 +1,4 @@
-""" Configurations for the tests """
+"""Configurations for the tests."""
 
 # Path to the OpenAPI spec
 SPEC = 'beacon.yaml'
@@ -11,7 +11,7 @@ HOSTS = {
     'es': 'https://ega-archive.org/beacon-api',
     'fi': 'https://beaconpy-elixirbeacon.rahtiapp.fi',
     'fi_local': 'http://localhost:5051',
-    }
+}
 
 # Directory containing JSON schemas
 SCHEMAS = 'schemas'
@@ -20,4 +20,4 @@ SCHEMAS = 'schemas'
 PRECISION = 6
 
 # Define what keys that should be used to sort lists of dictionaries
-SORT_BY = {'datasets': 'id', 'datasetAlleleResponses': 'frequency'}
+SORT_BY = {'datasets': ['id'], 'datasetAlleleResponses': ['datasetId', 'frequency']}
