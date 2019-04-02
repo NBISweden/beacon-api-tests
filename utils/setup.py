@@ -1,4 +1,4 @@
-"""  Responsible for configuration """
+"""Responsible for configuration."""
 import json
 import logging
 import os
@@ -22,9 +22,11 @@ info_url = 'https://raw.githubusercontent.com/CSCfi/beacon-python/master/beacon_
 
 
 def singleton(cls, *args, **kw):
-    """ Make a class a singleton """
+    """Make a class a singleton."""
     instances = {}
+
     def _singleton():
+        """Find existing instance."""
         if cls not in instances:
             instances[cls] = cls(*args, **kw)
         return instances[cls]
@@ -33,6 +35,7 @@ def singleton(cls, *args, **kw):
 
 @singleton
 class Settings():
+    """Object containing all settings for the test suite."""
 
     use_json_schemas = True
     check_result = True
@@ -45,8 +48,7 @@ class Settings():
         return
 
     def set_args(self, c_args):
-        """ Set current host, read API specifications """
-
+        """Set current host, read API specifications."""
         if c_args.host and c_args.host in config.config.HOSTS:
             # use a known host
             self.host = config.config.HOSTS.get(c_args.host)
@@ -93,7 +95,10 @@ class Settings():
                 self.json_schemas['info'] = load_local_schema('info')
             else:
                 logging.info('Downloading JSON schemas')
-                load_url = lambda x: json.loads(urllib.request.urlopen(x).read())
+
+                def load_url(file):
+                    return json.loads(urllib.request.urlopen(file).read())
+
                 self.json_schemas['response'] = load_url(response_url)
                 self.json_schemas['query'] = load_url(query_url)
                 self.json_schemas['info'] = load_url(info_url)
@@ -108,7 +113,7 @@ def load_local_schema(name):
 
 
 def parse_spec(inp_file):
-    """ Parse a yaml file into a specification object """
+    """Parse a yaml file into a specification object."""
     try:
         y_spec = yaml.load(inp_file)
         spec = create_spec(y_spec)

@@ -1,12 +1,12 @@
-""" Example tests. Check that they work and that we get the expected output """
+"""Example tests. Check that they work and that we get the expected output."""
 
 from tests.basequery import base
 from utils.validate import validate_query
 
 
 @validate_query(200, path='/')
-def info():
-    """ The info (/) call """
+def test_info():
+    """Test the beacon's info (/) call."""
     resp = {'datasets': [{
         "id": "GRCh38:beacon_test:2030-01-01",
         "assemblyId": "GRCh38",
@@ -17,10 +17,9 @@ def info():
     return {}, resp
 
 
-
 @validate_query(200)
 def test_search_1():
-    """ Test a standard query with alternateBases, start and end """
+    """Test a standard query with alternateBases, start and end."""
     query = base()
     query['start'] = 16050075
     query['end'] = 16050076
@@ -37,14 +36,13 @@ def test_search_1():
          "alternateBases": "G",
          "variantType": "SNP",
          "frequency": 0.000199681
-        }]}
+         }]}
     return query, resp
-
 
 
 @validate_query(200)
 def test_snp():
-    """ Test variantType SNP """
+    """Test variantType SNP."""
     query = base()
     query['start'] = 17302972
     query['end'] = 17302973
@@ -62,13 +60,13 @@ def test_snp():
          "alternateBases": "A",
          "variantType": "SNP",
          "frequency": 0.585264
-        }]}
+         }]}
     return query, resp
 
 
 @validate_query(200)
 def test_bad_end():
-    """ Test querying with a bad end position """
+    """Test querying with a bad end position."""
     query = base()
     query['start'] = 17300408
     query['end'] = 17300410
@@ -80,7 +78,7 @@ def test_bad_end():
 
 @validate_query(200)
 def test_end():
-    """ Test the same query as `test_bad_end()` but with the correct end position """
+    """Test the same query as `test_bad_end()` but with the correct end position."""
     query = base()
     query['start'] = 17300408
     query['end'] = 17300409
@@ -97,13 +95,13 @@ def test_end():
          "alternateBases": "G",
          "variantType": "SNP",
          "frequency": 0.943091
-        }]}
+         }]}
     return query, resp
 
 
 @validate_query(200)
 def test_insertion():
-    """ Test variantTypes INS """
+    """Test variantTypes INS."""
     query = base()
     query['start'] = 16064513
     query['end'] = 16064514
@@ -121,13 +119,13 @@ def test_insertion():
          "alternateBases": "AAGAATGGCCTAATAC",
          "variantType": "INS",
          "frequency": 0.00419329
-        }]}
+         }]}
     return query, resp
 
 
 @validate_query(200)
 def test_insertion_altbase():
-    """ Test variantTypes by searching for ref and alt """
+    """Test variantTypes by searching for ref and alt."""
     query = base()
     query['start'] = 16539541
     query['end'] = 16539542
@@ -144,13 +142,13 @@ def test_insertion_altbase():
          "alternateBases": "AC",
          "variantType": "INS",
          "frequency": 0.00139776
-        }]}
+         }]}
     return query, resp
 
 
 @validate_query(200)
 def test_multi_insertion():
-    """ Find a variantTypes INS at a position where there are two different variants """
+    """Find a variantTypes INS at a position where there are two different variants."""
     query = base()
     query['start'] = 16879601
     query['end'] = 16879602
@@ -168,7 +166,7 @@ def test_multi_insertion():
          "alternateBases": "TAA",
          "variantType": "INS",
          "frequency": 0.023162939,
-        },
+         },
         {"datasetId": "GRCh38:beacon_test:2030-01-01",
          "referenceName": "22",
          "callCount": 5008,
@@ -179,14 +177,13 @@ def test_multi_insertion():
          "alternateBases": "TA",
          "variantType": "INS",
          "frequency": 0.062699683,
-        }
-        ]}
+         }]}
     return query, resp
 
 
 @validate_query(200)
 def test_deletion_altbase():
-    """ Test a deletion by searching for ref and alt """
+    """Test a deletion by searching for ref and alt."""
     query = base()
     query['start'] = 16497141
     query['end'] = 16497144
@@ -203,13 +200,13 @@ def test_deletion_altbase():
          "alternateBases": "C",
          "variantType": "DEL",
          "frequency": 0.000798722
-        }]}
+         }]}
     return query, resp
 
 
 @validate_query(200)
 def test_deletion():
-    """ Test variantTypes DEL """
+    """Test variantTypes DEL."""
     query = base()
     query['start'] = 16517680
     query['end'] = 16517685
@@ -227,13 +224,13 @@ def test_deletion():
          "alternateBases": "G",
          "variantType": "DEL",
          "frequency": 0.000599042
-        }]}
+         }]}
     return query, resp
 
 
 @validate_query(200)
 def test_deletion_2():
-    """ Test variantTypes DEL with startMin/startMax """
+    """Test variantTypes DEL with startMin/startMax."""
     query = base()
     del query['start']
     del query['end']
@@ -255,7 +252,7 @@ def test_deletion_2():
          "alternateBases": "A",
          "variantType": "DEL",
          "frequency": 0.585463
-        }]}
+         }]}
     return query, resp
 
 
@@ -279,7 +276,7 @@ def test_snp_mnp():
          "alternateBases": "A",
          "variantType": "SNP",
          "frequency": 0.003394569
-        }]}
+         }]}
     return query, resp
 
 

@@ -1,6 +1,9 @@
-""" jsonschema validation.
+"""
+Jsonschema validation.
+
 Validates info objects, queries and responses.
-Needs to use jsonschema v2.6.0 because of opencore_api """
+Needs to use jsonschema v2.6.0 because of opencore_api
+"""
 import json
 import logging
 
@@ -8,7 +11,9 @@ import jsonschema
 
 
 def validate(inp, inp_type, settings, path='', error=False):
-    """ Validate against a schema
+    """
+    Validate against a schema.
+
     inp      - is a representation (dictionary or string) of a json object
     inp_type - is eithr `query` or `repsonse`
     settings - is an object containing schemas and specs
@@ -47,7 +52,7 @@ def validate(inp, inp_type, settings, path='', error=False):
 
 
 def adapt_to_error(schema):
-    """ On beacon errors (4xx), the response might differ slightly from the schemas """
+    """On beacon errors (4xx), the response might differ slightly from the schemas."""
     # TODO use another schema for this? or update the response schema to allow for this?
     try:
         schema['properties']['exists']['type'] = ["null", "boolean"]

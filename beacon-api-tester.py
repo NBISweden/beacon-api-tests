@@ -1,4 +1,4 @@
-""" Set logging, get current host, read and configure API spec """
+"""Set logging, get current host, read and configure API spec."""
 import argparse
 import glob
 import importlib
@@ -12,7 +12,7 @@ import utils.setup
 
 
 def run():
-    """ Look for all test modules and run them """
+    """Look for all test modules and run them."""
     for path in glob.glob('tests/*py'):
         module, _ = os.path.splitext(os.path.basename(path))
         if 'test' in module:
