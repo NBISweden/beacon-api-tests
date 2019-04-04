@@ -11,7 +11,7 @@ def test_info():
         "id": "GRCh38:beacon_test:2030-01-01",
         "assemblyId": "GRCh38",
         "variantCount": 17,
-        "callCount": 13,
+        "callCount": 15,
         "sampleCount": 2504,
     }]}
     return {}, resp

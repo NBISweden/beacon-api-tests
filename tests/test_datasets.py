@@ -58,19 +58,19 @@ def test_second_datasets():
 
 
 @validate_query(200, path='/')
-def test_info():
+def test_datasets_info():
     """Test that both datasets are in the beacon's info (/) call."""
     resp = {'datasets': [
         {"id": "GRCh38:beacon_test:2030-01-01",
          "assemblyId": "GRCh38",
          "variantCount": 17,
-         "callCount": 13,
+         "callCount": 15,
          "sampleCount": 2504
          },
         {"id": "GRCh38:beacon_test2:2030-01-01",
          "assemblyId": "GRCh38",
          "variantCount": 4,
-         "callCount": 2,
+         "callCount": 4,
          "sampleCount": 2504
          }]}
     return {}, resp
