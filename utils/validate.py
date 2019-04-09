@@ -18,6 +18,26 @@ import utils.setup
 import utils.jsonschemas
 
 
+def exclude_from_response(path='query'):
+    """Decorator for testing that a queries response does not contain forbidden values.
+
+    A function decorated with this should return a
+    query (dict) and an dictionary with forbidden values (dict)
+    """
+    def decorator(func):
+        query, exclude = func()
+        logging.info('Testing %s\n      %s', func.__name__, func.__doc__.strip())
+        errs, warns = validate_excluded(path, query, exclude)
+        if errs or warns:
+            logging.error('\n      Test "%s" did not pass: """%s"""', func.__name__, func.__doc__.strip())
+        for error in errs:
+            logging.error(error)
+        for warn in warns:
+            logging.warning(warn)
+        logging.info('Done\n')
+    return decorator
+
+
 def validate_query(code, path='query', test_query=False):
     """Decorator for test queries.
 
@@ -217,7 +237,8 @@ def compare_list(gold, clist, errors, key=''):
 
 
 def compare_objlist(gold, clist, sorters, errors):
-    """Help function to compare(), compares a list of objects.
+    """
+    Help function to compare(), compares a list of objects.
 
     The objects with the (most) matching sort keys objects are compared to each other
     """
@@ -239,7 +260,6 @@ def compare_objlist(gold, clist, sorters, errors):
             return 0
         return len([1 for (g, c) in zip(gold_id, cmp_id) if g != c])
 
-
     for golditem in gold:
         if not clist:
             errors.append(f'Too few elements, could not find {gold}')
@@ -254,3 +274,44 @@ def normalize(val):
     if isinstance(val, float):
         return round(val, config.config.PRECISION)
     return val
+
+
+def validate_excluded(path, query, exclude):
+    """Validate that the response does include any forbidden values."""
+    settings = utils.setup.Settings()
+    req = BeaconRequest(settings.host, 'GET', path, args=query)
+    errors, warnings = [], []
+
+    resp = BeaconResponse(req)
+    result = json.loads(resp.data)
+    not_in(result, exclude, errors)
+    return errors, warnings
+
+
+def not_in(obj, exclude, errors):
+    """Recurse through the object of forbidden values to verify that they are not present."""
+    for key in exclude.keys():
+        if key not in obj:
+            # key is excluded in obj -> ok
+            continue
+
+        elif not exclude[key]:
+            # empty value in `exclude` -> the key is not accepted
+            errors.append(f'Key {key} not allowed in answer')
+
+        elif isinstance(exclude[key], dict):
+            # go deeper
+            not_in(obj[key], exclude[key], errors)
+
+        elif isinstance(exclude[key], list):
+            # check that all values in the list are excluded
+            for k in exclude[key]:
+                if isinstance(k, dict):
+                    for item in obj[key]:
+                        not_in(item, k, errors)
+                if k in obj[key]:
+                    errors.append(f'Value {k} not allowed in answer')
+
+        elif obj[key] == exclude[key]:
+            # equal values -> not ok
+            errors.append(f'Value {{{key}: {obj[key]}}} not allowed in answer')

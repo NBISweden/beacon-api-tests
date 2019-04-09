@@ -10,8 +10,8 @@ def test_info():
     resp = {'datasets': [{
         "id": "GRCh38:beacon_test:2030-01-01",
         "assemblyId": "GRCh38",
-        "variantCount": 15,
-        "callCount": 11,
+        "variantCount": 17,
+        "callCount": 15,
         "sampleCount": 2504,
     }]}
     return {}, resp
