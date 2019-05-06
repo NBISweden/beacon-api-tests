@@ -7,7 +7,7 @@ from tests.basequery import base
 from utils.validate import validate_query
 
 
-@validate_query(400, test_query=False)
+@validate_query(400, ignore_schemas=True)
 def no_refname():
     """Check that queries without referenceName is not allowed."""
     query = base()
@@ -15,7 +15,7 @@ def no_refname():
     return query, {}
 
 
-@validate_query(400, test_query=False)
+@validate_query(400, ignore_schemas=True)
 def no_refbases():
     """Check that queries without referenceBases is not allowed."""
     query = base()
@@ -23,7 +23,7 @@ def no_refbases():
     return query, {}
 
 
-@validate_query(400, test_query=False)
+@validate_query(400, ignore_schemas=True)
 def no_assembly():
     """Check that queries without assemblyId is not allowed."""
     query = base()
@@ -31,7 +31,7 @@ def no_assembly():
     return query, {}
 
 
-@validate_query(400, test_query=False)
+@validate_query(400, ignore_schemas=True)
 def no_alternate():
     """Check that either alternateBases or variantType is required."""
     query = base()
@@ -39,7 +39,7 @@ def no_alternate():
     return query, {}
 
 
-@validate_query(400, test_query=False)
+@validate_query(400, ignore_schemas=True)
 def start_and_startMin():
     """Check that you cannot use start and startMin+startMax."""
     query = base()
@@ -51,7 +51,7 @@ def start_and_startMin():
     return query, {}
 
 
-@validate_query(400, test_query=False)
+@validate_query(400, ignore_schemas=True)
 def no_start():
     """Check that you cannot use start and startMin+startMax."""
     query = base()

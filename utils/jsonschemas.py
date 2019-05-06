@@ -15,7 +15,7 @@ def validate(inp, inp_type, settings, path='', error=False):
     Validate against a schema.
 
     inp      - is a representation (dictionary or string) of a json object
-    inp_type - is eithr `query` or `repsonse`
+    inp_type - is either `query` or `repsonse`
     settings - is an object containing schemas and specs
     path     - is the url of the query (either '/' or 'query')
     Returns a list of error messages
@@ -26,16 +26,22 @@ def validate(inp, inp_type, settings, path='', error=False):
             inp = json.loads(inp)
         except json.decoder.JSONDecodeError:
             return [f"Input not a valid json object. {inp}"]
+
+    if inp_type == 'query' and not path.strip('/') and not inp:
+        # If this is a call to /info, there's no need to validate the (empty) json object
+        return []
+
+    # Find the correct schema type
     if inp_type == 'response':
-        # for response objects
+        # For response objects
         schemas = {'query': 'response', 'info': 'info', '': 'info'}
         schema = schemas[path.strip('/')]
     else:
-        # for query objects
+        # For queries
         schema = inp_type
+
     try:
         jschema = settings.json_schemas[schema]
-
     except KeyError:
         logging.warning('No JSON schema for %s, not validating', schema)
         return []
