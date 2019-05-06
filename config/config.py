@@ -20,4 +20,4 @@ SCHEMAS = 'schemas'
 PRECISION = 6
 
 # Define what keys that should be used to sort lists of dictionaries
-SORT_BY = {'datasets': ['id'], 'datasetAlleleResponses': ['datasetId', 'frequency']}
+SORT_BY = {'datasets': ['id'], 'datasetAlleleResponses': ['datasetId', 'frequency', 'referenceBases']}
