@@ -184,7 +184,7 @@ def make_offset(args):
     settings = utils.setup.Settings()
     for key in ['start', 'end', 'startMin', 'startMax', 'endMin', 'endMax']:
         # The testsuite allows one based beacons as well, so check the settings
-        if settings.start_pos == 0:
+        if settings.start_pos == 1:
             if key in args:
                 args[key] = max(args[key]-1, 0)
 
