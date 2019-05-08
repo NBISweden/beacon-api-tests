@@ -258,7 +258,7 @@ def test_deletion_2():
 
 @validate_query(200)
 def test_snp_mnp():
-    """ Test representation of TG->AG and multiple variations from one vcf line """
+    """Test representation of TG->AG and multiple variations from one vcf line."""
     query = base()
     query['start'] = 16577043
     query['end'] = 16577045
@@ -282,7 +282,7 @@ def test_snp_mnp():
 
 @validate_query(200)
 def test_multi():
-    """ Test alternateBases=N and multiple variations from one vcf line (indel) """
+    """Test alternateBases=N and multiple variations from one vcf line (indel)."""
     query = base()
     query['start'] = 19617926
     query['referenceBases'] = 'N'
@@ -299,7 +299,7 @@ def test_multi():
          "alternateBases": "GTCTTCTTCT",
          "variantType": "INS",
          "frequency": 0.00339457
-        },
+         },
         {"datasetId": "GRCh38:beacon_test:2030-01-01",
          "referenceName": "22",
          "callCount": 5008,
@@ -310,7 +310,7 @@ def test_multi():
          "alternateBases": "GTCTTCT",
          "variantType": "INS",
          "frequency": 0.0235623
-        },
+         },
         {"datasetId": "GRCh38:beacon_test:2030-01-01",
          "referenceName": "22",
          "variantCount": 182,
@@ -321,6 +321,5 @@ def test_multi():
          "alternateBases": "G",
          "variantType": "DEL",
          "frequency": 0.036341853
-         }
-        ]}
+         }]}
     return query, resp
