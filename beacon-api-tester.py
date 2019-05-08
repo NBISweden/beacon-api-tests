@@ -39,6 +39,9 @@ if __name__ == '__main__':
                         help="Only print warnings and errors")
     parser.add_argument('--one_based', action="store_true",
                         help="Expect the beacon to be 1 based")
+    parser.add_argument('--version', nargs='?', default='v1.0.1',
+                        choices=['v1.0.1', 'v1.1.0'],
+                        help="Which version of the api to test. Defalt v1.0.1")
 
     c_args = parser.parse_args()
     if c_args.only_warn:
