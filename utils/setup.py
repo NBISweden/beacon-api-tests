@@ -15,8 +15,8 @@ import config.config
 import utils.errors as err
 
 
-VERSIONS = {'v1.0.1': {'ga4gh': 'v1.0.1', 'CSCfi': 'v1.1.0-rc1'},
-            'v1.1.0': {'ga4gh': 'develop', 'CSCfi': 'v1.2.0-rc0'}
+VERSIONS = {'v101': {'ga4gh': 'v1.0.1', 'CSCfi': 'v1.1.0-rc1'},
+            'v110': {'ga4gh': 'develop', 'CSCfi': 'v1.2.0-rc0'}
             }
 
 
@@ -66,7 +66,8 @@ class Settings():
         self.start_pos = int(c_args.one_based)
 
 
-        version = VERSIONS[c_args.version]
+        self.version = c_args.version.replace('.', '')
+        spec_versions = VERSIONS[self.version]
         if c_args.no_openapi:
             spec_path = ''
         else:
@@ -78,7 +79,7 @@ class Settings():
             else:
                 logging.info('Downloading Beacon specification')
                 try:
-                    spec_url = SPEC_URL.format(version=version['ga4gh'])
+                    spec_url = SPEC_URL.format(version=spec_versions['ga4gh'])
                     spec_path = urllib.request.urlopen(spec_url).read()
                     self.openapi = parse_spec(spec_path)
                 except urllib.error.URLError:
@@ -103,7 +104,7 @@ class Settings():
                 logging.info('Downloading JSON schemas')
 
                 def load_url(qtype):
-                    path = JSON_URL.format(querytype=qtype, version=version['CSCfi'])
+                    path = JSON_URL.format(querytype=qtype, version=spec_versions['CSCfi'])
                     return json.loads(urllib.request.urlopen(path).read())
 
                 self.json_schemas['response'] = load_url('response')
