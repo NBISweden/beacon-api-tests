@@ -48,6 +48,7 @@ class Settings():
     host = None
 
     def __init__(self):
+        """Initialize."""
         return
 
     def set_args(self, c_args):
@@ -64,7 +65,6 @@ class Settings():
 
         self.check_result = not c_args.only_structure
         self.start_pos = int(c_args.one_based)
-
 
         self.version = c_args.version.replace('.', '')
         spec_versions = VERSIONS[self.version]
