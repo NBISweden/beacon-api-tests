@@ -4,6 +4,10 @@ import config.config
 import utils.errors as err
 
 
+# Define what keys that should be used to sort lists of dictionaries
+SORT_BY = {'datasets': ['id'], 'datasetAlleleResponses': ['datasetId', 'frequency', 'referenceBases']}
+
+
 def run_test():
     """Decorator for test queries.
 
@@ -58,7 +62,7 @@ def find_best_match_x(gold, resp, key):
 
     def get_sort_ids(obj):
         """Sort by normalized key."""
-        sorters = config.config.SORT_BY.get(key)
+        sorters = SORT_BY.get(key)
         return [normalize(obj.get(sorter)) for sorter in sorters]
 
     def compare_identifiers(gold, cmp):
