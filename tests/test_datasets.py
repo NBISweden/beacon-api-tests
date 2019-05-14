@@ -47,11 +47,11 @@ def test_second_datasets():
     """Test that excluding a dataset works."""
     query = base()
     query['start'] = 16577043
-    query['end'] = 16577044
-    query['referenceBases'] = 'T'
+    query['end'] = 16577045
+    query['referenceBases'] = 'TG'
     del query['alternateBases']
     query['variantType'] = 'SNP'
-    query['datasetIds'] = "GRCh38:beacon_test2:2030-01-01"
+    query['datasetIds'] = ["GRCh38:beacon_test2:2030-01-01"]
     resp = {"datasetAlleleResponses": [{"datasetId": "GRCh38:beacon_test:2030-01-01"}]}
     return query, resp
 
