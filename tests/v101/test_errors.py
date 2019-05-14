@@ -5,7 +5,7 @@ Check that the beacon does not allow these
 """
 from tests.basequery import base
 from utils.beacon_query import call_beacon
-from utils.validate import run_test
+from utils.compare import run_test
 
 
 @run_test()

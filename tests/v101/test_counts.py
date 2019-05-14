@@ -2,7 +2,7 @@
 
 from tests.basequery import base
 from utils.beacon_query import call_beacon
-from utils.validate import assert_partly_in, run_test
+from utils.compare import assert_partly_in, run_test
 
 
 @run_test()
