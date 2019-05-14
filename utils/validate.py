@@ -157,13 +157,13 @@ def validate_call(path, query, ignore_schemas=False, code='', gold=None):
         warnings.extend(utils.jsonschemas.validate(query, 'query', settings))
 
     resp = BeaconResponse(req)
-    if ignore_schemas and not settings.openapi:
+    if settings.openapi and not ignore_schemas:
         # check that the response complies to the api spec
         validator = ResponseValidator(settings.openapi)
         result = validator.validate(req, resp)
         warnings.extend(result.errors)
 
-    if ignore_schemas and not settings.use_json_schemas:
+    if settings.use_json_schemas and not ignore_schemas:
         # validate against json schemas
         warnings.extend(utils.jsonschemas.validate(resp.data, 'response',
                                                    settings, path, error=resp.error))
