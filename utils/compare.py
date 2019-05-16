@@ -36,7 +36,7 @@ def assert_partly_in(gold, response, key):
     #  collect all diffs for this match
     assert key in response, f'Bad response, could not find {key} in {response}'
     assert response[key], f'Too few elements, could not find {gold}'
-    comparable = find_best_match_x(gold, response, key)
+    comparable = find_matching_object(gold, response, key)
     errors = []
     compare_obj(gold, comparable, errors=errors)
     if errors:
@@ -52,7 +52,7 @@ def assert_not_in(exclude, response, key):
         raise err.ResponseError(errors)
 
 
-def find_best_match_x(gold, resp, key):
+def find_matching_object(gold, resp, key):
     """Compare to objects by a given set of identifiers. Return the number of mismatches."""
     def find_best_match(alist):
         """Sort by fst (identifier), return snd (an object)."""
