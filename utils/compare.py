@@ -62,7 +62,10 @@ def find_best_match_x(gold, resp, key):
 
     def get_sort_ids(obj):
         """Sort by normalized key."""
-        sorters = SORT_BY.get(key)
+        if key in SORT_BY:
+            sorters = SORT_BY.get(key)
+        else:
+            sorters = obj.keys()
         return [normalize(obj.get(sorter)) for sorter in sorters]
 
     def compare_identifiers(gold, cmp):
