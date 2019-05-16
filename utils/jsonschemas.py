@@ -10,7 +10,7 @@ import logging
 import jsonschema
 
 
-def validate(inp, inp_type, settings, path='', error=False):
+def validate(inp, inp_type, settings, path=''):
     """
     Validate against a schema.
 
@@ -48,19 +48,8 @@ def validate(inp, inp_type, settings, path='', error=False):
 
     validator = jsonschema.Draft4Validator(jschema)
     logging.info('Validate JSON to schema %s', schema)
-    if error:
-        adapt_to_error(jschema)
     for err in validator.iter_errors(inp, jschema):
         # join path, skipping list indices
         path = '.'.join([p for p in err.path if isinstance(p, str)])
         errs.append(f"JSON schema, field '{path}': " + err.message)
     return errs
-
-
-def adapt_to_error(schema):
-    """On beacon errors (4xx), the response might differ slightly from the schemas."""
-    # TODO use another schema for this? or update the response schema to allow for this?
-    try:
-        schema['properties']['exists']['type'] = ["null", "boolean"]
-    except KeyError:
-        pass

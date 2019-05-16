@@ -55,7 +55,7 @@ def validate(req, resp, path, query):
             # validate query against jsons schemas
             warnings.extend(utils.jsonschemas.validate(query, 'query', settings))
         # validate response against jsons schemas
-        warnings.extend(utils.jsonschemas.validate(resp.data, 'response', settings, path, error=resp.error))
+        warnings.extend(utils.jsonschemas.validate(resp.data, 'response', settings, path))
     for warning in warnings:
         logging.warning(warning)
 
