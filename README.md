@@ -24,7 +24,7 @@ To run, install dependencies:
 
 Then run the tests:
 
-`python3 beacon-api-tester.py`
+`python3 beacon_api_tester.py`
 
 This test assumes a local server running on your machine. See below for other alternatives.
 
@@ -39,11 +39,11 @@ Other options:
 
 - Use a host specified in `config/config.py`:
 
-  `python3 beacon-api-tester.py --host sv`
+  `python3 beacon_api_tester.py --host sv`
 
 - Use a custom host:
 
-  `python3 beacon-api-tester.py --host http://beacon.com`
+  `python3 beacon_api_tester.py --host http://beacon.com`
 
 
 **Validation options**
