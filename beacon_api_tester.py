@@ -52,6 +52,7 @@ if __name__ == '__main__':
                         help="Which version of the api to test. Defalt v1.0.1")
 
     c_args = parser.parse_args()
+    logging.info('Running api tests...')
     if c_args.only_warn:
         coloredlogs.install(level='WARNING', fmt='%(levelname)s: %(message)s')
     try:
@@ -59,3 +60,5 @@ if __name__ == '__main__':
     except err.BeaconTestError:
         exit()
     run()
+    coloredlogs.set_level('INFO')
+    logging.info('Testing done.')
