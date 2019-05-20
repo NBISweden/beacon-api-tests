@@ -205,7 +205,6 @@ def test_deletion_altbase():
             "frequency": 0.000798722
             }
     assert_partly_in(gold, resp, 'datasetAlleleResponses')
-    return query, resp
 
 
 @run_test()
