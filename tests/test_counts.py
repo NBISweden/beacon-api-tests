@@ -11,7 +11,7 @@ def test_info():
         "id": "GRCh38:beacon_test:2030-01-01",
         "assemblyId": "GRCh38",
         "variantCount": 17,
-        "callCount": 15,
+        "callCount": 12,
         "sampleCount": 2504,
     }]}
     return {}, resp
@@ -261,8 +261,8 @@ def test_snp_mnp():
     """ Test representation of TG->AG and multiple variations from one vcf line """
     query = base()
     query['start'] = 16577044
-    query['end'] = 16577045
-    query['referenceBases'] = 'T'
+    query['end'] = 16577046
+    query['referenceBases'] = 'TG'
     del query['alternateBases']
     query['variantType'] = 'SNP'
     resp = {"datasetAlleleResponses": [
@@ -272,8 +272,8 @@ def test_snp_mnp():
          "variantCount": 17,
          "sampleCount": 2504,
          "exists": True,
-         "referenceBases": "T",
-         "alternateBases": "A",
+         "referenceBases": "TG",
+         "alternateBases": "AG",
          "variantType": "SNP",
          "frequency": 0.003394569
          }]}
@@ -295,8 +295,8 @@ def test_multi():
          "variantCount": 17,
          "sampleCount": 2504,
          "exists": True,
-         "referenceBases": "G",
-         "alternateBases": "GTCTTCT",
+         "referenceBases": "GTCT",
+         "alternateBases": "GTCTTCTTCT",
          "variantType": "INS",
          "frequency": 0.00339457
         },
@@ -306,8 +306,8 @@ def test_multi():
          "variantCount": 118,
          "sampleCount": 2504,
          "exists": True,
-         "referenceBases": "G",
-         "alternateBases": "GTCT",
+         "referenceBases": "GTCT",
+         "alternateBases": "GTCTTCT",
          "variantType": "INS",
          "frequency": 0.0235623
         },

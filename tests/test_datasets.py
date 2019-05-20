@@ -9,8 +9,8 @@ def test_two_datasets():
     """Test that both datasets repsond."""
     query = base()
     query['start'] = 16577044
-    query['end'] = 16577045
-    query['referenceBases'] = 'T'
+    query['end'] = 16577046
+    query['referenceBases'] = 'TG'
     del query['alternateBases']
     query['variantType'] = 'SNP'
     del query['datasetIds']
@@ -21,8 +21,8 @@ def test_two_datasets():
          "variantCount": 17,
          "sampleCount": 2504,
          "exists": True,
-         "referenceBases": "T",
-         "alternateBases": "A",
+         "referenceBases": "TG",
+         "alternateBases": "AG",
          "variantType": "SNP",
          "frequency": 0.003394569
          },
@@ -30,11 +30,11 @@ def test_two_datasets():
          "referenceName": "22",
          "externalUrl": "www.beacon.com",
          "exists": True,
-         "referenceBases": "T",
-         "alternateBases": "A",
+         "referenceBases": "TG",
+         "alternateBases": "AG",
          "variantType": "SNP",
          "start": 16577043,
-         "end": 16577044,
+         "end": 16577045,
          "frequency": 0.003394569,
          "variantCount": 17,
          "callCount": 5008,
@@ -64,13 +64,13 @@ def test_datasets_info():
         {"id": "GRCh38:beacon_test:2030-01-01",
          "assemblyId": "GRCh38",
          "variantCount": 17,
-         "callCount": 15,
+         "callCount": 12,
          "sampleCount": 2504
          },
         {"id": "GRCh38:beacon_test2:2030-01-01",
          "assemblyId": "GRCh38",
          "variantCount": 4,
-         "callCount": 4,
+         "callCount": 2,
          "sampleCount": 2504
          }]}
     return {}, resp
