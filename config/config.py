@@ -1,6 +1,7 @@
 """Configurations for the tests."""
 
 # Path to the OpenAPI spec
+# SPEC = ''
 SPEC = 'beacon.yaml'
 
 # Lists of hosts to test
@@ -14,10 +15,8 @@ HOSTS = {
 }
 
 # Directory containing JSON schemas
+# SCHEMAS = ''
 SCHEMAS = 'schemas'
 
 #  Floats are rounded in comparisions, set the precision (number of digits) here
 PRECISION = 6
-
-# Define what keys that should be used to sort lists of dictionaries
-SORT_BY = {'datasets': ['id'], 'datasetAlleleResponses': ['datasetId', 'frequency', 'referenceBases']}

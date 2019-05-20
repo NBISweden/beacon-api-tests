@@ -1,9 +1,9 @@
 """Set logging, get current host, read and configure API spec."""
 import argparse
-import glob
 import importlib
 import logging
 import os
+from pathlib import Path
 
 import coloredlogs
 
@@ -17,7 +17,8 @@ def run():
     settings = utils.setup.Settings()
     for version in testgroups:
         logging.info(f'Testing version {version}')
-        for path in glob.glob(f'tests/{version}/*py'):
+        testdir = Path('tests') / version
+        for path in testdir.glob('*.py'):
             module, _ = os.path.splitext(os.path.basename(path))
             if 'test' in module:
                 logging.info('*** Running tests from %s', module)
@@ -51,6 +52,7 @@ if __name__ == '__main__':
                         help="Which version of the api to test. Defalt v1.0.1")
 
     c_args = parser.parse_args()
+    logging.info('Running api tests...')
     if c_args.only_warn:
         coloredlogs.install(level='WARNING', fmt='%(levelname)s: %(message)s')
     try:
@@ -58,3 +60,5 @@ if __name__ == '__main__':
     except err.BeaconTestError:
         exit()
     run()
+    coloredlogs.set_level('INFO')
+    logging.info('Testing done.')

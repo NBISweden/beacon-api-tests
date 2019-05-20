@@ -1,8 +1,9 @@
-"""Example tests. Check that they work and that we get the expected output."""
-from utils.validate import validate_query
+"""Testing breakends (aka BND, mates). Check that they work and that we get the expected output."""
+from utils.beacon_query import call_beacon
+from utils.compare import assert_partly_in, run_test
 
 
-@validate_query(200)
+@run_test()
 def test_search_1():
     """Test a mate query with referenceBases=N. This should give two answers, one for each direction."""
     query = {}
@@ -14,25 +15,28 @@ def test_search_1():
     query['variantType'] = 'BND'
     query['assemblyId'] = 'GRCh38'
     query['includeDatasetResponses'] = 'HIT'
-    resp = {"datasetAlleleResponses": [
-        {"datasetId": "GRCh38:beacon_test:2030-01-01",
-         "referenceName": '2',
-         "exists": True,
-         "referenceBases": "G",
-         "alternateBases": "G",
-         "variantType": "BND"
-         },
-        {"datasetId": "GRCh38:beacon_test:2030-01-01",
-         "referenceName": '13',
-         "exists": True,
-         "referenceBases": "A",
-         "alternateBases": "A",
-         "variantType": "BND"
-         }]}
-    return query, resp
+    resp = call_beacon(query=query)
+    gold = {"datasetId": "GRCh38:beacon_test:2030-01-01",
+            "referenceName": '2',
+            "exists": True,
+            "referenceBases": "G",
+            "alternateBases": "G",
+            "variantType": "BND"
+            }
+    gold2 = {"datasetId": "GRCh38:beacon_test:2030-01-01",
+             "referenceName": '13',
+             "exists": True,
+             "referenceBases": "A",
+             "alternateBases": "A",
+             "variantType": "BND"
+             }
+    assert len(resp.get("datasetAlleleResponses", [])) == 2, \
+        f'All datasets not in response. Expected 2, found {len(resp.get("datasetAlleleResponses", []))}'
+    assert_partly_in(gold, resp, 'datasetAlleleResponses')
+    assert_partly_in(gold2, resp, 'datasetAlleleResponses')
 
 
-@validate_query(200)
+@run_test()
 def test_search_2():
     """Test a mate query with referenceBases set to A. This should only give one hit."""
     query = {}
@@ -44,12 +48,12 @@ def test_search_2():
     query['variantType'] = 'BND'
     query['assemblyId'] = 'GRCh38'
     query['includeDatasetResponses'] = 'HIT'
-    resp = {"datasetAlleleResponses": [
-        {"datasetId": "GRCh38:beacon_test:2030-01-01",
-         "referenceName": "13",
-         "exists": True,
-         "referenceBases": "A",
-         "alternateBases": "A",
-         "variantType": "BND"
-         }]}
-    return query, resp
+    resp = call_beacon(query=query)
+    gold = {"datasetId": "GRCh38:beacon_test:2030-01-01",
+            "referenceName": "13",
+            "exists": True,
+            "referenceBases": "A",
+            "alternateBases": "A",
+            "variantType": "BND"
+            }
+    assert_partly_in(gold, resp, 'datasetAlleleResponses')
