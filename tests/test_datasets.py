@@ -8,8 +8,8 @@ from utils.validate import validate_query, exclude_from_response
 def test_two_datasets():
     """Test that both datasets repsond."""
     query = base()
-    query['start'] = 16577044
-    query['end'] = 16577046
+    query['start'] = 16577043
+    query['end'] = 16577045
     query['referenceBases'] = 'TG'
     del query['alternateBases']
     query['variantType'] = 'SNP'
@@ -28,7 +28,6 @@ def test_two_datasets():
          },
         {"datasetId": "GRCh38:beacon_test2:2030-01-01",
          "referenceName": "22",
-         "externalUrl": "www.beacon.com",
          "exists": True,
          "referenceBases": "TG",
          "alternateBases": "AG",
@@ -47,12 +46,12 @@ def test_two_datasets():
 def test_second_datasets():
     """Test that excluding a dataset works."""
     query = base()
-    query['start'] = 16577044
+    query['start'] = 16577043
     query['end'] = 16577045
-    query['referenceBases'] = 'T'
+    query['referenceBases'] = 'TG'
     del query['alternateBases']
     query['variantType'] = 'SNP'
-    query['datasetIds'] = "GRCh38:beacon_test2:2030-01-01"
+    query['datasetIds'] = ["GRCh38:beacon_test2:2030-01-01"]
     resp = {"datasetAlleleResponses": [{"datasetId": "GRCh38:beacon_test:2030-01-01"}]}
     return query, resp
 

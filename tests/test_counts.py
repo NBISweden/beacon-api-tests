@@ -21,8 +21,8 @@ def test_info():
 def test_search_1():
     """Test a standard query with alternateBases, start and end."""
     query = base()
-    query['start'] = 16050075
-    query['end'] = 16050076
+    query['start'] = 16050074
+    query['end'] = 16050075
     query['referenceBases'] = 'A'
     query['alternateBases'] = 'G'
     resp = {"datasetAlleleResponses": [
@@ -44,8 +44,8 @@ def test_search_1():
 def test_snp():
     """Test variantType SNP."""
     query = base()
-    query['start'] = 17302972
-    query['end'] = 17302973
+    query['start'] = 17302971
+    query['end'] = 17302972
     query['variantType'] = 'SNP'
     query['referenceBases'] = 'C'
     del query['alternateBases']
@@ -68,8 +68,8 @@ def test_snp():
 def test_bad_end():
     """Test querying with a bad end position."""
     query = base()
-    query['start'] = 17300408
-    query['end'] = 17300410
+    query['start'] = 17300407
+    query['end'] = 17300409
     query['referenceBases'] = 'A'
     query['alternateBases'] = 'G'
     resp = {"exists": False}
@@ -80,8 +80,8 @@ def test_bad_end():
 def test_end():
     """Test the same query as `test_bad_end()` but with the correct end position."""
     query = base()
-    query['start'] = 17300408
-    query['end'] = 17300409
+    query['start'] = 17300407
+    query['end'] = 17300408
     query['referenceBases'] = 'A'
     query['alternateBases'] = 'G'
     resp = {"datasetAlleleResponses": [
@@ -103,8 +103,8 @@ def test_end():
 def test_insertion():
     """Test variantTypes INS."""
     query = base()
-    query['start'] = 16064513
-    query['end'] = 16064514
+    query['start'] = 16064512
+    query['end'] = 16064513
     query['variantType'] = 'INS'
     query['referenceBases'] = 'A'
     del query['alternateBases']
@@ -127,8 +127,8 @@ def test_insertion():
 def test_insertion_altbase():
     """Test variantTypes by searching for ref and alt."""
     query = base()
-    query['start'] = 16539541
-    query['end'] = 16539542
+    query['start'] = 16539540
+    query['end'] = 16539541
     query['referenceBases'] = 'A'
     query['alternateBases'] = 'AC'
     resp = {"datasetAlleleResponses": [
@@ -150,8 +150,8 @@ def test_insertion_altbase():
 def test_multi_insertion():
     """Find a variantTypes INS at a position where there are two different variants."""
     query = base()
-    query['start'] = 16879601
-    query['end'] = 16879602
+    query['start'] = 16879600
+    query['end'] = 16879601
     query['referenceBases'] = 'T'
     del query['alternateBases']
     query['variantType'] = 'INS'
@@ -185,8 +185,8 @@ def test_multi_insertion():
 def test_deletion_altbase():
     """Test a deletion by searching for ref and alt."""
     query = base()
-    query['start'] = 16497141
-    query['end'] = 16497144
+    query['start'] = 16497140
+    query['end'] = 16497143
     query['referenceBases'] = 'CTT'
     query['alternateBases'] = 'C'
     resp = {"datasetAlleleResponses": [
@@ -208,8 +208,8 @@ def test_deletion_altbase():
 def test_deletion():
     """Test variantTypes DEL."""
     query = base()
-    query['start'] = 16517680
-    query['end'] = 16517685
+    query['start'] = 16517679
+    query['end'] = 16517684
     query['referenceBases'] = 'GACAA'
     del query['alternateBases']
     query['variantType'] = 'DEL'
@@ -236,7 +236,7 @@ def test_deletion_2():
     del query['end']
     query['startMin'] = 17301520
     query['startMax'] = 17301530
-    query['endMin'] = 17301536
+    query['endMin'] = 17301535
     query['endMax'] = 17301536
     query['referenceBases'] = 'ATACATAGTC'
     del query['alternateBases']
@@ -258,10 +258,10 @@ def test_deletion_2():
 
 @validate_query(200)
 def test_snp_mnp():
-    """ Test representation of TG->AG and multiple variations from one vcf line """
+    """Test representation of TG->AG and multiple variations from one vcf line."""
     query = base()
-    query['start'] = 16577044
-    query['end'] = 16577046
+    query['start'] = 16577043
+    query['end'] = 16577045
     query['referenceBases'] = 'TG'
     del query['alternateBases']
     query['variantType'] = 'SNP'
@@ -282,9 +282,9 @@ def test_snp_mnp():
 
 @validate_query(200)
 def test_multi():
-    """ Test alternateBases=N and multiple variations from one vcf line (indel) """
+    """Test alternateBases=N and multiple variations from one vcf line (indel)."""
     query = base()
-    query['start'] = 19617927
+    query['start'] = 19617926
     query['referenceBases'] = 'N'
     query['alternateBases'] = 'N'
     del query['end']
@@ -299,7 +299,7 @@ def test_multi():
          "alternateBases": "GTCTTCTTCT",
          "variantType": "INS",
          "frequency": 0.00339457
-        },
+         },
         {"datasetId": "GRCh38:beacon_test:2030-01-01",
          "referenceName": "22",
          "callCount": 5008,
@@ -310,7 +310,7 @@ def test_multi():
          "alternateBases": "GTCTTCT",
          "variantType": "INS",
          "frequency": 0.0235623
-        },
+         },
         {"datasetId": "GRCh38:beacon_test:2030-01-01",
          "referenceName": "22",
          "variantCount": 182,
@@ -321,6 +321,5 @@ def test_multi():
          "alternateBases": "G",
          "variantType": "DEL",
          "frequency": 0.036341853
-         }
-        ]}
+         }]}
     return query, resp
