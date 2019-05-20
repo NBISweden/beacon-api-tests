@@ -15,10 +15,13 @@ import config.config
 import utils.errors as err
 
 
-spec_url = 'https://raw.githubusercontent.com/ga4gh-beacon/specification/master/beacon.yaml'
-response_url = 'https://raw.githubusercontent.com/CSCfi/beacon-python/master/beacon_api/schemas/response.json'
-query_url = 'https://raw.githubusercontent.com/CSCfi/beacon-python/master/beacon_api/schemas/query.json'
-info_url = 'https://raw.githubusercontent.com/CSCfi/beacon-python/master/beacon_api/schemas/info.json'
+VERSIONS = {'v101': {'ga4gh': 'v1.0.1', 'CSCfi': 'v1.1.0-rc1'},
+            'v110': {'ga4gh': 'develop', 'CSCfi': 'v1.2.0-rc0'}
+            }
+
+
+SPEC_URL = 'https://raw.githubusercontent.com/ga4gh-beacon/specification/{version}/beacon.yaml'
+JSON_URL = 'https://raw.githubusercontent.com/CSCfi/beacon-python/{version}/beacon_api/schemas/{querytype}.json'
 
 
 def singleton(cls, *args, **kw):
@@ -62,6 +65,9 @@ class Settings():
         self.check_result = not c_args.only_structure
         self.start_pos = int(c_args.one_based)
 
+
+        self.version = c_args.version.replace('.', '')
+        spec_versions = VERSIONS[self.version]
         if c_args.no_openapi:
             spec_path = ''
         else:
@@ -73,6 +79,7 @@ class Settings():
             else:
                 logging.info('Downloading Beacon specification')
                 try:
+                    spec_url = SPEC_URL.format(version=spec_versions['ga4gh'])
                     spec_path = urllib.request.urlopen(spec_url).read()
                     self.openapi = parse_spec(spec_path)
                 except urllib.error.URLError:
@@ -96,12 +103,13 @@ class Settings():
             else:
                 logging.info('Downloading JSON schemas')
 
-                def load_url(file):
-                    return json.loads(urllib.request.urlopen(file).read())
+                def load_url(qtype):
+                    path = JSON_URL.format(querytype=qtype, version=spec_versions['CSCfi'])
+                    return json.loads(urllib.request.urlopen(path).read())
 
-                self.json_schemas['response'] = load_url(response_url)
-                self.json_schemas['query'] = load_url(query_url)
-                self.json_schemas['info'] = load_url(info_url)
+                self.json_schemas['response'] = load_url('response')
+                self.json_schemas['query'] = load_url('query')
+                self.json_schemas['info'] = load_url('info')
         logging.info('\n')
 
 
