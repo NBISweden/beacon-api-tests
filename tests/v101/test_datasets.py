@@ -8,9 +8,9 @@ from utils.validate import validate_query, exclude_from_response
 def test_two_datasets():
     """Test that both datasets repsond."""
     query = base()
-    query['start'] = 16577044
+    query['start'] = 16577043
     query['end'] = 16577045
-    query['referenceBases'] = 'T'
+    query['referenceBases'] = 'TG'
     del query['alternateBases']
     query['variantType'] = 'SNP'
     del query['datasetIds']
@@ -21,20 +21,19 @@ def test_two_datasets():
          "variantCount": 17,
          "sampleCount": 2504,
          "exists": True,
-         "referenceBases": "T",
-         "alternateBases": "A",
+         "referenceBases": "TG",
+         "alternateBases": "AG",
          "variantType": "SNP",
          "frequency": 0.003394569
          },
         {"datasetId": "GRCh38:beacon_test2:2030-01-01",
          "referenceName": "22",
-         "externalUrl": "www.beacon.com",
          "exists": True,
-         "referenceBases": "T",
-         "alternateBases": "A",
+         "referenceBases": "TG",
+         "alternateBases": "AG",
          "variantType": "SNP",
          "start": 16577043,
-         "end": 16577044,
+         "end": 16577045,
          "frequency": 0.003394569,
          "variantCount": 17,
          "callCount": 5008,
@@ -47,12 +46,12 @@ def test_two_datasets():
 def test_second_datasets():
     """Test that excluding a dataset works."""
     query = base()
-    query['start'] = 16577044
+    query['start'] = 16577043
     query['end'] = 16577045
-    query['referenceBases'] = 'T'
+    query['referenceBases'] = 'TG'
     del query['alternateBases']
     query['variantType'] = 'SNP'
-    query['datasetIds'] = "GRCh38:beacon_test2:2030-01-01"
+    query['datasetIds'] = ["GRCh38:beacon_test2:2030-01-01"]
     resp = {"datasetAlleleResponses": [{"datasetId": "GRCh38:beacon_test:2030-01-01"}]}
     return query, resp
 
@@ -64,13 +63,13 @@ def test_datasets_info():
         {"id": "GRCh38:beacon_test:2030-01-01",
          "assemblyId": "GRCh38",
          "variantCount": 17,
-         "callCount": 15,
+         "callCount": 12,
          "sampleCount": 2504
          },
         {"id": "GRCh38:beacon_test2:2030-01-01",
          "assemblyId": "GRCh38",
          "variantCount": 4,
-         "callCount": 4,
+         "callCount": 2,
          "sampleCount": 2504
          }]}
     return {}, resp

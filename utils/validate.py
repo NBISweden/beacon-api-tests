@@ -38,7 +38,7 @@ def exclude_from_response(path='query'):
     return decorator
 
 
-def validate_query(code, path='query', test_query=False):
+def validate_query(code, path='query', ignore_schemas=False):
     """Decorator for test queries.
 
     A function decorated with this should return a
@@ -48,7 +48,7 @@ def validate_query(code, path='query', test_query=False):
         query, resp = func()
         logging.info('Testing %s\n      %s', func.__name__, func.__doc__.strip())
         errs, warns = validate_call(path, query,
-                                    test_query=test_query,
+                                    ignore_schemas=ignore_schemas,
                                     code=code, gold=resp)
         if errs or warns:
             logging.error('\n      Test "%s" did not pass: """%s"""', func.__name__, func.__doc__.strip())
@@ -141,29 +141,29 @@ class BeaconResponse(BaseOpenAPIResponse):
             self.error = True
 
 
-def validate_call(path, query, test_query=True, code='', gold=None):
+def validate_call(path, query, ignore_schemas=False, code='', gold=None):
     """Validate a query and its response."""
     settings = utils.setup.Settings()
     req = BeaconRequest(settings.host, 'GET', path, args=query)
     errors, warnings = [], []
-    if test_query and settings.openapi:
+    if settings.openapi and not ignore_schemas:
         # check that the query complies to the api spec
         validator = RequestValidator(settings.openapi)
         result = validator.validate(req)
         warnings.extend(result.errors)
 
-    if test_query and settings.use_json_schemas:
+    if settings.use_json_schemas and not ignore_schemas:
         # validate against jsons schemas
-        warnings.extend(utils.jsonschemas.validate(req.body, 'query', settings))
+        warnings.extend(utils.jsonschemas.validate(query, 'query', settings))
 
     resp = BeaconResponse(req)
-    if settings.openapi:
+    if settings.openapi and not ignore_schemas:
         # check that the response complies to the api spec
         validator = ResponseValidator(settings.openapi)
         result = validator.validate(req, resp)
         warnings.extend(result.errors)
 
-    if settings.use_json_schemas:
+    if settings.use_json_schemas and not ignore_schemas:
         # validate against json schemas
         warnings.extend(utils.jsonschemas.validate(resp.data, 'response',
                                                    settings, path, error=resp.error))
@@ -184,9 +184,9 @@ def make_offset(args):
     settings = utils.setup.Settings()
     for key in ['start', 'end', 'startMin', 'startMax', 'endMin', 'endMax']:
         # The testsuite allows one based beacons as well, so check the settings
-        if settings.start_pos == 0:
-            if key in args:
-                args[key] = max(args[key]-1, 0)
+        if settings.start_pos == 1:
+            if key in args and args[key] != 0:
+                args[key] = args[key]+1
 
 
 def compare(gold, obj):
