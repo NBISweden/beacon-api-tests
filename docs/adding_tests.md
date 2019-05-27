@@ -1,4 +1,6 @@
-# Adding new tests
+# Contributing
+
+## Writing tests
 
 Create a python file and save it in the `tests` directory, in the directory matching it's intended version.
 Make sure that "test" is included in it's name, eg. `tests/v101/test_deletion.py`.
@@ -64,4 +66,6 @@ def no_alternate():
 
 ```
 
+## Unit testing
 
+Run `python -m unittest unittests/*py`
