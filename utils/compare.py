@@ -37,8 +37,7 @@ def assert_partly_in(gold, response, key):
     assert key in response, f'Bad response, could not find {key} in {response}'
     assert response[key], f'Too few elements, could not find {gold}'
     comparable = find_matching_object(gold, response, key)
-    errors = []
-    compare_obj(gold, comparable, errors=errors)
+    errors = compare_obj(gold, comparable)
     if errors:
         raise err.ResponseError(errors)
 
@@ -46,8 +45,9 @@ def assert_partly_in(gold, response, key):
 def assert_not_in(exclude, response, key):
     """Recurse through the object of forbidden values to verify that they are not present."""
     errors = []
+    # Gather up all errors from all objects before failing
     for obj in response[key]:
-        not_in(obj, exclude, errors)
+        errors.extend(not_in(obj, exclude))
     if errors:
         raise err.ResponseError(errors)
 
@@ -79,14 +79,16 @@ def find_matching_object(gold, resp, key):
     return find_best_match([(compare_identifiers(gold, obj), obj) for obj in resp[key]])
 
 
-def compare_obj(gold, obj, errors):
+def compare_obj(gold, obj):
     """Help function to compare(), compares objects."""
+    errors = []
     for key, val in gold.items():
         if key not in obj:
             errors.append(f'Value missing: {key}  {obj.keys()}')
 
         elif normalize(val) != normalize(obj[key]):
             errors.append(f'Bad value for field {key}: {val} != {obj[key]}')
+    return errors
 
 
 def normalize(val):
@@ -96,8 +98,9 @@ def normalize(val):
     return val
 
 
-def not_in(obj, exclude, errors):
+def not_in(obj, exclude):
     """Verify that forbidden values are not present in the object."""
+    errors = []
     for key in exclude.keys():
         if key not in obj:
             # key is not in obj -> ok
@@ -110,3 +113,4 @@ def not_in(obj, exclude, errors):
         elif obj[key] == exclude[key]:
             # equal values -> not ok
             errors.append(f'Value {{{key}: {obj[key]}}} not allowed in answer')
+    return errors
