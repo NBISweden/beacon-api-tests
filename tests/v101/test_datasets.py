@@ -1,14 +1,24 @@
 """Tests for more than one dataset."""
 
-from tests.basequery import base
 from utils.beacon_query import call_beacon
 from utils.compare import assert_partly_in, assert_not_in, run_test
+
+
+QUERY = {'referenceName': "22",
+         'referenceBases': 'GG',
+         'alternateBases': 'N',
+         'assemblyId': 'GRCh38',
+         'start': 0,
+         'end': 2,
+         'includeDatasetResponses': 'HIT',
+         'datasetIds': ['GRCh38:beacon_test:2030-01-01']
+         }
 
 
 @run_test()
 def test_two_datasets():
     """Test that both datasets repsond."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16577043
     query['end'] = 16577045
     query['referenceBases'] = 'TG'
@@ -48,7 +58,7 @@ def test_two_datasets():
 @run_test()
 def test_second_datasets():
     """Test that excluding a dataset works."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16577043
     query['end'] = 16577045
     query['referenceBases'] = 'TG'

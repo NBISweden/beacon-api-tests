@@ -1,8 +1,18 @@
 """Example tests. Check that they work and that we get the expected output."""
 
-from tests.basequery import base
 from utils.beacon_query import call_beacon
 from utils.compare import assert_partly_in, run_test
+
+
+QUERY = {'referenceName': "22",
+         'referenceBases': 'GG',
+         'alternateBases': 'N',
+         'assemblyId': 'GRCh38',
+         'start': 0,
+         'end': 2,
+         'includeDatasetResponses': 'HIT',
+         'datasetIds': ['GRCh38:beacon_test:2030-01-01']
+         }
 
 
 @run_test()
@@ -21,7 +31,7 @@ def test_info():
 @run_test()
 def test_search_1():
     """Test a standard query with alternateBases, start and end."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16050074
     query['end'] = 16050075
     query['referenceBases'] = 'A'
@@ -44,7 +54,7 @@ def test_search_1():
 @run_test()
 def test_snp():
     """Test variantType SNP."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 17302971
     query['end'] = 17302972
     query['variantType'] = 'SNP'
@@ -68,7 +78,7 @@ def test_snp():
 @run_test()
 def test_bad_end():
     """Test querying with a bad end position."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 17300407
     query['end'] = 17300409
     query['referenceBases'] = 'A'
@@ -80,7 +90,7 @@ def test_bad_end():
 @run_test()
 def test_end():
     """Test the same query as `test_bad_end()` but with the correct end position."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 17300407
     query['end'] = 17300408
     query['referenceBases'] = 'A'
@@ -103,7 +113,7 @@ def test_end():
 @run_test()
 def test_insertion():
     """Test variantTypes INS."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16064512
     query['end'] = 16064513
     query['variantType'] = 'INS'
@@ -128,7 +138,7 @@ def test_insertion():
 @run_test()
 def test_insertion_altbase():
     """Test variantTypes by searching for ref and alt."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16539540
     query['end'] = 16539541
     query['referenceBases'] = 'A'
@@ -151,7 +161,7 @@ def test_insertion_altbase():
 @run_test()
 def test_multi_insertion():
     """Find a variantTypes INS at a position where there are two different variants."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16879600
     query['end'] = 16879601
     query['referenceBases'] = 'T'
@@ -187,7 +197,7 @@ def test_multi_insertion():
 @run_test()
 def test_deletion_altbase():
     """Test a deletion by searching for ref and alt."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16497140
     query['end'] = 16497143
     query['referenceBases'] = 'CTT'
@@ -210,7 +220,7 @@ def test_deletion_altbase():
 @run_test()
 def test_deletion():
     """Test variantTypes DEL."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16517679
     query['end'] = 16517684
     query['referenceBases'] = 'GACAA'
@@ -234,7 +244,7 @@ def test_deletion():
 @run_test()
 def test_deletion_2():
     """Test variantTypes DEL with startMin/startMax."""
-    query = base()
+    query = dict(QUERY)
     del query['start']
     del query['end']
     query['startMin'] = 17301520
@@ -262,7 +272,7 @@ def test_deletion_2():
 @run_test()
 def test_snp_mnp():
     """Test representation of TG->AG and multiple variations from one vcf line."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 16577043
     query['end'] = 16577045
     query['referenceBases'] = 'TG'
@@ -287,7 +297,7 @@ def test_snp_mnp():
 @run_test()
 def test_multi():
     """Test alternateBases=N and multiple variations from one vcf line (indel)."""
-    query = base()
+    query = dict(QUERY)
     query['start'] = 19617926
     query['referenceBases'] = 'N'
     query['alternateBases'] = 'N'
