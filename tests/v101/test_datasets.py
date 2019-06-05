@@ -75,7 +75,7 @@ def test_second_datasets():
 @run_test()
 def test_datasets_info():
     """Test that both datasets are in the beacon's info (/) call."""
-    resp = call_beacon(path='/')  # takes care of calling, validating to schemas
+    resp = call_beacon(path='/')
     gold = {"id": "GRCh38:beacon_test:2030-01-01",
             "assemblyId": "GRCh38",
             "variantCount": 17,
@@ -84,8 +84,8 @@ def test_datasets_info():
             }
     gold2 = {"id": "GRCh38:beacon_test2:2030-01-01",
              "assemblyId": "GRCh38",
-             "variantCount": 4,
-             "callCount": 2,
+             "variantCount": 17,
+             "callCount": 12,
              "sampleCount": 2504
              }
     assert len(resp.get("datasets", [])) > 1, \
