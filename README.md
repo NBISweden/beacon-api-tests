@@ -10,12 +10,17 @@ The project uses [openapi-core](https://github.com/p1c2u/openapi-core) and [json
 (version 2.6 for compatability with `openapi-core`).
 
 
-## The test dataset
+## The testdata
 
+### v101
 The tests expect the beacon to have a dataset called `GRCh38:beacon_test:2030-01-01`.
-This should correspond to content of [the test vcf file](testdata/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes_testset.vcf). Before
-testing your beacon, load this into your database.
-To test multiple datasets, also load [dataset 2](testdata/dataset2.vcf) as  `GRCh38:beacon_test2:2030-01-01`.
+This should correspond to content of [the test vcf file](testdata/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes_testset.vcf).
+Before testing your beacon, load this into your database.
+To test multiple datasets, also load the same vcf file into a dataset called `GRCh38:beacon_test2:2030-01-01`.
+
+### v110
+To test version v110, load the structural variants from
+[testdata_v110.vcf](testdata/testdat_v110) into the main dataset (`GRCh38:beacon_test:2030-01-01`).
 
 
 ## Running the test suite
