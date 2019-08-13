@@ -84,7 +84,7 @@ def test_bad_end():
     query['referenceBases'] = 'A'
     query['alternateBases'] = 'G'
     resp = call_beacon(query=query)
-    assert not resp['exists'], 'Beacon found match for bad query'
+    assert 'exists' in resp and not resp['exists'], 'Beacon did not report "exist: False" for a bad query'
 
 
 @run_test()
