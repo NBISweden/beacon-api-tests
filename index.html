@@ -11915,7 +11915,7 @@ a.anchor-link {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Validation:</p>
 <ul>
-<li>The beacon <a href="https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml">OpenAPI schema</a></li>
+<li>The beacon <a href="https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml">OpenAPI schema</a> (GA4GH)</li>
 <li>The <a href="https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas">JSON schemas</a> (CSCfi)</li>
 </ul>
 
@@ -11928,8 +11928,10 @@ a.anchor-link {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Data:</p>
 <ul>
-<li>1000 Genomes Projet</li>
-<li>10 lines (12 variants) from chromosome 22, Phase 3</li>
+<li>Mainly from 1000 Genomes Projet</li>
+<li>11 lines (17 variants) from chromosome 22, Phase 3</li>
+<li>2 structural variants (BND, for version 1.1.0
+)</li>
 </ul>
 
 </div>
@@ -11956,7 +11958,7 @@ a.anchor-link {
 <ul>
 <li><code>frequency</code>, <code>variantCount</code>, <code>callCount</code>, <code>sampleCount</code></li>
 <li>searching by <code>alternateBases</code> and by <code>variantType</code></li>
-<li>variant types (<code>DEL</code>, <code>INS</code>, <code>MNP</code>, <code>SNP</code>)</li>
+<li>variant types (<code>DEL</code>, <code>INS</code>, <code>SNP</code>, <code>BND</code>)</li>
 <li>span queries (<code>startMin</code>/<code>startMax</code>)</li>
 <li>errors (queries without <code>assemblyId</code> etc)</li>
 </ul>
@@ -12066,10 +12068,24 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Schema validation:</p>
+<ul>
+<li><p>will be automatically downloaded from GA4GH's / CSCfi's Github.</p>
+</li>
+<li><p>the queries are also validated (may help finding errors in the specifications).</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Not tested:</p>
 <ul>
 <li>other values than <code>HIT</code> for <code>includeDatasetResponses</code></li>
-<li>querying more than one dataset</li>
 </ul>
 
 </div>
@@ -12080,9 +12096,7 @@ a.anchor-link {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><p>other <code>variantTypes</code> than <code>DEL</code>, <code>INS</code>, <code>SNP</code>, <code>MNP</code></p>
-<p>(what if the dataset does not have anymore?)</p>
-</li>
+<li>other <code>variantTypes</code> than <code>DEL</code>, <code>INS</code>, <code>SNP</code>, <code>BND</code></li>
 </ul>
 
 </div>
@@ -12092,25 +12106,22 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Span queries:</p>
-<ul>
-<li>the OpenAPI spec is not clear on how <code>start</code>, <code>end</code>, <code>startMin</code>, <code>startMax</code> etc can be used</li>
-<li>are queries for the whole chromosome allowed?</li>
-</ul>
-
-</div>
-</div>
-</div></section></section><section><section>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>Future:</p>
 <ul>
 <li>add more test data?</li>
 <li>other types of checks?</li>
+<li>closer integration to the Beacon itself?</li>
 <li>all contributions are welcome!</li>
 </ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>&emsp;&emsp;&emsp; <a href="">https://github.com/NBISweden/beacon-api-tests</a></p>
 
 </div>
 </div>
