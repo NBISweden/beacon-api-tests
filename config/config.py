@@ -1,8 +1,8 @@
 """Configurations for the tests."""
 
 # Path to the OpenAPI spec
-# SPEC = ''
-SPEC = 'beacon.yaml'
+SPEC = ''
+# SPEC = 'beacon.yaml'
 
 # Lists of hosts to test
 HOSTS = {
@@ -15,8 +15,8 @@ HOSTS = {
 }
 
 # Directory containing JSON schemas
-# SCHEMAS = ''
-SCHEMAS = 'schemas'
+SCHEMAS = ''
+# SCHEMAS = 'schemas'
 
 #  Floats are rounded in comparisions, set the precision (number of digits) here
 PRECISION = 6
