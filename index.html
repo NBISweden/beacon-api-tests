@@ -11908,7 +11908,7 @@ a.anchor-link {
 <h1 id="Beacon-api-compliance-suite"><a href="https://github.com/NBISweden/beacon-api-tests">Beacon api compliance suite</a><a class="anchor-link" href="#Beacon-api-compliance-suite">&#182;</a></h1>
 </div>
 </div>
-</div><div class="fragment">
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -11921,7 +11921,7 @@ a.anchor-link {
 
 </div>
 </div>
-</div></div><div class="fragment">
+</div><div class="fragment">
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12024,9 +12024,11 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Output, validation failure:
-￼
-<img src="img/bad_structure.png" alt="Bad structure" style="width:1500px !important; max-width:200%!important"></p>
+<p>Output, validation failure:</p>
+<ul>
+<li><code>"organization": null</code>
+<img src="img/bad_structure.png" alt="Bad structure" style="max-width:200%!important"></li>
+</ul>
 
 </div>
 </div>
@@ -12038,7 +12040,20 @@ a.anchor-link {
 <p>Output, validation failure (only from the JSON schemas):</p>
 <ul>
 <li><code>assemblyId: ""</code>
-<img src="img/json_check.png" alt="Bad json" style="width:1509px !important; max-width:200%!important"></li>
+<img src="img/json_check.png" alt="Bad json" style="max-width:200%!important"></li>
+</ul>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Output, validation failure (only from the OpenAPI spec):</p>
+<ul>
+<li><code>"organization": {"info": {"orgInfo": "..."}}</code>
+<img src="img/openapi_error.png" alt="Bad spec" style="max-width:200%!important"></li>
 </ul>
 
 </div>
@@ -12049,7 +12064,7 @@ a.anchor-link {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Output, bad answer:</p>
-<p><img src="img/bad_vartype.png" alt="Bad varianttype" style="width:1500px !important; max-width:200%; overflow:hidden"></p>
+<p><img src="img/bad_vartype.png" alt="Bad varianttype" style="max-width:150%; overflow:hidden"></p>
 
 </div>
 </div>
