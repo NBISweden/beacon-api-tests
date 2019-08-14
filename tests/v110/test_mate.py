@@ -7,8 +7,8 @@ from utils.compare import assert_partly_in, run_test
 def test_search_1():
     """Test a mate query with referenceBases=N. This should give two answers, one for each direction."""
     query = {}
-    query['start'] = 321681
-    query['end'] = 123460
+    query['start'] = 321680
+    query['end'] = 123459
     query['referenceName'] = '2'
     query['mateName'] = '13'
     query['referenceBases'] = 'N'
@@ -40,8 +40,8 @@ def test_search_1():
 def test_search_2():
     """Test a mate query with referenceBases set to A. This should only give one hit."""
     query = {}
-    query['start'] = 123460
-    query['end'] = 321681
+    query['start'] = 123459
+    query['end'] = 321680
     query['referenceName'] = '13'
     query['mateName'] = '2'
     query['referenceBases'] = 'A'
