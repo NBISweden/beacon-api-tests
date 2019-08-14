@@ -46,7 +46,7 @@ def validate(inp, inp_type, settings, path=''):
         logging.warning('No JSON schema for %s, not validating', schema)
         return []
 
-    validator = jsonschema.Draft4Validator(jschema) #, format_checker=jsonschema.FormatChecker())
+    validator = jsonschema.Draft4Validator(jschema)  # , format_checker=jsonschema.FormatChecker())
     logging.info('Validate JSON to schema %s', schema)
     for err in validator.iter_errors(inp, jschema):
         # join path, skipping list indices

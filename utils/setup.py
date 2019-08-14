@@ -46,6 +46,7 @@ class Settings():
     json_schemas = {}
     openapi = None
     host = None
+    version = None
 
     def __init__(self):
         """Initialize."""
