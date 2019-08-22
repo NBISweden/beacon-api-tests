@@ -6,8 +6,10 @@ The Beacon's responses are validated against the
 and against JSON schemas by [CSCfi](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas).
 Apart from this, the counts returned by the beacon are also checked.
 
-The project uses [openapi-core](https://github.com/p1c2u/openapi-core) and [jsonschemas](https://python-jsonschema.readthedocs.io/en/latest/)
-(version 2.6 for compatability with `openapi-core`).
+The project uses [openapi-core](https://github.com/p1c2u/openapi-core) and [jsonschemas](https://python-jsonschema.readthedocs.io/en/latest/)<sup>*</sup>.
+
+A few slides giving some examples can be found [here](https://nbisweden.github.io/beacon-api-tests/).
+
 
 
 ## The testdata
@@ -124,3 +126,6 @@ To create more tests, see [adding_tests.md](doc/adding_tests.md).
 #### Overall
 
 - How exact should the `frequency` be? Rounding to more than 6 digits, will give errors for Swe vs. Fin.
+
+------
+<sup>*</sup>(version 2.6 for compatability with `openapi-core`).
