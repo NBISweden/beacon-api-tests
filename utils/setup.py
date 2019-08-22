@@ -16,7 +16,7 @@ import utils.errors as err
 
 
 VERSIONS = {'v101': {'ga4gh': 'v1.0.1', 'CSCfi': 'v1.1.0-rc1'},
-            'v110': {'ga4gh': 'develop', 'CSCfi': 'v1.2.0-rc0'}
+            'v110': {'ga4gh': 'develop', 'CSCfi': 'v1.3.0-rc0'}
             }
 
 
@@ -46,6 +46,7 @@ class Settings():
     json_schemas = {}
     openapi = None
     host = None
+    version = None
 
     def __init__(self):
         """Initialize."""

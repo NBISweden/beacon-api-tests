@@ -43,12 +43,12 @@ def validate(req, resp, path, query):
         # check that the query complies to the api spec
         validator = RequestValidator(settings.openapi)
         result = validator.validate(req)
-        warnings.extend(result.errors)
+        warnings.extend(['OpenApi: ' + x for x in result.errors])
 
         # check that the response complies to the api spec
         validator = ResponseValidator(settings.openapi)
         result = validator.validate(req, resp)
-        warnings.extend(result.errors)
+        warnings.extend(['OpenAPI: ' + str(x) for x in result.errors])
 
     if settings.use_json_schemas:
         if path != '/' and query is not None:
