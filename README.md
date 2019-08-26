@@ -109,9 +109,9 @@ SCHEMAS = 'schemas'
   - The `info` (`/`) endpoint answer. Json validation and the dataset counts `variantCount`, `callCount` and `sampleCount`.
   
   - Queries that are not allowed. Check that these return code `400`.
-    See `tests/test_errors.py`
+    See `tests/v101/test_errors.py`
   
-  - The structure and counts of some specific queries. See `tests/test_counts.py`.
+  - The structure and counts of some specific queries. See `tests/v101/test_counts.py`.
   
   - Having multiple datasets.
 
