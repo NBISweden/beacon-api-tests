@@ -43,19 +43,26 @@ def validate(req, resp, path, query):
         # check that the query complies to the api spec
         validator = RequestValidator(settings.openapi)
         result = validator.validate(req)
-        warnings.extend(['OpenApi: ' + x for x in result.errors])
+        settings.query_warnings += map(str, result.errors)
+        warnings.extend(['OpenApi: ' + str(x) for x in result.errors])
 
         # check that the response complies to the api spec
         validator = ResponseValidator(settings.openapi)
         result = validator.validate(req, resp)
+        settings.warnings += map(str, result.errors)
         warnings.extend(['OpenAPI: ' + str(x) for x in result.errors])
 
     if settings.use_json_schemas:
         if path != '/' and query is not None:
             # validate query against jsons schemas
-            warnings.extend(utils.jsonschemas.validate(query, 'query', settings))
+            q_warns = utils.jsonschemas.validate(query, 'query', settings)
+            warnings.extend(q_warns)
+            settings.query_warnings += q_warns
+
         # validate response against jsons schemas
-        warnings.extend(utils.jsonschemas.validate(resp.data, 'response', settings, path))
+        warns = utils.jsonschemas.validate(resp.data, 'response', settings, path)
+        warnings.extend(warns)
+        settings.warnings += warns
     for warning in warnings:
         logging.warning(warning)
 
