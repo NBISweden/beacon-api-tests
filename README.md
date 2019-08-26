@@ -119,7 +119,7 @@ SCHEMAS = 'schemas'
   - Structural variants (breakends)
 
 ## Create new tests:
-To create more tests, see [adding_tests.md](doc/adding_tests.md).
+To create more tests, see [adding_tests.md](docs/adding_tests.md).
 
 
 ## TODO
