@@ -47,6 +47,9 @@ class Settings():
     openapi = None
     host = None
     version = None
+    errors = 0
+    warnings = []
+    query_warnings = []
 
     def __init__(self):
         """Initialize."""

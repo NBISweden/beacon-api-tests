@@ -32,6 +32,23 @@ def run():
             break
 
 
+def print_result():
+    """Print a summary of the results."""
+    settings = utils.setup.Settings()
+    coloredlogs.install(level='DEBUG', fmt='%(message)s')
+    logging.info(f'\n\n{"":_^40}')
+    logging.info('Testing done. Result:\n')
+    if settings.errors:
+        logging.error(f'  {"Data errors:":27} {settings.errors} tests failed')
+    if settings.warnings:
+        logging.warning(f'  {"Specification errors:":27} {len(settings.warnings)} ({len(set(settings.warnings))} unique)')
+    if settings.query_warnings:
+        logging.warning(f'  {"Query specification errors:":27} {len(settings.query_warnings)} ({len(set(settings.query_warnings))} unique)')
+    if not (settings.errors or settings.warnings or settings.query_warnings):
+        logging.debug('  All tests passed!')
+    logging.info('\n\n')
+
+
 if __name__ == '__main__':
     coloredlogs.install(level='INFO', fmt='%(levelname)s: %(message)s')
     parser = argparse.ArgumentParser()
@@ -60,5 +77,4 @@ if __name__ == '__main__':
     except err.BeaconTestError:
         exit()
     run()
-    coloredlogs.set_level('INFO')
-    logging.info('Testing done.')
+    print_result()
