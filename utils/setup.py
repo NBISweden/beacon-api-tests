@@ -127,7 +127,7 @@ def load_local_schema(name):
 def parse_spec(inp_file):
     """Parse a yaml file into a specification object."""
     try:
-        y_spec = yaml.load(inp_file)
+        y_spec = yaml.load(inp_file, Loader=yaml.SafeLoader)
         spec = create_spec(y_spec)
     except jsonschema.exceptions.RefResolutionError:
         logging.error("Could not load specification. Check your network or try again")
