@@ -6,7 +6,7 @@ The Beacon's responses are validated against the
 and against JSON schemas by [CSCfi](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas).
 Apart from this, the counts returned by the beacon are also checked.
 
-The project uses [openapi-core](https://github.com/p1c2u/openapi-core) and [jsonschemas](https://python-jsonschema.readthedocs.io/en/latest/)<sup>*</sup>.
+The project uses [openapi-core](https://github.com/p1c2u/openapi-core) and [jsonschemas](https://python-jsonschema.readthedocs.io/en/latest/).
 
 A few slides giving some examples can be found [here](https://nbisweden.github.io/beacon-api-tests/).
 
@@ -109,9 +109,9 @@ SCHEMAS = 'schemas'
   - The `info` (`/`) endpoint answer. Json validation and the dataset counts `variantCount`, `callCount` and `sampleCount`.
   
   - Queries that are not allowed. Check that these return code `400`.
-    See `tests/test_errors.py`
+    See `tests/v101/test_errors.py`
   
-  - The structure and counts of some specific queries. See `tests/test_counts.py`.
+  - The structure and counts of some specific queries. See `tests/v101/test_counts.py`.
   
   - Having multiple datasets.
 
@@ -119,13 +119,10 @@ SCHEMAS = 'schemas'
   - Structural variants (breakends)
 
 ## Create new tests:
-To create more tests, see [adding_tests.md](doc/adding_tests.md).
+To create more tests, see [adding_tests.md](docs/adding_tests.md).
 
 
 ## TODO
 #### Overall
 
 - How exact should the `frequency` be? Rounding to more than 6 digits, will give errors for Swe vs. Fin.
-
-------
-<sup>*</sup>(version 2.6 for compatability with `openapi-core`).
