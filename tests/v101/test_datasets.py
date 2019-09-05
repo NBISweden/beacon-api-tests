@@ -26,7 +26,7 @@ def test_two_datasets():
     query['variantType'] = 'SNP'
     del query['datasetIds']
     resp = call_beacon(query=query)
-    assert len(resp["datasetAlleleResponses"]) > 1, 'All datasets not in response'
+    assert len(resp.get("datasetAlleleResponses", [])) > 1, 'All datasets not in response'
     gold = {"datasetId": "GRCh38:beacon_test:2030-01-01",
             "referenceName": "22",
             "callCount": 5008,
@@ -67,7 +67,7 @@ def test_second_datasets():
     query['datasetIds'] = ["GRCh38:beacon_test2:2030-01-01"]
     resp = call_beacon(query=query)
     assert len(resp.get("datasetAlleleResponses", [])) == 1, \
-        f'Response should include exactly 1 dataset, found {len(resp["datasetAlleleResponses"])}'
+        f'Response should include exactly 1 dataset, found {len(resp.get("datasetAlleleResponses", []))}'
     exclude = {"datasetId": "GRCh38:beacon_test:2030-01-01"}
     assert_not_in(exclude, resp, 'datasetAlleleResponses')
 
