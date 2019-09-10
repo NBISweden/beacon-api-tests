@@ -31,7 +31,7 @@ def test_search_1():
              "variantType": "BND"
              }
     assert len(resp.get("datasetAlleleResponses", [])) == 2, \
-        f'All datasets not in response. Expected 2, found {len(resp.get("datasetAlleleResponses", []))}'
+        f'All allele responses not in response. Expected 2, found {len(resp.get("datasetAlleleResponses", []))}'
     assert_partly_in(gold, resp, 'datasetAlleleResponses')
     assert_partly_in(gold2, resp, 'datasetAlleleResponses')
 
