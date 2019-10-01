@@ -64,7 +64,7 @@ def start_and_startMin():
 
 @run_test()
 def no_start():
-    """Check that you cannot use start and startMin+startMax."""
+    """Check that you cannot query without start."""
     query = dict(QUERY)
     del query['start']
     query['referenceBases'] = 'A'
