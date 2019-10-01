@@ -1,0 +1,65 @@
+# Tests for the Beacon API Tester (beacon_api_tester.py)
+#
+---
+groups:
+        - name: v110
+          tests:
+                  - name: test_search_1
+                    descr:
+                            Test a mate query with referenceBases=N.
+                            This should give two answers, one for each
+                            direction.
+                    query:
+                            start: 321680
+                            end: 123459
+                            referenceName: 2
+                            mateName: 13
+                            referenceBases: N
+                            variantType: BND
+                            assemblyId: GRCh38
+                            includeDatasetResponses: HIT
+                    results:
+                            - property: datasetAlleleResponses
+                              assert: length_eq
+                              length: 2
+                            - property: datasetAlleleResponses
+                              assert: contains
+                              datasetId: GRCh38:beacon_test:2030-01-01
+                              referenceName: 2
+                              exists: true
+                              referenceBases: G
+                              alternateBases: G
+                              variantType: BND
+                            - property: datasetAlleleResponses
+                              assert: contains
+                              datasetId: GRCh38:beacon_test:2030-01-01
+                              referenceName: 13
+                              exists: true
+                              referenceBases: A
+                              alternateBases: A
+                              variantType: BND
+                  - name: test_search_2
+                    descr:
+                            Test a mate query with referenceBases set to
+                            A. This should only give one hit.
+                    query:
+                            start: 123459
+                            end: 321680
+                            referenceName: 13
+                            mateName: 2
+                            referenceBases: A
+                            variantType: BND
+                            assemblyId: GRCh38
+                            includeDatasetResponses: HIT
+                    results:
+                            - property: datasetAlleleResponses
+                              assert: length_eq
+                              length: 1
+                            - property: datasetAlleleResponses
+                              assert: contains
+                              datasetId: GRCh38:beacon_test:2030-01-01
+                              referenceName: 13
+                              exists: true
+                              referenceBases: A
+                              alternateBases: A
+                              variantType: BND
