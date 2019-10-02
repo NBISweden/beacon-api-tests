@@ -67,6 +67,10 @@ class Settings():
             # default, use local host
             self.host = config.config.HOSTS.get('local')
 
+        for pathname in c_args.test:
+            with open(pathname) as stream:
+                load_test_config(stream)
+
         self.check_result = not c_args.only_structure
         self.start_pos = int(c_args.one_based)
 
@@ -136,3 +140,8 @@ def parse_spec(inp_file):
         logging.error("Could not read specification. Check tat your file is valid")
         raise err.BeaconTestError()
     return spec
+
+def load_test_config(pathname):
+    """Load a test YAML file"""
+    y_test = yaml.load(pathname, Loader=yaml.SafeLoader)
+    print(y_test)
