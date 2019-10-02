@@ -50,6 +50,7 @@ class Settings():
     errors = 0
     warnings = []
     query_warnings = []
+    tests = []
 
     def __init__(self):
         """Initialize."""
@@ -69,7 +70,9 @@ class Settings():
 
         for pathname in c_args.test:
             with open(pathname) as stream:
-                load_test_config(stream)
+                self.tests += [load_test_config(stream)]
+
+        print(self.tests)
 
         self.check_result = not c_args.only_structure
         self.start_pos = int(c_args.one_based)
@@ -143,5 +146,4 @@ def parse_spec(inp_file):
 
 def load_test_config(pathname):
     """Load a test YAML file"""
-    y_test = yaml.load(pathname, Loader=yaml.SafeLoader)
-    print(y_test)
+    return yaml.load(pathname, Loader=yaml.SafeLoader)
