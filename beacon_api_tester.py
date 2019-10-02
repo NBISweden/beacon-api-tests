@@ -54,6 +54,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--host', type=str, nargs='?', default='local',
                         help="Specify which beacon host to test")
+    parser.add_argument('--test', action='append',
+                        help="Test to run (pathname for test configuration file in YAML format). " +
+                        "This option may occur several times")
     parser.add_argument('--no_openapi', action="store_true",
                         help="Don't validate against the OpenAPI specification")
     parser.add_argument('--no_json', action="store_true",
