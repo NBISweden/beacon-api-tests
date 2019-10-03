@@ -37,6 +37,7 @@
         referenceBases: A
         alternateBases: A
         variantType: BND
+
 - name: test_search_2
   descr:
     Test a mate query with referenceBases set to A. This should
