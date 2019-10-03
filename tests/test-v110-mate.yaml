@@ -1,5 +1,6 @@
-# Tests for the Beacon API Tester (beacon_api_tester.py)
-# vim: ts=4 sw=2 et
+# vim: tabstop=4 shiftwidth=2 expandtab
+# Testing breakends (aka BND, mates).
+# Check that they work and that we get the expected output.
 ---
 - name: test_search_1
   descr:
