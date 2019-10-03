@@ -2,16 +2,52 @@
 # Example tests.
 # Check that they work and that we get the expected output.
 ---
+- &default_query
+  referenceName: 22
+  referenceBases: GG
+  alternateBases: N
+  assemblyId: GRCh38
+  start: 0
+  end: 2
+  includeDatasetResponses: HIT
+  datasetIds:
+    - GRCh38:beacon_test:2030-01-01
+
 - name: test_info
   descr:
     Test the beacon's info (/) call.
   query:
-    referenceName: 22
-    referenceBases: GG
-    alternateBases: N
-    assemblyId: GRCh38
-    start: 0
-    end: 2
-    includeDatasetResponses: HIT
-    datasetIds:
-      - GRCh38:beacon_test:2030-01-01
+    <<: *default_query
+  results:
+    - property: datasets
+      assert: contains
+      data:
+        id: GRCh38:beacon_test:2030-01-01
+        assemblyId: GRCh38
+        variantCount: 17
+        callCount: 12
+        sampleCount: 2504
+
+- name: test_search_1
+  descr:
+    Test a standard query with alternateBases, start and end.
+  query:
+    <<: *default_query
+    start: 16050074
+    end: 16050075
+    referenceBases: A
+    alternateBases: G
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 1
+        sampleCount: 2504
+        exists: true
+        referenceBases: A
+        alternateBases: G
+        variantType: SNP
+        frequency: 0.000199681
