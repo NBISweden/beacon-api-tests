@@ -2,22 +2,19 @@
 # Example tests.
 # Check that they work and that we get the expected output.
 ---
-- &default_query
-  referenceName: 22
-  referenceBases: GG
-  alternateBases: N
-  assemblyId: GRCh38
-  start: 0
-  end: 2
-  includeDatasetResponses: HIT
-  datasetIds:
-    - GRCh38:beacon_test:2030-01-01
-
 - name: test_info
   descr:
     Test the beacon's info (/) call.
-  query:
-    <<: *default_query
+  query: &default_query
+    referenceName: 22
+    referenceBases: GG
+    alternateBases: N
+    assemblyId: GRCh38
+    start: 0
+    end: 2
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
   results:
     - property: datasets
       assert: contains
