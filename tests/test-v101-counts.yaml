@@ -112,4 +112,53 @@
         referenceBases: A
         alternateBases: G
         variantType: SNP
-        frequerncy: 0.943091
+        frequency: 0.943091
+
+- name: test_insertion
+  descr:
+    Test variantTypes INS.
+  query:
+    <<: &default_query
+    start: 16064512
+    end: 16064513
+    variantType: INS
+    referenceBases: A
+    alternateBases: null
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 21
+        sampleCount: 2504
+        exists: true
+        referenceBases: A
+        alternateBases: AAGAATGGCCTAATAC
+        variantType: INS
+        frequency: 0.00419329
+
+- name: test_insertion_altbase
+  descr:
+    Test variantTypes by searching for ref and alt.
+  query:
+    <<: &default_query
+    start: 16539540
+    end: 16539541
+    referenceBases: A
+    alternateBases: AC
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 7
+        sampleCount: 2504
+        exists: true
+        referenceBases: A
+        alternateBases: AC
+        variantType: INS
+        frequency: 0.00139776
