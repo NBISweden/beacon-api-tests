@@ -162,3 +162,121 @@
         alternateBases: AC
         variantType: INS
         frequency: 0.00139776
+
+- name: test_multi_insertion
+  descr:
+    Find a variantTypes INS at a position where there are two different variants.
+  query:
+    <<: &default_query
+    start: 16879600
+    end: 16879601
+    referenceBases: T
+    alternateBases: null
+    variantType: INS
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 116
+        sampleCount: 2504
+        exists: true
+        referenceBases: T
+        alternateBases: TAA
+        variantType: INS
+        frequency: 0.023162939
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 314
+        sampleCount: 2504
+        exists: true
+        referenceBases: T
+        alternateBases: TA
+        variantType: INS
+        frequency: 0.062699683
+
+- name: test_deletion_altbase
+  descr:
+    Test a deletion by searching for ref and alt.
+  query:
+    <<: &default_query
+    start: 16497140
+    end: 16497143
+    referenceBases: CTT
+    alternateBases: C
+    # FIXME: Following missing from Python code?
+    variantType: DEL
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 4
+        sampleCount: 2504
+        exists: true
+        referenceBases: CTT
+        alternateBases: C
+        variantType: DEL
+        frequency: 0.000798722
+
+- name: test_deletion
+  descr:
+    Test variantTypes DEL.
+  query:
+    <<: &default_query
+    start: 16517679
+    end: 16517684
+    referenceBases: GACAA
+    alternateBases: null
+    variantType: DEL
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 3
+        sampleCount: 2504
+        exists: true
+        referenceBases: GACAA
+        alternateBases: G
+        variantType: DEL
+        frequency: 0.000599042
+
+- name: test_deletion_2
+  descr:
+    Test variantTypes DEL with startMin/startMax.
+  query:
+    <<: &default_query
+    start: null
+    end: null
+    startMin: 17301520
+    startMax: 17301530
+    endMin: 17301535
+    endMax: 17301536
+    referenceBases: ATACATAGTC
+    alternateBases: null
+    variantType: DEL
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 2932
+        sampleCount: 2504
+        exists: true
+        referenceBases: ATACATAGTC
+        alternateBases: A
+        variantType: DEL
+        frequency: 0.585463
