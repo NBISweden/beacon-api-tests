@@ -165,7 +165,8 @@
 
 - name: test_multi_insertion
   descr:
-    Find a variantTypes INS at a position where there are two different variants.
+    Find a variantTypes INS at a position where there are two different
+    variants.
   query:
     <<: &default_query
     start: 16879600
@@ -211,7 +212,7 @@
     referenceBases: CTT
     alternateBases: C
     # FIXME: Following missing from Python code?
-    variantType: DEL
+    # variantType: DEL
   results:
     - property: datasetAlleleResponses
       assert: contains
@@ -280,3 +281,78 @@
         alternateBases: A
         variantType: DEL
         frequency: 0.585463
+
+- name: test_snp_mnp
+  descr:
+    Test representation of TG->AG and multiple variations from one vcf line.
+  query:
+    <<: &default_query
+    start: 16577043
+    end: 16577045
+    referenceBases: TG
+    alternateBases: null
+    variantType: SNP
+  Results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 17
+        sampleCount: 2504
+        exists: true
+        referenceBases: TG
+        alternateBases: AG
+        variantType: SNP
+        frequency: 0.003394569
+
+- name: test_multi
+  descr:
+    Test alternateBases=N and multiple variations from one vcf line (indel).
+  query:
+    <<: &default_query
+    start: 19617926
+    end: null
+    referenceBases: N
+    alternateBases: N
+  Results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 17
+        sampleCount: 2504
+        exists: true
+        referenceBases: GTCT
+        alternateBases: GTCTTCTTCT
+        variantType: INS
+        frequency: 0.00339457
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 118
+        sampleCount: 2504
+        exists: true
+        referenceBases: GTCT
+        alternateBases: GTCTTCT
+        variantType: INS
+        frequency: 0.0235623
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 182
+        sampleCount: 2504
+        exists: true
+        referenceBases: GTCT
+        alternateBases: G
+        variantType: DEL
+        frequency: 0.036341853
