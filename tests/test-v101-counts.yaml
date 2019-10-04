@@ -48,3 +48,68 @@
         alternateBases: G
         variantType: SNP
         frequency: 0.000199681
+
+- name: test_snp
+  descr:
+    Test variantType SNP.
+  query:
+    <<: *default_query
+    start: 17302971
+    end: 17302972
+    variantType: SNP
+    referenceBases: C
+    alternateBases: null
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 2931
+        sampleCount: 2504
+        exists: true
+        referenceBases: C
+        alternateBases: A
+        variantType: SNP
+        frequency: 0.585264
+
+- name: test_bad_end
+  descr:
+    Test querying with a bad end position.
+  query:
+    <<: *default_query
+    start: 17300407
+    end: 17300409
+    referenceBases: A
+    alternateBases: G
+  results:
+    # FIXME: I'm unsure of how to formulate this.
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        exists: null
+
+- name: test_end
+  descr:
+    Test the same query as "test_bad_end" but with the correct end position.
+  query:
+    <<: *default_query
+    start: 17300407
+    end: 17300408
+    referenceBases: A
+    alternateBases: G
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 4723
+        sampleCount: 2504
+        exists: true
+        referenceBases: A
+        alternateBases: G
+        variantType: SNP
+        frequerncy: 0.943091
