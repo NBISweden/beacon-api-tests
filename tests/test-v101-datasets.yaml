@@ -1,0 +1,47 @@
+# vim: tabstop=4 shiftwidth=2 expandtab
+# Tests for more than one dataset.
+---
+- name: test_two_datasets
+  descr:
+    Test that both datasets repsond.
+  query: &default_query
+    start: 16577043
+    end: 16577043
+    referenceBases: TG
+    variantType: SNP
+    assemblyId: GRCh38
+    referenceName: 22
+    referenceBases: GG
+    includeDatasetResponses: HIT
+  results:
+    - property: datasetAlleleResponses
+      assert: length_gt
+      length: 1
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        callCount: 5008
+        variantCount: 17
+        sampleCount: 2504
+        exists: true
+        referenceBases: TG
+        alternateBases: AG
+        variantType: SNP
+        frequency: 0.003394569
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: 22
+        exists: true
+        referenceBases: TG
+        alternateBases: AG
+        variantType: SNP
+        start: 16577043
+        end: 16577045
+        frequency: 0.003394569
+        variantCount: 17
+        callCount: 5008
+        sampleCount: 2504
