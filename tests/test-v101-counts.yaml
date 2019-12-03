@@ -42,7 +42,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 1
         sampleCount: 2504
@@ -67,7 +67,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 2931
         sampleCount: 2504
@@ -107,7 +107,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 4723
         sampleCount: 2504
@@ -132,7 +132,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 21
         sampleCount: 2504
@@ -156,7 +156,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 7
         sampleCount: 2504
@@ -182,7 +182,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 116
         sampleCount: 2504
@@ -195,7 +195,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 314
         sampleCount: 2504
@@ -221,7 +221,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 4
         sampleCount: 2504
@@ -246,7 +246,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 3
         sampleCount: 2504
@@ -275,7 +275,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 2932
         sampleCount: 2504
@@ -289,18 +289,18 @@
   descr:
     Test representation of TG->AG and multiple variations from one vcf line.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16577043
     end: 16577045
     referenceBases: TG
     alternateBases: null
     variantType: SNP
-  Results:
+  results:
     - property: datasetAlleleResponses
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 17
         sampleCount: 2504
@@ -314,17 +314,17 @@
   descr:
     Test alternateBases=N and multiple variations from one vcf line (indel).
   query:
-    <<: &default_query
+    <<: *default_query
     start: 19617926
     end: null
     referenceBases: N
     alternateBases: N
-  Results:
+  results:
     - property: datasetAlleleResponses
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 17
         sampleCount: 2504
@@ -337,7 +337,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 118
         sampleCount: 2504
@@ -350,7 +350,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 182
         sampleCount: 2504
