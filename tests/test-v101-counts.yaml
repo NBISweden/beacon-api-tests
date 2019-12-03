@@ -2,11 +2,10 @@
 # Example tests.
 # Check that they work and that we get the expected output.
 ---
-- name: test_info
-  descr:
-    Test the beacon's info (/) call.
+- name: default query
+  skip: true
   query: &default_query
-    referenceName: 22
+    referenceName: "22"
     referenceBases: GG
     alternateBases: N
     assemblyId: GRCh38
@@ -15,6 +14,10 @@
     includeDatasetResponses: HIT
     datasetIds:
       - GRCh38:beacon_test:2030-01-01
+
+- name: test_info
+  descr:
+    Test the beacon's info (/) endpoint.
   results:
     - property: datasets
       assert: contains
