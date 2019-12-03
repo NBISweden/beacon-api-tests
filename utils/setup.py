@@ -70,9 +70,7 @@ class Settings():
 
         for pathname in c_args.test:
             with open(pathname) as stream:
-                self.tests += [load_test_config(stream)]
-
-        print(self.tests)
+                self.tests += load_test_config(stream)
 
         self.check_result = not c_args.only_structure
         self.start_pos = int(c_args.one_based)
