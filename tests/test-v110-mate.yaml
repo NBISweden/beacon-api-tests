@@ -23,7 +23,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 2
+        referenceName: "2"
         exists: true
         referenceBases: G
         alternateBases: G
@@ -32,7 +32,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 13
+        referenceName: "13"
         exists: true
         referenceBases: A
         alternateBases: A
@@ -59,7 +59,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 13
+        referenceName: "13"
         exists: true
         referenceBases: A
         alternateBases: A

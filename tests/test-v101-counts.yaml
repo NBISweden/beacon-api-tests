@@ -2,11 +2,10 @@
 # Example tests.
 # Check that they work and that we get the expected output.
 ---
-- name: test_info
-  descr:
-    Test the beacon's info (/) call.
+- name: default query
+  skip: true
   query: &default_query
-    referenceName: 22
+    referenceName: "22"
     referenceBases: GG
     alternateBases: N
     assemblyId: GRCh38
@@ -15,6 +14,10 @@
     includeDatasetResponses: HIT
     datasetIds:
       - GRCh38:beacon_test:2030-01-01
+
+- name: test_info
+  descr:
+    Test the beacon's info (/) endpoint.
   results:
     - property: datasets
       assert: contains
@@ -39,7 +42,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 1
         sampleCount: 2504
@@ -64,7 +67,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 2931
         sampleCount: 2504
@@ -84,11 +87,8 @@
     referenceBases: A
     alternateBases: G
   results:
-    # FIXME: I'm unsure of how to formulate this.
-    - property: datasetAlleleResponses
-      assert: contains
-      data:
-        exists: null
+    - property: exists
+      assert: isfalse
 
 - name: test_end
   descr:
@@ -104,7 +104,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 4723
         sampleCount: 2504
@@ -118,7 +118,7 @@
   descr:
     Test variantTypes INS.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16064512
     end: 16064513
     variantType: INS
@@ -129,7 +129,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 21
         sampleCount: 2504
@@ -143,7 +143,7 @@
   descr:
     Test variantTypes by searching for ref and alt.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16539540
     end: 16539541
     referenceBases: A
@@ -153,7 +153,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 7
         sampleCount: 2504
@@ -168,7 +168,7 @@
     Find a variantTypes INS at a position where there are two different
     variants.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16879600
     end: 16879601
     referenceBases: T
@@ -179,7 +179,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 116
         sampleCount: 2504
@@ -192,7 +192,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 314
         sampleCount: 2504
@@ -206,7 +206,7 @@
   descr:
     Test a deletion by searching for ref and alt.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16497140
     end: 16497143
     referenceBases: CTT
@@ -218,7 +218,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 4
         sampleCount: 2504
@@ -232,7 +232,7 @@
   descr:
     Test variantTypes DEL.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16517679
     end: 16517684
     referenceBases: GACAA
@@ -243,7 +243,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 3
         sampleCount: 2504
@@ -257,7 +257,7 @@
   descr:
     Test variantTypes DEL with startMin/startMax.
   query:
-    <<: &default_query
+    <<: *default_query
     start: null
     end: null
     startMin: 17301520
@@ -272,7 +272,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 2932
         sampleCount: 2504
@@ -286,18 +286,18 @@
   descr:
     Test representation of TG->AG and multiple variations from one vcf line.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16577043
     end: 16577045
     referenceBases: TG
     alternateBases: null
     variantType: SNP
-  Results:
+  results:
     - property: datasetAlleleResponses
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 17
         sampleCount: 2504
@@ -311,17 +311,17 @@
   descr:
     Test alternateBases=N and multiple variations from one vcf line (indel).
   query:
-    <<: &default_query
+    <<: *default_query
     start: 19617926
     end: null
     referenceBases: N
     alternateBases: N
-  Results:
+  results:
     - property: datasetAlleleResponses
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 17
         sampleCount: 2504
@@ -334,7 +334,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 118
         sampleCount: 2504
@@ -347,7 +347,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 182
         sampleCount: 2504
