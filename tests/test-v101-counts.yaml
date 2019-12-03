@@ -87,11 +87,8 @@
     referenceBases: A
     alternateBases: G
   results:
-    # FIXME: I'm unsure of how to formulate this.
-    - property: datasetAlleleResponses
-      assert: contains
-      data:
-        exists: null
+    - property: exists
+      assert: isfalse
 
 - name: test_end
   descr:
