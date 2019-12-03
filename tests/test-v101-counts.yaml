@@ -118,7 +118,7 @@
   descr:
     Test variantTypes INS.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16064512
     end: 16064513
     variantType: INS
@@ -143,7 +143,7 @@
   descr:
     Test variantTypes by searching for ref and alt.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16539540
     end: 16539541
     referenceBases: A
@@ -168,7 +168,7 @@
     Find a variantTypes INS at a position where there are two different
     variants.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16879600
     end: 16879601
     referenceBases: T
@@ -206,7 +206,7 @@
   descr:
     Test a deletion by searching for ref and alt.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16497140
     end: 16497143
     referenceBases: CTT
@@ -232,7 +232,7 @@
   descr:
     Test variantTypes DEL.
   query:
-    <<: &default_query
+    <<: *default_query
     start: 16517679
     end: 16517684
     referenceBases: GACAA
@@ -257,7 +257,7 @@
   descr:
     Test variantTypes DEL with startMin/startMax.
   query:
-    <<: &default_query
+    <<: *default_query
     start: null
     end: null
     startMin: 17301520
