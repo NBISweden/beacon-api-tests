@@ -5,17 +5,22 @@
 #   test_datasets_info():
 #   I don't quite know how to translate a call_beacon(path='/') query.
 ---
-- name: test_two_datasets
-  descr:
-    Test that both datasets respond.
+- name: default query
+  skip: true
   query: &default_query
     start: 16577043
     end: 16577043
     referenceBases: TG
     variantType: SNP
     assemblyId: GRCh38
-    referenceName: 22
+    referenceName: "22"
     includeDatasetResponses: HIT
+
+- name: test_two_datasets
+  descr:
+    Test that both datasets respond.
+  query:
+    <<: *default_query
   results:
     - property: datasetAlleleResponses
       assert: length_gt
@@ -24,7 +29,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         callCount: 5008
         variantCount: 17
         sampleCount: 2504
@@ -37,7 +42,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: 22
+        referenceName: "22"
         exists: true
         referenceBases: TG
         alternateBases: AG
