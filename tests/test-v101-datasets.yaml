@@ -2,7 +2,7 @@
 # Tests for more than one dataset.
 #
 # TODO:
-#   test_datasets_info(): 
+#   test_datasets_info():
 #   I don't quite know how to translate a call_beacon(path='/') query.
 ---
 - name: test_two_datasets
@@ -53,7 +53,7 @@
 - name: test_second_datasets
   descr:
     Test that excluding a dataset works.
-  query: 
+  query:
     <<: *default_query
     start: 16577043
     end: 16577045
