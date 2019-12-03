@@ -7,7 +7,7 @@
 ---
 - name: test_two_datasets
   descr:
-    Test that both datasets repsond.
+    Test that both datasets respond.
   query: &default_query
     start: 16577043
     end: 16577043
@@ -15,7 +15,6 @@
     variantType: SNP
     assemblyId: GRCh38
     referenceName: 22
-    referenceBases: GG
     includeDatasetResponses: HIT
   results:
     - property: datasetAlleleResponses
