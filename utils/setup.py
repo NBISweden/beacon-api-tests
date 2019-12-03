@@ -142,6 +142,7 @@ def parse_spec(inp_file):
         raise err.BeaconTestError()
     return spec
 
+
 def load_test_config(pathname):
-    """Load a test YAML file"""
+    """Load a test YAML file."""
     return yaml.load(pathname, Loader=yaml.SafeLoader)
