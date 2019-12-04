@@ -1,37 +1,13 @@
 """Responsible for comparing the responses to the given gold standard."""
-import logging
 import config.config
 import utils.errors as err
-import utils.setup
 
 
 # Define what keys that should be used to sort lists of dictionaries
-SORT_BY = {'datasets': ['id'], 'datasetAlleleResponses': ['datasetId', 'frequency', 'referenceBases']}
-
-
-def run_test():
-    """Decorator for test queries.
-
-    Run the decorated function and catch and log its errors.
-    """
-    def decorator(func):
-        logging.info('Testing %s\n\t%s', func.__name__, func.__doc__.strip())
-        settings = utils.setup.Settings()
-        try:
-            func()
-        except err.ResponseError as r_error:
-            # errors from the comparisons of a response, contains a list of errors to report
-            logging.error('Test "%s" did not pass: """%s"""', func.__name__, func.__doc__.strip())
-            for err_msg in r_error.messages:
-                settings.errors += 1
-                logging.error(err_msg)
-        except AssertionError as a_error:
-            # other errors
-            logging.error('Test "%s" did not pass: """%s"""', func.__name__, func.__doc__.strip())
-            logging.error(str(a_error))
-            settings.errors += 1
-        logging.info('Done\n')
-    return decorator
+SORT_BY = {
+    'datasets': ['id'],
+    'datasetAlleleResponses': ['datasetId', 'frequency', 'referenceBases']
+}
 
 
 def assert_partly_in(gold, response, key):

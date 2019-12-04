@@ -1,35 +1,23 @@
 """Set logging, get current host, read and configure API spec."""
 import argparse
-import importlib
 import logging
-import os
-from pathlib import Path
 
 import coloredlogs
 
 import utils.errors as err
+import utils.run_test
 import utils.setup
 
 
 def run():
     """Look for all test modules and run them."""
-    testgroups = ['v101', 'v110']
     settings = utils.setup.Settings()
-    for version in testgroups:
-        logging.info(f'Testing version {version}')
-        testdir = Path('tests') / version
-        for path in testdir.glob('*.py'):
-            module, _ = os.path.splitext(os.path.basename(path))
-            if 'test' in module:
-                logging.info('*** Running tests from %s', module)
-                try:
-                    importlib.import_module(f'tests.{version}.'+module)
-                    logging.info('Module %s done ***\n', module)
-                except err.BeaconTestError:
-                    exit()
-        if version == settings.version:
-            # don't continue to higher versions
-            break
+    for test in settings.tests:
+        try:
+            utils.run_test.run_test(test)
+        except err.BeaconTestError:
+            logging.error('Testing stopped unexpectedly.')
+            exit()
 
 
 def print_result():
@@ -55,7 +43,7 @@ if __name__ == '__main__':
     parser.add_argument('--host', type=str, nargs='?', default='local',
                         help="Specify which beacon host to test")
     parser.add_argument('--test', action='append',
-                        help="Test to run (pathname for test configuration file in YAML format). " +
+                        help="Test to run (pathname for test configuration file in YAML format). "
                         "This option may occur several times")
     parser.add_argument('--no_openapi', action="store_true",
                         help="Don't validate against the OpenAPI specification")
@@ -67,6 +55,7 @@ if __name__ == '__main__':
                         help="Only print warnings and errors")
     parser.add_argument('--one_based', action="store_true",
                         help="Expect the beacon to be 1 based")
+    # currently not used:
     parser.add_argument('--version', nargs='?', default='v1.0.1',
                         choices=['v1.0.1', 'v1.1.0', 'v101', 'v110'],
                         help="Which version of the api to test. Defalt v1.0.1")
