@@ -85,3 +85,15 @@ def validate_test(filepath, schema='tests/schema.yaml'):
         json_test = yaml.load(fileh, Loader=yaml.SafeLoader)
     validator = jsonschema.Draft7Validator(json_schema)
     return list(validator.iter_errors(json_test))
+
+
+def run_testvalidaton(validate_tests):
+    """Run the validation of a list of files, print the errors."""
+    num_errors = 0
+    for testfile in validate_tests:
+        errs = validate_test(testfile)
+        for err in errs:
+            print(err.path)
+            print(err.message)
+        num_errors += len(errs)
+    print(f'Totally {num_errors} errors')
