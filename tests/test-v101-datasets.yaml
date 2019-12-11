@@ -1,9 +1,5 @@
 # vim: tabstop=4 shiftwidth=2 expandtab
 # Tests for more than one dataset.
-#
-# TODO:
-#   test_datasets_info():
-#   I don't quite know how to translate a call_beacon(path='/') query.
 ---
 - name: default query
   skip: true
@@ -15,6 +11,30 @@
     assemblyId: GRCh38
     referenceName: "22"
     includeDatasetResponses: HIT
+
+- name: test_datasets_info
+  descr:
+    Test that both datasets are shown by both beacons.
+  query:
+    <<: *default_query
+  results:
+    - property: datasets
+      assert: length_eq
+      length: 2
+    - property: datasets
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        callCount: 12
+        variantCount: 17
+        sampleCount: 2504
+    - property: datasets
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test2:2030-01-01
+        variantCount: 17
+        callCount: 12
+        sampleCount: 2504
 
 - name: test_two_datasets
   descr:
