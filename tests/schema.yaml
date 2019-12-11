@@ -1,0 +1,109 @@
+---
+$schema: http://json-schema.org/draft-07/schema#
+type: array
+title: "A test file, giving a list of tests"
+items:
+  type: object
+  title: "A test object"
+  required:
+    - name
+    - descr
+  oneOf:
+    - required:
+        - skip
+    - required:
+        - results
+  properties:
+    name:
+      type: string
+      title: "The name of the test"
+    descr:
+      type: string
+      title: "A short description of the test"
+    skip:
+      type: boolean
+      title: "Signals that a test should not be run"
+      default: false
+    query:
+      $ref: "#/definitions/query"
+    results:
+      $ref: '#/definitions/results'
+    additionalProperties: false  # doesn't work
+
+definitions:
+  beacondata: &beacondata
+    # This describes the fields of beacon data, query or a response.
+    # Note that this is not an attempt to reformulate the official spec,
+    # but a shorter overview allowing all fields to be null.
+    referenceName:
+      type:
+        - string
+        - "null"
+    referenceBases:
+      type:
+        - string
+        - "null"
+    alternateBases:
+      type:
+        - string
+        - "null"
+    variantType:
+      type:
+        - string
+        - "null"
+    assemblyId:
+      type:
+        - string
+        - "null"
+    start:
+      type:
+        - integer
+        - "null"
+    end:
+      type:
+        - integer
+        - "null"
+    datasetIds:
+      type: array
+      items:
+        type: string
+
+  query:
+    title: "Models a query to a Beacon"
+    properties:
+      <<: *beacondata
+      includeDatasetResponses:
+        type: string
+
+  results:
+    # This section defines how an expected response can be expressed,
+    # as well as the available tests methods (assert).
+    type: array
+    title: "The expected result"
+    items:
+      type: object
+      required:
+        - assert
+      oneOf:
+        - required:
+            - ignore_schemas
+            - status_code
+        - required:
+            - property
+      properties:
+        assert:
+          type: string
+          enum:
+            - contains
+            - not_contains
+            - status_code
+            - is_false
+            - length_eq
+            - length_gt
+        data:
+          type: object
+          properties:
+            <<: *beacondata
+            exists:
+              type: boolean
+            additionalProperties: false  # does not work
