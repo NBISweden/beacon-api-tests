@@ -4,10 +4,6 @@
 class BeaconTestError(Exception):
     """Class for all exceptions that are expected."""
 
-    def __init__(self):
-        """Nothing special, use standard exception."""
-        Exception.__init__(self)
-
 
 class ResponseError(Exception):
     """Class for exceptions in comparisons of the expected responses to the real ones."""
@@ -17,3 +13,7 @@ class ResponseError(Exception):
         Exception.__init__(self)
         # Keep a list of messages to log later
         self.messages = messages
+
+
+class TestError(Exception):
+    """Class for exceptions when reading yaml tests."""

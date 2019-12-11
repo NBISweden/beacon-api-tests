@@ -13,6 +13,7 @@ import yaml
 
 import config.config
 import utils.errors as err
+import utils.jsonschemas
 
 
 VERSIONS = {'v101': {'ga4gh': 'v1.0.1', 'CSCfi': 'v1.1.0-rc1'},
@@ -69,8 +70,7 @@ class Settings():
             self.host = config.config.HOSTS.get('local')
 
         for pathname in c_args.test:
-            with open(pathname) as stream:
-                self.tests += load_test_config(stream)
+            self.tests += utils.jsonschemas.load_and_validate_test(pathname)
 
         self.check_result = not c_args.only_structure
         self.start_pos = int(c_args.one_based)
@@ -141,8 +141,3 @@ def parse_spec(inp_file):
         logging.error("Could not read specification. Check tat your file is valid")
         raise err.BeaconTestError()
     return spec
-
-
-def load_test_config(pathname):
-    """Load a test YAML file."""
-    return yaml.load(pathname, Loader=yaml.SafeLoader)

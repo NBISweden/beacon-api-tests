@@ -6,9 +6,12 @@ Needs to use jsonschema v2.6.0 because of opencore_api
 """
 import json
 import logging
+import os.path
 
 import jsonschema
+import yaml
 
+import utils.errors as errors
 
 def validate(inp, inp_type, settings, path=''):
     """
@@ -53,3 +56,32 @@ def validate(inp, inp_type, settings, path=''):
         path = '.'.join([p for p in err.path if isinstance(p, str)])
         errs.append(f"JSON schema: field '{path}': " + err.message)
     return errs
+
+
+def load_and_validate_test(filepath, schema='tests/schema.yaml'):
+    """Validate that a yaml file with tests is ok, return the test as json."""
+    if not os.path.isfile(filepath):
+        logging.error(f'No such file {filepath}')
+        raise errors.TestError(f'No such file {filepath}')
+    with open(schema) as fileh:
+        json_schema = yaml.load(fileh, Loader=yaml.SafeLoader)
+    with open(filepath) as fileh:
+        json_test = yaml.load(fileh, Loader=yaml.SafeLoader)
+    try:
+        validator = jsonschema.Draft7Validator(json_schema)
+        validator.validate(json_test)
+    except:
+        logging.error(f'The test {filepath} is not valid:')
+        raise
+    logging.debug(f'Return {json_test}')
+    return json_test
+
+
+def validate_test(filepath, schema='tests/schema.yaml'):
+    """Validate a yaml file, return a list errors."""
+    with open(schema) as fileh:
+        json_schema = yaml.load(fileh, Loader=yaml.SafeLoader)
+    with open(filepath) as fileh:
+        json_test = yaml.load(fileh, Loader=yaml.SafeLoader)
+    validator = jsonschema.Draft7Validator(json_schema)
+    return list(validator.iter_errors(json_test))
