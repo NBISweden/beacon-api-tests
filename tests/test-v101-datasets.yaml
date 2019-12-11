@@ -3,6 +3,7 @@
 ---
 - name: default query
   skip: true
+  descr: defining the default query
   query: &default_query
     start: 16577043
     end: 16577043

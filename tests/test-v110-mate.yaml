@@ -9,7 +9,7 @@
   query:
     start: 321680
     end: 123459
-    referenceName: 2
+    referenceName: "2"
     mateName: 13
     referenceBases: N
     variantType: BND
@@ -45,7 +45,7 @@
   query:
     start: 123459
     end: 321680
-    referenceName: 13
+    referenceName: "13"
     mateName: 2
     referenceBases: A
     variantType: BND

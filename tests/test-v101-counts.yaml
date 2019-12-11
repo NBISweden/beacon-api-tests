@@ -4,6 +4,7 @@
 ---
 - name: default query
   skip: true
+  descr: defining the default query
   query: &default_query
     referenceName: "22"
     referenceBases: GG
@@ -88,7 +89,7 @@
     alternateBases: G
   results:
     - property: exists
-      assert: isfalse
+      assert: is_false
 
 - name: test_end
   descr:

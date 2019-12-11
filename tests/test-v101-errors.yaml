@@ -2,6 +2,7 @@
 # Testing that the beacon does not allowed bad queries.
 ---
 - name: default query
+  descr: defining the default query
   skip: true
   query: &default_query
     referenceName: "22"
