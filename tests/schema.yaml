@@ -28,10 +28,15 @@ items:
       $ref: "#/definitions/query"
     results:
       $ref: '#/definitions/results'
+    beacondata:
+      $ref: '#/definitions/beacondata'
+    vcf:
+      title: A reference to (a variant in) a vcf file
+      type: string
     additionalProperties: false  # doesn't work
 
 definitions:
-  beacondata: &beacondata
+  datafields: &datafields
     # This describes the fields of beacon data, query or a response.
     # Note that this is not an attempt to reformulate the official spec,
     # but a shorter overview allowing all fields to be null.
@@ -68,10 +73,15 @@ definitions:
       items:
         type: string
 
+    mateName:
+      type:
+        - string
+        - "null"
+
   query:
     title: "Models a query to a Beacon"
     properties:
-      <<: *beacondata
+      <<: *datafields
       includeDatasetResponses:
         type: string
 
@@ -103,7 +113,52 @@ definitions:
         data:
           type: object
           properties:
-            <<: *beacondata
+            <<: *datafields
             exists:
               type: boolean
+            datasetId:
+              type: string
             additionalProperties: false  # does not work
+
+  beacondata:
+    # This section describes the data that should be in the beacon's data base
+    type: object
+    properties:
+      datasets:
+        # The datasets is a list of object. The extra layer (inner objects) is
+        # there to allow referencing specific datasets in the response.
+        type: array
+        items:
+          type: object
+          title: The metadata assumed to be in the beacons
+          properties:
+            dataset:
+              type: object
+              properties:
+                datasetId:
+                  type: string
+                assemblyId:
+                  type: string
+                variantCount:
+                  type: integer
+                callCount:
+                  type: integer
+                sampleCount:
+                  type: integer
+      variants:
+        # The variants is a list of object. The extra layer (inner objects) is
+        # there to allow referencing specific variants in the response.
+        type: array
+        items:
+          type: object
+          title: The data assumed to be in the beacons
+          properties:
+            variant:
+              type: object
+              <<: *datafields
+              variantCount:
+                type: integer
+              callCount:
+                type: integer
+              sampleCount:
+                type: integer
