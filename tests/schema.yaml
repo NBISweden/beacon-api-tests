@@ -72,11 +72,6 @@ definitions:
       type:
         - integer
         - "null"
-    datasetIds:
-      type: array
-      items:
-        type: string
-
     mateName:
       type:
         - string
@@ -108,7 +103,6 @@ definitions:
         type: array
         items:
           type: string
-
 
   results:
     # This section defines how an expected response can be expressed,
@@ -179,6 +173,8 @@ definitions:
           title: The data assumed to be in the beacons
           properties:
             variant:
+              datasetId:
+                type: string
               type: object
               <<: *datafields
               variantCount:

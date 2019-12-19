@@ -6,15 +6,23 @@
   descr:
     Test a mate query with referenceBases=N. This should give two
     answers, one for each direction.
-  query:
+  query: &query_mate
     start: 321680
     end: 123459
     referenceName: "2"
-    mateName: 13
+    mateName: "13"
     referenceBases: N
     variantType: BND
     assemblyId: GRCh38
     includeDatasetResponses: HIT
+  beacondata: &matedata
+    # TODO should the data be stored once or twice (once for each direction)?
+    variants:
+      - variant: &variant_mate
+          datasetId: GRCh38:beacon_test:2030-01-01
+          <<: *query_mate
+          referenceBases: G
+          alternateBases: G
   results:
     - property: datasetAlleleResponses
       assert: length_eq
@@ -22,21 +30,18 @@
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "2"
+        <<: *variant_mate
         exists: true
-        referenceBases: G
-        alternateBases: G
-        variantType: BND
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
+        <<: *variant_mate
         referenceName: "13"
+        mateName: "2"
         exists: true
         referenceBases: A
         alternateBases: A
-        variantType: BND
+  vcf: testmatedata.vcf:bnd_w,bnd_X
 
 - name: test_search_2
   descr:
@@ -46,11 +51,13 @@
     start: 123459
     end: 321680
     referenceName: "13"
-    mateName: 2
+    mateName: "2"
     referenceBases: A
     variantType: BND
     assemblyId: GRCh38
     includeDatasetResponses: HIT
+  beacondata:
+    <<: *matedata
   results:
     - property: datasetAlleleResponses
       assert: length_eq
@@ -64,3 +71,4 @@
         referenceBases: A
         alternateBases: A
         variantType: BND
+  vcf: testmatedata.vcf:bnd_w,bnd_X

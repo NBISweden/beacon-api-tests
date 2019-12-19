@@ -19,245 +19,284 @@
 - name: test_info
   descr:
     Test the beacon's info (/) endpoint.
+  beacondata:
+    datasets:
+      - dataset: &info
+          datasetId: GRCh38:beacon_test:2030-01-01
+          assemblyId: GRCh38
+          variantCount: 17
+          callCount: 12
+          sampleCount: 2504
   results:
     - property: datasets
       assert: contains
       data:
-        id: GRCh38:beacon_test:2030-01-01
-        assemblyId: GRCh38
-        variantCount: 17
-        callCount: 12
-        sampleCount: 2504
+        <<: *info
+  vcf: testdata.vcf:*
 
 - name: test_search_1
   descr:
     Test a standard query with alternateBases, start and end.
-  query:
+  query: &query_search
     <<: *default_query
     start: 16050074
     end: 16050075
     referenceBases: A
     alternateBases: G
+  beacondata:
+    variants:
+      - variant: &variant_search
+          <<: *query_search
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 1
+          frequency: 0.000199681
+          sampleCount: 2504
+          variantType: SNP
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
+        <<: *variant_search
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 1
-        sampleCount: 2504
-        exists: true
-        referenceBases: A
-        alternateBases: G
-        variantType: SNP
-        frequency: 0.000199681
+  vcf: testdata.vcf:rs587697622
 
 - name: test_snp
   descr:
     Test variantType SNP.
-  query:
+  query: &query_snp
     <<: *default_query
     start: 17302971
     end: 17302972
     variantType: SNP
     referenceBases: C
     alternateBases: null
+  beacondata:
+    variants:
+      - variant: &variant_snp
+          <<: *query_snp
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 2931
+          sampleCount: 2504
+          alternateBases: A
+          frequency: 0.585264
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 2931
-        sampleCount: 2504
+        <<: *variant_snp
         exists: true
-        referenceBases: C
-        alternateBases: A
-        variantType: SNP
-        frequency: 0.585264
+  vcf: testdata.vcf:rs5994030
 
 - name: test_bad_end
   descr:
     Test querying with a bad end position.
-  query:
+  query: &query_bad_end
     <<: *default_query
     start: 17300407
     end: 17300409
     referenceBases: A
     alternateBases: G
+  beacondata:
+    variants:
+      - variant:
+          <<: *query_bad_end
+          datasetId: GRCh38:beacon_test:2030-01-01
+          end: 17300408
+          referenceBases: A
+          alternateBases: G
   results:
     - property: exists
       assert: is_false
+  vcf: testdata.vcf:rs5748665
 
 - name: test_end
   descr:
     Test the same query as "test_bad_end" but with the correct end position.
-  query:
+  query: &query_end
     <<: *default_query
     start: 17300407
     end: 17300408
     referenceBases: A
     alternateBases: G
+  beacondata:
+    variants:
+      - variant: &variant_end
+          <<: *query_end
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 4723
+          sampleCount: 2504
+          frequency: 0.943091
+          variantType: SNP
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
+        <<: *variant_end
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 4723
-        sampleCount: 2504
         exists: true
-        referenceBases: A
-        alternateBases: G
-        variantType: SNP
-        frequency: 0.943091
+  vcf: testdata.vcf:rs5748665
 
 - name: test_insertion
   descr:
     Test variantTypes INS.
-  query:
+  query: &query_insertion
     <<: *default_query
     start: 16064512
     end: 16064513
     variantType: INS
     referenceBases: A
     alternateBases: null
+  beacondata:
+    variants:
+      - variant: &variant_insertion
+          <<: *query_insertion
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 21
+          sampleCount: 2504
+          alternateBases: AAGAATGGCCTAATAC
+          frequency: 0.00419329
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 21
-        sampleCount: 2504
+        <<: *variant_insertion
         exists: true
-        referenceBases: A
-        alternateBases: AAGAATGGCCTAATAC
-        variantType: INS
-        frequency: 0.00419329
+  vcf: testdata.vcf:rs587642978
 
 - name: test_insertion_altbase
   descr:
     Test variantTypes by searching for ref and alt.
-  query:
+  query: &query_alt_base
     <<: *default_query
     start: 16539540
     end: 16539541
     referenceBases: A
     alternateBases: AC
+  beacondata:
+    variants:
+      - variant: &variant_alt_base
+          <<: *query_alt_base
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 7
+          sampleCount: 2504
+          variantType: INS
+          frequency: 0.00139776
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 7
-        sampleCount: 2504
+        <<: *variant_alt_base
         exists: true
-        referenceBases: A
-        alternateBases: AC
-        variantType: INS
-        frequency: 0.00139776
+  vcf: testdata.vcf:rs538489066
 
 - name: test_multi_insertion
   descr:
     Find a variantTypes INS at a position where there are two different
     variants.
-  query:
+  query: &query_multi_insertion
     <<: *default_query
     start: 16879600
     end: 16879601
     referenceBases: T
     alternateBases: null
     variantType: INS
+  beacondata:
+    variants:
+      - variant: &variant_multi_insertion_1
+          <<: *query_multi_insertion
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 116
+          sampleCount: 2504
+          alternateBases: TAA
+          variantType: INS
+          frequency: 0.023162939
+      - variant: &variant_multi_insertion_2
+          <<: *query_multi_insertion
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 314
+          sampleCount: 2504
+          alternateBases: TA
+          variantType: INS
+          frequency: 0.062699683
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 116
-        sampleCount: 2504
+        <<: *variant_multi_insertion_1
         exists: true
-        referenceBases: T
-        alternateBases: TAA
-        variantType: INS
-        frequency: 0.023162939
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 314
-        sampleCount: 2504
+        <<: *variant_multi_insertion_2
         exists: true
-        referenceBases: T
-        alternateBases: TA
-        variantType: INS
-        frequency: 0.062699683
+  vcf: testdata.vcf:rs371560503
 
 - name: test_deletion_altbase
   descr:
     Test a deletion by searching for ref and alt.
-  query:
+  query: &query_del_altbase
     <<: *default_query
     start: 16497140
     end: 16497143
     referenceBases: CTT
     alternateBases: C
-    # FIXME: Following missing from Python code?
-    # variantType: DEL
+  beacondata:
+    variants:
+      - variant: &variant_del_altbase
+          <<: *query_del_altbase
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 4
+          sampleCount: 2504
+          variantType: DEL
+          frequency: 0.000798722
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 4
-        sampleCount: 2504
+        <<: *variant_del_altbase
         exists: true
-        referenceBases: CTT
-        alternateBases: C
-        variantType: DEL
-        frequency: 0.000798722
+  vcf: testdata.vcf:rs574946654
 
 - name: test_deletion
   descr:
     Test variantTypes DEL.
-  query:
+  query: &query_deletion
     <<: *default_query
     start: 16517679
     end: 16517684
     referenceBases: GACAA
     alternateBases: null
     variantType: DEL
+  beacondata:
+    variants:
+      - variant: &variant_deletion
+          <<: *query_deletion
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 3
+          sampleCount: 2504
+          alternateBases: G
+          frequency: 0.000599042
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 3
-        sampleCount: 2504
+        <<: *variant_deletion
         exists: true
-        referenceBases: GACAA
-        alternateBases: G
-        variantType: DEL
-        frequency: 0.000599042
+  vcf: testdata.vcf:rs527791780
 
 - name: test_deletion_2
   descr:
     Test variantTypes DEL with startMin/startMax.
-  query:
+  query: &query_deletion_2
     <<: *default_query
     start: null
     end: null
@@ -268,92 +307,109 @@
     referenceBases: ATACATAGTC
     alternateBases: null
     variantType: DEL
+  beacondata:
+    variants:
+      - variant: &variant_deletion_2
+          <<: *query_deletion_2
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 2932
+          sampleCount: 2504
+          alternateBases: A
+          frequency: 0.585463
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 2932
-        sampleCount: 2504
+        <<: *variant_deletion_2
         exists: true
-        referenceBases: ATACATAGTC
-        alternateBases: A
-        variantType: DEL
-        frequency: 0.585463
+  vcf: testdata.vcf:rs5844283
 
 - name: test_snp_mnp
   descr:
     Test representation of TG->AG and multiple variations from one vcf line.
-  query:
+  query: &query_snp_mnp
     <<: *default_query
     start: 16577043
     end: 16577045
     referenceBases: TG
     alternateBases: null
     variantType: SNP
+  beacondata:
+    variants:
+      - variant: &variant_snp_mnp
+          <<: *query_snp_mnp
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 17
+          sampleCount: 2504
+          alternateBases: AG
+          frequency: 0.003394569
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 17
-        sampleCount: 2504
+        <<: *variant_snp_mnp
         exists: true
-        referenceBases: TG
-        alternateBases: AG
-        variantType: SNP
-        frequency: 0.003394569
+  vcf: testdata.vcf:rs374006257
 
 - name: test_multi
   descr:
     Test alternateBases=N and multiple variations from one vcf line (indel).
-  query:
+  query: &query_multi
     <<: *default_query
     start: 19617926
     end: null
     referenceBases: N
     alternateBases: N
+  beacondata:
+    variants:
+      - variant: &variant_multi_1
+          <<: *query_multi
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 17
+          sampleCount: 2504
+          referenceBases: GTCT
+          alternateBases: GTCTTCTTCT
+          variantType: INS
+          frequency: 0.00339457
+      - variant: &variant_multi_2
+          <<: *query_multi
+          #variants: &variant_multi_2
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 118
+          sampleCount: 2504
+          exists: true
+          referenceBases: GTCT
+          alternateBases: GTCTTCT
+          variantType: INS
+          frequency: 0.0235623
+      - variant: &variant_multi_3
+          <<: *query_multi
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 182
+          sampleCount: 2504
+          referenceBases: GTCT
+          alternateBases: G
+          variantType: DEL
+          frequency: 0.036341853
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 17
-        sampleCount: 2504
+        <<: *variant_multi_1
         exists: true
-        referenceBases: GTCT
-        alternateBases: GTCTTCTTCT
-        variantType: INS
-        frequency: 0.00339457
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 118
-        sampleCount: 2504
+        <<: *variant_multi_2
         exists: true
-        referenceBases: GTCT
-        alternateBases: GTCTTCT
-        variantType: INS
-        frequency: 0.0235623
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 182
-        sampleCount: 2504
+        <<: *variant_multi_3
         exists: true
-        referenceBases: GTCT
-        alternateBases: G
-        variantType: DEL
-        frequency: 0.036341853
+  vcf: testdata.vcf:rs553611103;rs553611103;rs148427666
