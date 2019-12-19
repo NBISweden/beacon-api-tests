@@ -5,6 +5,7 @@ import logging
 import coloredlogs
 
 import utils.errors as err
+import utils.export as export
 import utils.jsonschemas
 import utils.run_test
 import utils.setup
@@ -60,6 +61,9 @@ if __name__ == '__main__':
                         help="Check if a test file is correctly formatted."
                         "Input: pathname for test configuration file in YAML format."
                         "This option may occur several times")
+    parser.add_argument('--extract_csv_data', action='append',
+                        help="Extract the beacon data for a test."
+                        "Input: pathname for test configuration file in YAML format.")
     # currently not used:
     parser.add_argument('--version', nargs='?', default='v1.0.1',
                         choices=['v1.0.1', 'v1.1.0', 'v101', 'v110'],
@@ -67,11 +71,10 @@ if __name__ == '__main__':
 
     c_args = parser.parse_args()
     if c_args.validate_tests:
-        errs = utils.jsonschemas.validate_test(c_args.validate_tests)
-        for err in errs:
-            print(err.path)
-            print(err.message)
-        print(f'Totally {len(errs)} errors')
+        utils.jsonschemas.run_testvalidaton(c_args.validate_tests)
+        exit()
+    if c_args.extract_csv_data:
+        print(export.export_csv_testdata(c_args.extract_csv_data))
         exit()
 
     logging.info('Running api tests...')
