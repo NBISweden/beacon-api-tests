@@ -9,12 +9,13 @@
     referenceName: "22"
     referenceBases: GG
     alternateBases: N
-    assemblyId: GRCh38
     start: 0
     end: 2
+  query_metadata: &default_metadata
     includeDatasetResponses: HIT
     datasetIds:
       - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
 
 - name: test_info
   descr:
@@ -31,22 +32,28 @@
     - property: datasets
       assert: contains
       data:
-        <<: *info
+        id: GRCh38:beacon_test:2030-01-01
+        variantCount: 17
+        callCount: 12
+        sampleCount: 2504
   vcf: testdata.vcf:*
 
 - name: test_search_1
   descr:
     Test a standard query with alternateBases, start and end.
-  query: &query_search
+  target: &target_1 # ta bort default querien?
     <<: *default_query
     start: 16050074
     end: 16050075
     referenceBases: A
     alternateBases: G
+  query: # 
+    <<: *default_metadata
+    <<: *target_1
   beacondata:
     variants:
       - variant: &variant_search
-          <<: *query_search
+          <<: *target_1
           datasetId: GRCh38:beacon_test:2030-01-01
           callCount: 5008
           variantCount: 1
@@ -58,23 +65,25 @@
       assert: contains
       data:
         <<: *variant_search
-        datasetId: GRCh38:beacon_test:2030-01-01
   vcf: testdata.vcf:rs587697622
 
 - name: test_snp
   descr:
     Test variantType SNP.
-  query: &query_snp
+  target: &target_snp
     <<: *default_query
     start: 17302971
     end: 17302972
     variantType: SNP
     referenceBases: C
     alternateBases: null
+  query:
+    <<: *target_snp
+    <<: *default_metadata
   beacondata:
     variants:
       - variant: &variant_snp
-          <<: *query_snp
+          <<: *target_snp
           datasetId: GRCh38:beacon_test:2030-01-01
           callCount: 5008
           variantCount: 2931
@@ -92,20 +101,21 @@
 - name: test_bad_end
   descr:
     Test querying with a bad end position.
-  query: &query_bad_end
+  target: &target_bad_end
     <<: *default_query
     start: 17300407
     end: 17300409
     referenceBases: A
     alternateBases: G
+  query: &query_bad_end
+    <<: *target_bad_end
+    <<: *default_metadata
   beacondata:
     variants:
       - variant:
-          <<: *query_bad_end
+          <<: *target_bad_end
           datasetId: GRCh38:beacon_test:2030-01-01
           end: 17300408
-          referenceBases: A
-          alternateBases: G
   results:
     - property: exists
       assert: is_false

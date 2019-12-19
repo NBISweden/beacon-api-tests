@@ -1,0 +1,141 @@
+# alt 2
+# No reusing or references used.
+# Pros and cons:
+#  - very explicit
+---
+# 38 lines
+- name: test_search_1
+  descr:
+    Test a standard query with alternateBases, start and end.
+  query:
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
+    referenceName: "22"
+    start: 16050074
+    end: 16050075
+    referenceBases: A
+    alternateBases: G
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        callCount: 5008
+        variantCount: 1
+        frequency: 0.000199681
+        sampleCount: 2504
+        variantType: SNP
+  beacondata:
+    variants:
+      - variant:
+          referenceName: "22"
+          start: 16050074
+          end: 16050075
+          referenceBases: A
+          alternateBases: G
+          datasetId: GRCh38:beacon_test:2030-01-01
+          callCount: 5008
+          variantCount: 1
+          frequency: 0.000199681
+          sampleCount: 2504
+          variantType: SNP
+  vcf: testdata.vcf:rs587697622
+
+
+# 23 lines
+- name: test_bad_end
+  descr:
+    Test querying with a bad end position.
+  query:
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
+    referenceName: "22"
+    start: 17300407
+    end: 17300409
+    referenceBases: A
+    alternateBases: G
+  results:
+    - property: exists
+      assert: is_false
+  beacondata:
+    variants:
+      - variant:
+          referenceName: "22"
+          start: 17300407
+          end: 17300408
+          referenceBases: A
+          alternateBases: G
+          datasetId: GRCh38:beacon_test:2030-01-01
+  vcf: testdata.vcf:rs5748665
+
+# 45 lines
+- name: test_snp
+  descr:
+    Test variantType SNP.
+  query:
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
+    referenceName: "22"
+    start: 17302971
+    end: 17302972
+    variantType: SNP
+    referenceBases: C
+    alternateBases: null
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        referenceName: "22"
+        start: 17302971
+        end: 17302972
+        variantType: SNP
+        referenceBases: C
+        callCount: 5008
+        variantCount: 2931
+        sampleCount: 2504
+        alternateBases: A
+        frequency: 0.585264
+        exists: true
+  beacondata:
+    variants:
+      - variant:
+          datasetId: GRCh38:beacon_test:2030-01-01
+          referenceName: "22"
+          alternateBases: A
+          start: 17302971
+          end: 17302972
+          variantType: SNP
+          referenceBases: C
+          callCount: 5008
+          variantCount: 2931
+          sampleCount: 2504
+          frequency: 0.585264
+  vcf: testdata.vcf:rs5994030
+
+- name: test_info
+  descr:
+    Test the beacon's info (/) endpoint.
+  beacondata:
+    datasets:
+      - dataset:
+          datasetId: GRCh38:beacon_test:2030-01-01
+          assemblyId: GRCh38
+          variantCount: 17
+          callCount: 12
+          sampleCount: 2504
+  results:
+    - property: datasets
+      assert: contains
+      data:
+        id: GRCh38:beacon_test:2030-01-01
+        variantCount: 17
+        callCount: 12
+        sampleCount: 2504
+  vcf: testdata.vcf:*

@@ -4,49 +4,54 @@
 - name: default query
   skip: true
   descr: defining the default query
+  query_metadata: &default_metadata
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
   query: &default_query
     start: 16577043
-    end: 16577043
     referenceBases: TG
     variantType: SNP
-    assemblyId: GRCh38
     referenceName: "22"
-    includeDatasetResponses: HIT
 
 - name: test_datasets_info
   descr:
     Test that both datasets are shown in the info endpoint.
+  target: &target_metadata
+    assemblyId: GRCh38
+    variantCount: 17
+    callCount: 12
+    sampleCount: 2504
   beacondata:
     datasets: &metadata
       - dataset: &dataset1
+          <<: *target_metadata
           datasetId: GRCh38:beacon_test:2030-01-01
-          assemblyId: GRCh38
-          variantCount: 17
-          callCount: 12
-          sampleCount: 2504
       - dataset: &dataset2
+          <<: *target_metadata
           datasetId: GRCh38:beacon_test2:2030-01-01
-          assemblyId: GRCh38
-          variantCount: 17
-          callCount: 12
-          sampleCount: 2504
   results:
     - property: datasets
       assert: length_eq
-      length: 2
+      count: 2
     - property: datasets
       assert: contains
       data:
-        <<: *dataset1
+        <<: *target_metadata
+        id: GRCh38:beacon_test:2030-01-01
     - property: datasets
       assert: contains
       data:
-        <<: *dataset2
+        <<: *target_metadata
+        id: GRCh38:beacon_test2:2030-01-01
 
 - name: test_two_datasets
   descr:
     Test that both datasets respond.
   query:
+    includeDatasetResponses: HIT
+    assemblyId: GRCh38
     <<: *default_query
   beacondata:
     <<: *metadata
@@ -88,7 +93,8 @@
   descr:
     Test that excluding a dataset works.
   query: &second_query
-    <<: *default_query
+    <<: *default_metadata
+    referenceName: "22"
     start: 16577043
     end: 16577045
     referenceBases: TG

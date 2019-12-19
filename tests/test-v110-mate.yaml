@@ -2,25 +2,36 @@
 # Testing breakends (aka BND, mates).
 # Check that they work and that we get the expected output.
 ---
+- name: default query
+  skip: true
+  descr: defining the default query
+  query_metadata: &default_metadata
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
+
 - name: test_search_1
   descr:
     Test a mate query with referenceBases=N. This should give two
     answers, one for each direction.
-  query: &query_mate
+  target: &target_mate
     start: 321680
     end: 123459
     referenceName: "2"
     mateName: "13"
-    referenceBases: N
+    referenceBases: G
     variantType: BND
-    assemblyId: GRCh38
-    includeDatasetResponses: HIT
+  query: &query_mate
+    <<: *default_metadata
+    <<: *target_mate
+    referenceBases: N
   beacondata: &matedata
     # TODO should the data be stored once or twice (once for each direction)?
     variants:
-      - variant: &variant_mate
-          datasetId: GRCh38:beacon_test:2030-01-01
+      - variant:
           <<: *query_mate
+          datasetId: GRCh38:beacon_test:2030-01-01
           referenceBases: G
           alternateBases: G
   results:
@@ -30,12 +41,14 @@
     - property: datasetAlleleResponses
       assert: contains
       data:
-        <<: *variant_mate
+        <<: *target_mate
         exists: true
+
     - property: datasetAlleleResponses
       assert: contains
+      # the same mate, but reversed
       data:
-        <<: *variant_mate
+        <<: *target_mate
         referenceName: "13"
         mateName: "2"
         exists: true

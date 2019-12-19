@@ -1,0 +1,137 @@
+# alt 1
+# Reusing and referencing as much as possible.
+# The first item (default query) describes the metadata of each query, and is
+# used by all other items/quries.
+# Pros:
+# - It is easy/ier to see what is changed in each position. For example, in the
+#   test test_bad_end, only the end differs between the real data and the query.
+# - Tests often get shorter
+# Cons:
+# - otherwise harder to follow
+# - because of structural differences, sharing data between the objects isn't
+#   always very straight-forward.
+---
+- name: default query
+  skip: true
+  descr: defining the default query
+  query_metadata: &default_metadata
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
+
+# 30 lines (excluding comments)
+- name: test_search_1
+  descr:
+    Test a standard query with alternateBases, start and end.
+  # This is the targeted variant, which is used in the query and in the internal beacon data
+  target: &target_1
+    referenceName: "22"
+    start: 16050074
+    end: 16050075
+    referenceBases: A
+    alternateBases: G
+  # The answer (the counts for the target), which is used in the internal beacon data and in the response
+  counts: &counts_1
+    # datasetId not in a list ( as in default_metadata)
+    datasetId: GRCh38:beacon_test:2030-01-01
+    callCount: 5008
+    variantCount: 1
+    frequency: 0.000199681
+    sampleCount: 2504
+    variantType: SNP
+  query:  # The query is the metadata combined with the target
+    <<: *default_metadata
+    <<: *target_1
+  beacondata:
+    variants:
+      # The internal data (in the database) consists of the target and the answer (counts).
+      - variant:
+          <<: *counts_1
+          <<: *target_1
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        # The response contains the counts.
+        <<: *counts_1
+  # A reference to an identifier in a named vcf file
+  vcf: testdata.vcf:rs587697622
+
+# 22 lines
+- name: test_bad_end
+  descr:
+    Test querying with a bad end position.
+  target: &target_bad_end
+    referenceName: "22"
+    start: 17300407
+    end: 17300409
+    referenceBases: A
+    alternateBases: G
+  query:
+    <<: *target_bad_end
+    <<: *default_metadata
+  beacondata:
+    variants:
+      - variant:
+          <<: *target_bad_end
+          # no counts section, so datasetId must be stated here
+          datasetId: GRCh38:beacon_test:2030-01-01
+          end: 17300408
+  results:
+    - property: exists
+      assert: is_false
+  vcf: testdata.vcf:rs5748665
+
+# 30 lines
+- name: test_snp
+  descr:
+    Test variantType SNP.
+  target: &target_snp
+    referenceName: "22"
+    start: 17302971
+    end: 17302972
+    variantType: SNP
+    referenceBases: C
+    alternateBases: null
+  query:
+    <<: *target_snp
+    <<: *default_metadata
+  beacondata:
+    variants:
+      - variant: &variant_snp
+          <<: *target_snp
+          datasetId: GRCh38:beacon_test:2030-01-01
+          alternateBases: A
+          callCount: 5008
+          variantCount: 2931
+          sampleCount: 2504
+          frequency: 0.585264
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        <<: *variant_snp
+        exists: true
+  vcf: testdata.vcf:rs5994030
+
+- name: test_info
+  descr:
+    Test the beacon's info (/) endpoint.
+  counts: &counts_info
+    assemblyId: GRCh38
+    variantCount: 17
+    callCount: 12
+    sampleCount: 2504
+  beacondata:
+    datasets:
+      - dataset: &data
+          datasetId: GRCh38:beacon_test:2030-01-01
+          <<: *counts_info
+  results:
+    - property: datasets
+      assert: contains
+      data:
+        id: GRCh38:beacon_test:2030-01-01
+        <<: *counts_info
+  vcf: testdata.vcf:*
