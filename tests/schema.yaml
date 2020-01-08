@@ -33,7 +33,7 @@ items:
     vcf:
       title: A reference to (a variant in) a vcf file
       type: string
-    additionalProperties: false  # doesn't work
+  additionalProperties: false
 
 definitions:
   datafields: &datafields
@@ -60,6 +60,10 @@ definitions:
       type:
         - string
         - "null"
+    id:  # datasetId in response to info call
+      type:
+        - string
+        - "null"
     start:
       type:
         - integer
@@ -77,6 +81,22 @@ definitions:
       type:
         - string
         - "null"
+    sampleCount:
+      type:
+        - integer
+        - "null"
+    variantCount:
+      type:
+        - integer
+        - "null"
+    callCount:
+      type:
+        - integer
+        - "null"
+    frequency:
+      type:
+        - number
+        - "null"
 
   query:
     title: "Models a query to a Beacon"
@@ -84,6 +104,11 @@ definitions:
       <<: *datafields
       includeDatasetResponses:
         type: string
+      datasetIds:
+        type: array
+        items:
+          type: string
+
 
   results:
     # This section defines how an expected response can be expressed,
@@ -118,7 +143,7 @@ definitions:
               type: boolean
             datasetId:
               type: string
-            additionalProperties: false  # does not work
+          additionalProperties: false
 
   beacondata:
     # This section describes the data that should be in the beacon's data base
