@@ -26,6 +26,12 @@ items:
       default: false
     query:
       $ref: "#/definitions/query"
+    query_metadata:
+      $ref: "#/definitions/query_metadata"
+    target:
+      $ref: "#/definitions/datafields"
+    counts:
+      $ref: "#/definitions/datafields"
     results:
       $ref: '#/definitions/results'
     beacondata:
@@ -103,6 +109,19 @@ definitions:
         type: array
         items:
           type: string
+
+  query_metadata:
+    title: "Models the query metadata"
+    properties:
+      includeDatasetResponses:
+        type: string
+      datasetIds:
+        type: array
+        items:
+          type: string
+      assemblyId:
+        type: string
+
 
   results:
     # This section defines how an expected response can be expressed,
