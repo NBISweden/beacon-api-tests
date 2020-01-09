@@ -20,3 +20,5 @@ SCHEMAS = ''
 
 #  Floats are rounded in comparisions, set the precision (number of digits) here
 PRECISION = 6
+
+TEST_SPEC = 'tests/schema.yaml'

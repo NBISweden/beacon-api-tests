@@ -8,10 +8,12 @@ import json
 import logging
 import os.path
 
+import config.config
 import jsonschema
 import yaml
 
 import utils.errors as errors
+
 
 def validate(inp, inp_type, settings, path=''):
     """
@@ -58,8 +60,9 @@ def validate(inp, inp_type, settings, path=''):
     return errs
 
 
-def load_and_validate_test(filepath, schema='tests/schema.yaml'):
+def load_and_validate_test(filepath, schema=''):
     """Validate that a yaml file with tests is ok, return the test as json."""
+    schema = schema or config.config.TEST_SPEC
     if not os.path.isfile(filepath):
         logging.error(f'No such file {filepath}')
         raise errors.TestError(f'No such file {filepath}')
@@ -77,8 +80,9 @@ def load_and_validate_test(filepath, schema='tests/schema.yaml'):
     return json_test
 
 
-def validate_test(filepath, schema='tests/schema.yaml'):
+def validate_test(filepath, schema=''):
     """Validate a yaml file, return a list errors."""
+    schema = schema or config.config.TEST_SPEC
     with open(schema) as fileh:
         json_schema = yaml.load(fileh, Loader=yaml.SafeLoader)
     with open(filepath) as fileh:

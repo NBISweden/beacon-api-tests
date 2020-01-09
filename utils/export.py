@@ -1,11 +1,15 @@
+import logging
+import tempfile
+from pathlib import Path
 import yaml
+import config.config
 import utils.jsonschemas
 
 
 def export_csv_testdata(filepaths):
     """Export data in csv from a list of test file paths."""
     sep = get_separator('csv')
-    schema_path = 'tests/schema.yaml'  # TODO don't hardcode path
+    schema_path = config.config.TEST_SPEC
     schema = yaml.load(open(schema_path), Loader=yaml.SafeLoader)
     metadata_headers = schema['definitions']['beacondata']['properties']\
                              ['datasets']['items']['properties']['dataset']\
