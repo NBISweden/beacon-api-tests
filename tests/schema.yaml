@@ -39,6 +39,8 @@ items:
     vcf:
       title: A reference to (a variant in) a vcf file
       type: string
+      pattern: ".+:.+"
+      example: "filename:id1,id2"
   additionalProperties: false
 
 definitions:

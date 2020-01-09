@@ -69,7 +69,6 @@ def assert_test(check, response):
         assert_not_in(check['data'], response, check['property'])
 
 
-
 def prepare_query(query):
     """Remove all null values from the query."""
     empties = [key for (key, val) in query.items() if val is None]

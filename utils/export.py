@@ -27,6 +27,17 @@ def export_csv_testdata(filepaths):
     return output
 
 
+def export_vcf_testdata(filepaths):
+    """Extract all vcf lines that a test refers to."""
+    refs = get_vcf_references(filepaths)
+    data = []
+    for filep, ids in refs.items():
+        metadata, info = get_vcf_data(filep, ids)
+        if info:
+            data.append((filep, metadata, info))
+    return data
+
+
 def extract_data(testyaml, metadata_headers, variants_headers, sep):
     """Extract the data (for the beacon's database) from a test file."""
     metadata, variants = [], []
@@ -68,3 +79,60 @@ def get_separator(out_format):
     if out_format == 'csv':
         return ','
     return '\t'
+
+
+def get_vcf_data(filep, ids):
+    """Extract relevant lines from a vcf."""
+    path = Path(filep)
+    metadata, info = [], []
+    matched_id = set()
+    if not path.exists():
+        path = 'testdata' / Path(filep)
+        if not path.exists():
+            logging.warning(f'vcf file {path} not found')
+            return metadata, info
+    for line in open(path):
+        if line.startswith('#'):
+            metadata.append(line)
+            continue
+        matched_id.update(vcf_match_id(line, ids))
+        if '*' in ids or matched_id:
+            info.append(line)
+    if len(matched_id) < len(ids):
+        logging.warning(f'No vcf matches for id {", ".join(ids.difference(matched_id))}')
+    return metadata, info
+
+
+def get_vcf_references(filepaths):
+    """Get all references to vcf data. Return a dict with filepath and ids."""
+    refs = {}
+    for testfile in filepaths:
+        testyaml = utils.jsonschemas.load_and_validate_test(testfile)
+        for test in testyaml:
+            if 'vcf' in test:
+                filep, ref = test['vcf'].split(':', 1)
+                if filep not in refs:
+                    refs[filep] = set()
+                refs[filep].update(ref.split(','))
+    return refs
+
+
+def print_vcf_files(data, print_metadata):
+    """Print data to a vcf file."""
+    for name, metadata, info in data:
+        fh = tempfile.NamedTemporaryFile(dir='.', prefix='testdata_', suffix='.vcf', delete=False)
+        logging.info(f'>> Writing from {name} to {Path(fh.name).name}.')
+        for line in metadata:
+            if not line.startswith('##') or print_metadata:
+                fh.file.write(line.encode())
+        fh.file.write(''.join(info).encode())
+        fh.close()
+
+
+def vcf_match_id(line, ids):
+    """Check whether the ids on a vcf line matches any of the given ones."""
+    try:
+        lineids = line.split('\t')[2].split(',')
+    except IndexError:
+        logging.warning(f'Could not find id in vcf line {line}')
+    return ids.intersection(lineids)
