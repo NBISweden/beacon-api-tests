@@ -58,9 +58,9 @@ def assert_test(check, response):
         assert not response[check['property']], f"{check['property']} should be false"
 
     if check["assert"] == "length_eq":
-        assert len(response[check['property']]) == check['count'], \
+        assert len(response[check['property']]) == check['length'], \
             f"Bad length of field {check['property']}" \
-            f"should be {check['count']}, but is {len(response[check['property']])}"
+            f"should be {check['length']}, but is {len(response[check['property']])}"
 
     if check["assert"] == "contains":
         assert_partly_in(check['data'], response, check['property'])
