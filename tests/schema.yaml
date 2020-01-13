@@ -35,7 +35,8 @@ items:
     results:
       $ref: '#/definitions/results'
     beacondata:
-      $ref: '#/definitions/beacondata'
+      title: A file path with variants
+      type: string
     vcf:
       title: A reference to (a variant in) a vcf file
       type: string
@@ -159,48 +160,3 @@ definitions:
             datasetId:
               type: string
           additionalProperties: false
-
-  beacondata:
-    # This section describes the data that should be in the beacon's data base
-    type: object
-    properties:
-      datasets:
-        # The datasets is a list of object. The extra layer (inner objects) is
-        # there to allow referencing specific datasets in the response.
-        type: array
-        items:
-          type: object
-          title: The metadata assumed to be in the beacons
-          properties:
-            dataset:
-              type: object
-              properties:
-                datasetId:
-                  type: string
-                assemblyId:
-                  type: string
-                variantCount:
-                  type: integer
-                callCount:
-                  type: integer
-                sampleCount:
-                  type: integer
-      variants:
-        # The variants is a list of object. The extra layer (inner objects) is
-        # there to allow referencing specific variants in the response.
-        type: array
-        items:
-          type: object
-          title: The data assumed to be in the beacons
-          properties:
-            variant:
-              datasetId:
-                type: string
-              type: object
-              <<: *datafields
-              variantCount:
-                type: integer
-              callCount:
-                type: integer
-              sampleCount:
-                type: integer

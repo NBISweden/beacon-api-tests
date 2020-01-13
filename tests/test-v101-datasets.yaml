@@ -4,11 +4,6 @@
 - name: default query
   skip: true
   descr: defining the default query
-  query_metadata: &default_metadata
-    includeDatasetResponses: HIT
-    datasetIds:
-      - GRCh38:beacon_test:2030-01-01
-    assemblyId: GRCh38
   query: &default_query
     start: 16577043
     referenceBases: TG
@@ -23,14 +18,7 @@
     variantCount: 17
     callCount: 12
     sampleCount: 2504
-  beacondata:
-    datasets: &metadata
-      - dataset: &dataset1
-          <<: *target_metadata
-          datasetId: GRCh38:beacon_test:2030-01-01
-      - dataset: &dataset2
-          <<: *target_metadata
-          datasetId: GRCh38:beacon_test2:2030-01-01
+  beacondata: testdata.csv
   results:
     - property: datasets
       assert: length_eq
@@ -48,32 +36,12 @@
 
 - name: test_two_datasets
   descr:
-    Test that both datasets respond.
+    Test that both datasets respond to a query.
   query:
     includeDatasetResponses: HIT
     assemblyId: GRCh38
     <<: *default_query
-  beacondata:
-    <<: *metadata
-    variants:
-      - variant: &variant1_search
-          <<: *default_query
-          datasetId: GRCh38:beacon_test:2030-01-01
-          callCount: 5008
-          variantCount: 17
-          sampleCount: 2504
-          exists: true
-          alternateBases: AG
-          frequency: 0.003394569
-      - variant: &variant2_search
-          <<: *default_query
-          datasetId: GRCh38:beacon_test2:2030-01-01
-          callCount: 5008
-          variantCount: 17
-          sampleCount: 2504
-          exists: true
-          alternateBases: AG
-          frequency: 0.003394569
+  beacondata: testdata.csv
   results:
     - property: datasetAlleleResponses
       assert: length_gt
@@ -81,32 +49,32 @@
     - property: datasetAlleleResponses
       assert: contains
       data:
-        <<: *variant1_search
+        <<: *default_query
+        datasetId: GRCh38:beacon_test:2030-01-01
+        exists: true
+        alternateBases: AG
         exists: true
     - property: datasetAlleleResponses
       assert: contains
       data:
-        <<: *variant2_search
+        <<: *default_query
+        datasetId: GRCh38:beacon_test2:2030-01-01
+        exists: true
+        alternateBases: AG
         exists: true
 
 - name: test_second_datasets
   descr:
     Test that excluding a dataset works.
-  query: &second_query
-    <<: *default_metadata
+  query:
+    includeDatasetResponses: HIT
+    assemblyId: GRCh38
     referenceName: "22"
     start: 16577043
     end: 16577045
     referenceBases: TG
     variantType: SNP
-    datasetIds:
-      - GRCh38:beacon_test2:2030-01-01
-  beacondata:
-    <<: *metadata
-    variants:
-      - variant: &variant_second
-          <<: *second_query
-          datasetId: GRCh38:beacon_test:2030-01-01
+  beacondata: testdata.csv
   results:
     - property: datasetAlleleResponses
       assert: length_eq

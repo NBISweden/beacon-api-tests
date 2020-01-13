@@ -20,20 +20,12 @@
     end: 123459
     referenceName: "2"
     mateName: "13"
-    referenceBases: G
     variantType: BND
   query: &query_mate
     <<: *default_metadata
     <<: *target_mate
     referenceBases: N
-  beacondata: &matedata
-    # TODO should the data be stored once or twice (once for each direction)?
-    variants:
-      - variant:
-          <<: *query_mate
-          datasetId: GRCh38:beacon_test:2030-01-01
-          referenceBases: G
-          alternateBases: G
+  beacondata: testdata_mate.csv
   results:
     - property: datasetAlleleResponses
       assert: length_eq
@@ -69,8 +61,7 @@
     variantType: BND
     assemblyId: GRCh38
     includeDatasetResponses: HIT
-  beacondata:
-    <<: *matedata
+  beacondata: testdata_mate.csv
   results:
     - property: datasetAlleleResponses
       assert: length_eq
