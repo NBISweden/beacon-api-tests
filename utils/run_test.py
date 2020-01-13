@@ -62,12 +62,21 @@ def assert_test(check, response):
             f"Bad length of field {check['property']}" \
             f"should be {check['length']}, but is {len(response[check['property']])}"
 
+    if check["assert"] == "length_gt":
+        assert len(response[check['property']]) > check['length'], \
+            f"Bad length of field {check['property']}" \
+            f"should be greater than {check['length']}, but is {len(response[check['property']])}"
+
     if check["assert"] == "contains":
         assert_partly_in(check['data'], response, check['property'])
 
     if check["assert"] == "not_contains":
         assert_not_in(check['data'], response, check['property'])
 
+    if check["assert"] == "is_false":
+        assert not response[check['property']],\
+            f"Bad value of field {check['property']}" \
+            f"should be 'false', but is {response[check['property']]}"
 
 def prepare_query(query):
     """Remove all null values from the query."""

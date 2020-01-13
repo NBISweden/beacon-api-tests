@@ -160,3 +160,30 @@ definitions:
             datasetId:
               type: string
           additionalProperties: false
+      oneOf:
+        - properties:
+             assert:
+               enum:
+                 - contains
+                 - not_contains
+          required:
+            - data
+        - properties:
+             assert:
+               enum:
+                 - status_code
+          required:
+            - status_code
+        - properties:
+             assert:
+               enum:
+                 - length_eq
+                 - length_gt
+          required:
+            - length
+        - properties:
+             assert:
+               enum:
+                 - is_false
+          required:
+            - property
