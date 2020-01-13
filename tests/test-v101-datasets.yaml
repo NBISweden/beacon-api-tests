@@ -52,7 +52,7 @@
   query:
     includeDatasetResponses: HIT
     datasetIds:
-      - GRCh38:beacon_test:2030-01-01
+      - GRCh38:beacon_test2:2030-01-01
     assemblyId: GRCh38
     referenceName: "22"
     start: 16577043
