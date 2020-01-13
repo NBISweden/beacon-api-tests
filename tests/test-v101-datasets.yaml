@@ -1,23 +1,9 @@
 # vim: tabstop=4 shiftwidth=2 expandtab
 # Tests for more than one dataset.
 ---
-- name: default query
-  skip: true
-  descr: defining the default query
-  query: &default_query
-    start: 16577043
-    referenceBases: TG
-    variantType: SNP
-    referenceName: "22"
-
 - name: test_datasets_info
   descr:
     Test that both datasets are shown in the info endpoint.
-  target: &target_metadata
-    assemblyId: GRCh38
-    variantCount: 17
-    callCount: 12
-    sampleCount: 2504
   beacondata: testdata.csv
   results:
     - property: datasets
@@ -26,12 +12,12 @@
     - property: datasets
       assert: contains
       data:
-        <<: *target_metadata
+        assemblyId: GRCh38
         id: GRCh38:beacon_test:2030-01-01
     - property: datasets
       assert: contains
       data:
-        <<: *target_metadata
+        assemblyId: GRCh38
         id: GRCh38:beacon_test2:2030-01-01
 
 - name: test_two_datasets
@@ -40,7 +26,10 @@
   query:
     includeDatasetResponses: HIT
     assemblyId: GRCh38
-    <<: *default_query
+    start: 16577043
+    referenceBases: TG
+    variantType: SNP
+    referenceName: "22"
   beacondata: testdata.csv
   results:
     - property: datasetAlleleResponses
@@ -49,18 +38,12 @@
     - property: datasetAlleleResponses
       assert: contains
       data:
-        <<: *default_query
         datasetId: GRCh38:beacon_test:2030-01-01
-        exists: true
-        alternateBases: AG
         exists: true
     - property: datasetAlleleResponses
       assert: contains
       data:
-        <<: *default_query
         datasetId: GRCh38:beacon_test2:2030-01-01
-        exists: true
-        alternateBases: AG
         exists: true
 
 - name: test_second_datasets
@@ -68,6 +51,8 @@
     Test that excluding a dataset works.
   query:
     includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
     assemblyId: GRCh38
     referenceName: "22"
     start: 16577043

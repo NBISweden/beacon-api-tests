@@ -18,8 +18,7 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        variantType: SNP
-        exists: true
+        exist: true
   beacondata: testdata.csv
   vcf: testdata.vcf:rs587697622
 
@@ -55,18 +54,11 @@
     end: 17302972
     variantType: SNP
     referenceBases: C
-    alternateBases: null
   results:
     - property: datasetAlleleResponses
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        start: 17302971
-        end: 17302972
-        variantType: SNP
-        referenceBases: C
-        alternateBases: A
         exists: true
   beacondata: testdata.csv
   vcf: testdata.vcf:rs5994030

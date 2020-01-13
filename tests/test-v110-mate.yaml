@@ -2,50 +2,26 @@
 # Testing breakends (aka BND, mates).
 # Check that they work and that we get the expected output.
 ---
-- name: default query
-  skip: true
-  descr: defining the default query
-  query_metadata: &default_metadata
-    includeDatasetResponses: HIT
-    datasetIds:
-      - GRCh38:beacon_test:2030-01-01
-    assemblyId: GRCh38
-
 - name: test_search_1
   descr:
     Test a mate query with referenceBases=N. This should give two
     answers, one for each direction.
-  target: &target_mate
+  query:
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
     start: 321680
     end: 123459
     referenceName: "2"
     mateName: "13"
     variantType: BND
-  query: &query_mate
-    <<: *default_metadata
-    <<: *target_mate
     referenceBases: N
   beacondata: testdata_mate.csv
   results:
     - property: datasetAlleleResponses
       assert: length_eq
       length: 2
-    - property: datasetAlleleResponses
-      assert: contains
-      data:
-        <<: *target_mate
-        exists: true
-
-    - property: datasetAlleleResponses
-      assert: contains
-      # the same mate, but reversed
-      data:
-        <<: *target_mate
-        referenceName: "13"
-        mateName: "2"
-        exists: true
-        referenceBases: A
-        alternateBases: A
   vcf: testmatedata.vcf:bnd_w,bnd_X
 
 - name: test_search_2
@@ -66,13 +42,4 @@
     - property: datasetAlleleResponses
       assert: length_eq
       length: 1
-    - property: datasetAlleleResponses
-      assert: contains
-      data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "13"
-        exists: true
-        referenceBases: A
-        alternateBases: A
-        variantType: BND
   vcf: testmatedata.vcf:bnd_w,bnd_X
