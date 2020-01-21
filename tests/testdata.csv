@@ -1,0 +1,7 @@
+# referenceName,referenceBases,alternateBases,variantType,assemblyId,id,start,end,mateName,datasetId,type
+22,C,A,SNP,None,None,17302971,17302972,NoneGRCh38:beacon_test:2030-01-01,None
+22,A,G,None,None,None,17300407,17300408,None,GRCh38:beacon_test:2030-01-01,None
+22,A,G,SNP,None,None,16050074,16050075,None,GRCh38:beacon_test:2030-01-01,None
+22,TG,None,SNP,GRCh38,None,16577043,16577045,None,GRCh38:beacon_test:2030-01-01,None
+22,TG,AG,SNP,None,None,16577043,None,None,GRCh38:beacon_test:2030-01-01,None
+22,TG,AG,SNP,None,None,16577043,None,None,GRCh38:beacon_test2:2030-01-01,None

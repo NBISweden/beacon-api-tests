@@ -6,7 +6,7 @@ import utils.errors as err
 # Define what keys that should be used to sort lists of dictionaries
 SORT_BY = {
     'datasets': ['id'],
-    'datasetAlleleResponses': ['datasetId', 'frequency', 'referenceBases']
+    'datasetAlleleResponses': ['datasetId', 'referenceBases', 'variantType']
 }
 
 

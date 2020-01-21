@@ -7,36 +7,22 @@
     Test a mate query with referenceBases=N. This should give two
     answers, one for each direction.
   query:
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
     start: 321680
     end: 123459
-    referenceName: 2
-    mateName: 13
-    referenceBases: N
+    referenceName: "2"
+    mateName: "13"
     variantType: BND
-    assemblyId: GRCh38
-    includeDatasetResponses: HIT
+    referenceBases: N
+  beacondata: testdata_mate.csv
   results:
     - property: datasetAlleleResponses
       assert: length_eq
       length: 2
-    - property: datasetAlleleResponses
-      assert: contains
-      data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "2"
-        exists: true
-        referenceBases: G
-        alternateBases: G
-        variantType: BND
-    - property: datasetAlleleResponses
-      assert: contains
-      data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "13"
-        exists: true
-        referenceBases: A
-        alternateBases: A
-        variantType: BND
+  vcf: testmatedata.vcf:bnd_w,bnd_X
 
 - name: test_search_2
   descr:
@@ -45,22 +31,15 @@
   query:
     start: 123459
     end: 321680
-    referenceName: 13
-    mateName: 2
+    referenceName: "13"
+    mateName: "2"
     referenceBases: A
     variantType: BND
     assemblyId: GRCh38
     includeDatasetResponses: HIT
+  beacondata: testdata_mate.csv
   results:
     - property: datasetAlleleResponses
       assert: length_eq
       length: 1
-    - property: datasetAlleleResponses
-      assert: contains
-      data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "13"
-        exists: true
-        referenceBases: A
-        alternateBases: A
-        variantType: BND
+  vcf: testmatedata.vcf:bnd_w,bnd_X

@@ -1,0 +1,88 @@
+# vim: tabstop=4 shiftwidth=2 expandtab
+# Testing that the beacon does not allowed bad queries.
+---
+- name: default query
+  descr: defining the default query
+  skip: true
+  query: &default_query
+    referenceName: "22"
+    referenceBases: 'GG'
+    alternateBases: 'N'
+    assemblyId: 'GRCh38'
+    start: 0
+    end: 2
+    includeDatasetResponses: 'HIT'
+    datasetIds:
+      - 'GRCh38:beacon_test:2030-01-01'
+
+- name: test_norefname
+  descr:
+    Check that queries without referenceName is not allowed.
+  query:
+    <<: *default_query
+    referenceName: null
+  results:
+    - assert: status_code
+      ignore_schemas: true
+      status_code: 400
+
+- name: test_no_refbases
+  descr:
+    Check that queries without referenceBases is not allowed.
+  query:
+    <<: *default_query
+    referenceBases: null
+  results:
+    - assert: status_code
+      ignore_schemas: true
+      status_code: 400
+
+- name: test_no_assembly
+  descr:
+    Check that queries without assemblyId is not allowed.
+  query:
+    <<: *default_query
+    assemblyId: null
+  results:
+    - assert: status_code
+      ignore_schemas: true
+      status_code: 400
+
+- name: test_no_alternate
+  descr:
+    Check that either alternateBases or variantType is required.
+  query:
+    <<: *default_query
+    alternateBases: null
+    variantType: null
+  results:
+    - assert: status_code
+      ignore_schemas: true
+      status_code: 400
+
+- name: test_start_and_startMin
+  descr:
+    Check that you cannot use start and startMin+startMax.
+  query:
+    <<: *default_query
+    startMin: 17301520
+    startMax: 17301530
+    endMin: 17301536
+    endMax: 17301536
+    referenceBases: 'A'
+  results:
+    - assert: status_code
+      ignore_schemas: true
+      status_code: 400
+
+- name: test_no_start
+  descr:
+    Check that you cannot query without start.
+  query:
+    <<: *default_query
+    referenceBases: 'A'
+    start: null
+  results:
+    - assert: status_code
+      ignore_schemas: true
+      status_code: 400

@@ -1,26 +1,36 @@
 # vim: tabstop=4 shiftwidth=2 expandtab
 # Tests for more than one dataset.
-#
-# TODO:
-#   test_datasets_info():
-#   I don't quite know how to translate a call_beacon(path='/') query.
 ---
-- name: default query
-  skip: true
-  query: &default_query
-    start: 16577043
-    end: 16577043
-    referenceBases: TG
-    variantType: SNP
-    assemblyId: GRCh38
-    referenceName: "22"
-    includeDatasetResponses: HIT
+- name: test_datasets_info
+  descr:
+    Test that both datasets are shown in the info endpoint.
+  beacondata: testdata.csv
+  results:
+    - property: datasets
+      assert: length_eq
+      length: 2
+    - property: datasets
+      assert: contains
+      data:
+        assemblyId: GRCh38
+        id: GRCh38:beacon_test:2030-01-01
+    - property: datasets
+      assert: contains
+      data:
+        assemblyId: GRCh38
+        id: GRCh38:beacon_test2:2030-01-01
 
 - name: test_two_datasets
   descr:
-    Test that both datasets respond.
+    Test that both datasets respond to a query.
   query:
-    <<: *default_query
+    includeDatasetResponses: HIT
+    assemblyId: GRCh38
+    start: 16577043
+    referenceBases: TG
+    variantType: SNP
+    referenceName: "22"
+  beacondata: testdata.csv
   results:
     - property: datasetAlleleResponses
       assert: length_gt
@@ -29,46 +39,31 @@
       assert: contains
       data:
         datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
-        callCount: 5008
-        variantCount: 17
-        sampleCount: 2504
         exists: true
-        referenceBases: TG
-        alternateBases: AG
-        variantType: SNP
-        frequency: 0.003394569
     - property: datasetAlleleResponses
       assert: contains
       data:
-        datasetId: GRCh38:beacon_test:2030-01-01
-        referenceName: "22"
+        datasetId: GRCh38:beacon_test2:2030-01-01
         exists: true
-        referenceBases: TG
-        alternateBases: AG
-        variantType: SNP
-        start: 16577043
-        end: 16577045
-        frequency: 0.003394569
-        variantCount: 17
-        callCount: 5008
-        sampleCount: 2504
 
 - name: test_second_datasets
   descr:
     Test that excluding a dataset works.
   query:
-    <<: *default_query
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test2:2030-01-01
+    assemblyId: GRCh38
+    referenceName: "22"
     start: 16577043
     end: 16577045
     referenceBases: TG
     variantType: SNP
-    datasetIds:
-      - GRCh38:beacon_test2:2030-01-01
+  beacondata: testdata.csv
   results:
     - property: datasetAlleleResponses
       assert: length_eq
-      count: 1
+      length: 1
     - property: datasetAlleleResponses
       assert: not_contains
       data:

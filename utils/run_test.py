@@ -17,10 +17,12 @@ def run_test(test):
     if test.get('skip', False):
         return
     try:
+        status_code, ignore_schemas = prepare_call(test)
         if 'query' not in test:
-            resp = call_beacon(path='/')
+            resp = call_beacon(path='/', code=status_code, ignore_schemas=ignore_schemas)
         else:
-            resp = call_beacon(query=prepare_query(test['query']))
+            query = prepare_query(test['query'])
+            resp = call_beacon(query=query, code=status_code, ignore_schemas=ignore_schemas)
 
         for check in test['results']:
             assert_test(check, resp)
@@ -39,16 +41,31 @@ def run_test(test):
         settings.errors += 1
 
 
+def prepare_call(test):
+    """Check what http statuscode the test should result in, and whether query is valide."""
+    status_code, ignore_schemas = 200, False
+    for check in test['results']:
+        if check["assert"] == "status_code":
+            status_code = check.get('status_code', 200)
+            ignore_schemas = check.get('ignore_schemas', False)
+    return status_code, ignore_schemas
+
+
 def assert_test(check, response):
     """Test one property."""
-    assert check['property'] in response, f"{check['property']} not found in response"
+    # assert check['property'] in response, f"{check['property']} not found in response"
     if check["assert"] == "isfalse":
         assert not response[check['property']], f"{check['property']} should be false"
 
     if check["assert"] == "length_eq":
-        assert len(response[check['property']]) == check['count'], \
+        assert len(response[check['property']]) == check['length'], \
             f"Bad length of field {check['property']}" \
-            f"should be {check['count']}, but is {len(response[check['property']])}"
+            f"should be {check['length']}, but is {len(response[check['property']])}"
+
+    if check["assert"] == "length_gt":
+        assert len(response[check['property']]) > check['length'], \
+            f"Bad length of field {check['property']}" \
+            f"should be greater than {check['length']}, but is {len(response[check['property']])}"
 
     if check["assert"] == "contains":
         assert_partly_in(check['data'], response, check['property'])
@@ -56,6 +73,10 @@ def assert_test(check, response):
     if check["assert"] == "not_contains":
         assert_not_in(check['data'], response, check['property'])
 
+    if check["assert"] == "is_false":
+        assert not response[check['property']],\
+            f"Bad value of field {check['property']}" \
+            f"should be 'false', but is {response[check['property']]}"
 
 def prepare_query(query):
     """Remove all null values from the query."""
