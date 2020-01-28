@@ -61,9 +61,6 @@ if __name__ == '__main__':
                         help="Check if a test file is correctly formatted."
                         "Input: pathname for test configuration file in YAML format."
                         "This option may occur several times")
-    parser.add_argument('--extract_csv_data', action='append',
-                        help="Extract the beacon data for a test."
-                        "Input: pathname for test configuration file in YAML format.")
     parser.add_argument('--extract_vcf_data', action='append',
                         help="Extract the beacon data for a test in vcf format."
                         "Input: pathname for test configuration file in YAML format.")
@@ -76,10 +73,6 @@ if __name__ == '__main__':
     if c_args.validate_tests:
         utils.jsonschemas.run_testvalidaton(c_args.validate_tests)
         exit()
-    if c_args.extract_csv_data:
-        print(export.export_csv_testdata(c_args.extract_csv_data))
-        exit()
-
     if c_args.extract_vcf_data:
         data = export.export_vcf_testdata(c_args.extract_vcf_data)
         export.print_vcf_files(data, print_metadata=True)

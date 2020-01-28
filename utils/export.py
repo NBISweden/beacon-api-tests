@@ -11,18 +11,16 @@ def export_csv_testdata(filepaths):
     sep = get_separator('csv')
     schema_path = config.config.TEST_SPEC
     schema = yaml.load(open(schema_path), Loader=yaml.SafeLoader)
-    metadata_headers = schema['definitions']['beacondata']['properties']\
-                             ['datasets']['items']['properties']['dataset']\
-                             ['properties'].keys()
-    variants_headers = schema['definitions']['beacondata']['properties']\
-                             ['variants']['items']['properties']\
-                             ['variant'].keys()
+    #metadata_headers = schema['definitions']['query_metadata']['properties']\
+    #                         ['datasets']['items']['properties']['dataset']\
+    #                         ['properties'].keys()
+    variants_headers = schema['definitions']['datafields'].keys()
 
+    metadata = variants_headers
     metadata, variants = [], []
     for testfile in filepaths:
         testyaml = utils.jsonschemas.load_and_validate_test(testfile)
-        meta, variant = extract_data(testyaml, metadata_headers, variants_headers, sep)
-        metadata += meta
+        variant = extract_data(testyaml, variants_headers, sep)
         variants += variant
 
     meta_header = [f"# {sep.join(metadata_headers)}"]
@@ -42,14 +40,13 @@ def export_vcf_testdata(filepaths):
     return data
 
 
-def extract_data(testyaml, metadata_headers, variants_headers, sep):
+def extract_data(testyaml, variants_headers, sep):
     """Extract the data (for the beacon's database) from a test file."""
-    metadata, variants = [], []
+    variants = []
     for test in testyaml:
         if 'beacondata' in test:
-            metadata.extend(extract_metadata(test['beacondata'], metadata_headers, sep))
             variants.extend(extract_variants(test['beacondata'], variants_headers, sep))
-    return metadata, variants
+    return variants
 
 
 def extract_metadata(beacondata, headers, separator):
