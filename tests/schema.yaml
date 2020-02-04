@@ -17,33 +17,52 @@ items:
     # standard fields
     name:
       type: string
-      title: "The name of the test"
+      title: The name of the test.
+      value: standard
     descr:
       type: string
-      title: "A short description of the test"
+      title: A short description of the test.
+      value: standard
     skip:
       type: boolean
-      title: "Signals that a test should not be run"
+      title: Signals that a test should not be run.
       default: false
+      value: optional
     query:
       $ref: "#/definitions/query"
+      title: The query to put to the beacon.
+      value: standard
     results:
       $ref: '#/definitions/results'
+      value: standard
+      title: The expected result.
     beacondata:
-      title: A file path with variants
+      title: A path to a csv file, containing data that should be loaded to the Beacon.
       type: string
+      value: standard
+      example: >
+        # referenceName,referenceBases,alternateBases,variantType,assemblyId,start,end,mateName,datasetId\n
+        22,C,A,SNP,GRCh38,17302971,17302972,None,GRCh38:beacon_test:2030-01-01\n
+        22,A,G,None,GRCh38,17300407,17300408,None,GRCh38:beacon_test:2030-01-01
     vcf:
-      title: An optinal reference to (a variant in) a vcf file
+      title: An optinal reference to (a variant in) a vcf file.
       type: string
       pattern: ".+:.+"
       example: "filename:id1,id2"
+      value: optional
     # optional fields, for using references in tests descriptions
     query_metadata:
       $ref: "#/definitions/query_metadata"
+      title: The metadata part of the query.
+      value: advanced
     target:
       $ref: "#/definitions/datafields"
+      title: The parameters of the query.
+      value: advanced
     counts:
       $ref: "#/definitions/datafields"
+      title: The expected counts of the query.
+      value: advanced
   additionalProperties: false
 
 definitions:
