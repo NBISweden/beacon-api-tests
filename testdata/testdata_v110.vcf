@@ -1,8 +1,0 @@
-##fileformat=VCFv4.3
-##fileDate=20190905
-##INFO<ID=SVTYPE,Number=1,Type=String,Description="SVTYPE description here">
-##INFO<ID=MATED,Number=1,Type=String,Description="MATED description here">
-##INFO<ID=EVENT,Number=1,Type=String,Description="EVENT description here">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
-2	321681	bnd_W	G	G[13 : 123460[	6	PASS	SVTYPE=BND;MATEID=bnd_X;EVENT=RR0
-13	123460	bnd_X	A	]2 : 321681]A	6	PASS	SVTYPE=BND;MATEID=bnd_W;EVENT=RR0
