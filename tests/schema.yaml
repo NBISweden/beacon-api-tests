@@ -90,10 +90,6 @@ definitions:
       type:
         - string
         - "null"
-    id:  # datasetId in response to info call
-      type:
-        - string
-        - "null"
     start:
       type:
         - integer
@@ -166,46 +162,64 @@ definitions:
             - is_false
             - length_eq
             - length_gt
+            - length_lt
+        property:
+          type: string
+          title: name of a field to check
+        status_code:
+          type: number
+          title: the http status to expect
         data:
           type: object
-          properties:
-            <<: *datafields
-            exists:
-              type: boolean
-            datasetId:
-              type: string
-          additionalProperties: false
+          title: the data expected at the given field
+          oneOf:
+            - properties:
+                <<: *datafields
+                datasetId:
+                  type: string
+                exists:
+                  type: boolean
+              additionalProperties: false
+            - properties:
+                id:  # datasetId in response to info call (/)
+                  type:
+                    - string
+                    - "null"
+                assemblyId:
+                  type:
+                    - string
+                    - "null"
+              additionalProperties: false
+        length:
+          type: number
       allOf:
         - oneOf:
-          - required:
-              - ignore_schemas
-              - status_code
-          - required:
-              - property
-        - oneOf:
-          - properties:
-               assert:
-                 enum:
-                   - contains
-                   - not_contains
-            required:
-              - data
-          - properties:
-               assert:
-                 enum:
-                   - status_code
-            required:
-              - status_code
-          - properties:
-               assert:
-                 enum:
-                   - length_eq
-                   - length_gt
-            required:
-              - length
-          - properties:
-               assert:
-                 enum:
-                   - is_false
-            required:
-              - property
+            - properties:
+                assert:
+                  enum:
+                    - contains
+                    - not_contains
+              required:
+                - data
+                - property
+            - properties:
+                assert:
+                  enum:
+                    - status_code
+              required:
+                - status_code
+            - properties:
+                assert:
+                  enum:
+                    - length_eq
+                    - length_gt
+                    - length_lt
+              required:
+                - length
+                - property
+            - properties:
+                assert:
+                  enum:
+                    - is_false
+              required:
+                - property
