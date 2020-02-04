@@ -1,6 +1,7 @@
 """Module for running tests, specified in yml."""
 
 import logging
+import operator
 
 from utils.beacon_query import call_beacon
 import utils.errors as err
@@ -54,18 +55,18 @@ def prepare_call(test):
 def assert_test(check, response):
     """Test one property."""
     # assert check['property'] in response, f"{check['property']} not found in response"
-    if check["assert"] == "isfalse":
-        assert not response[check['property']], f"{check['property']} should be false"
+    #if check["assert"] == "isfalse":
+    #    assert not response[check['property']], f"{check['property']} should be false"
+    length_ops = {'length_gt': (operator.gt, 'greater than'),
+                  'length_lt': (operator.lt, 'lesser than'),
+                  'length_eq': (operator.eq, 'equal to')
+                  }
 
-    if check["assert"] == "length_eq":
-        assert len(response[check['property']]) == check['length'], \
+    if check["assert"] in length_ops:
+        lop, txt = length_ops[check["assert"]]
+        assert lop(len(response[check['property']]), check['length']), \
             f"Bad length of field {check['property']}" \
-            f"should be {check['length']}, but is {len(response[check['property']])}"
-
-    if check["assert"] == "length_gt":
-        assert len(response[check['property']]) > check['length'], \
-            f"Bad length of field {check['property']}" \
-            f"should be greater than {check['length']}, but is {len(response[check['property']])}"
+            f"should be {txt} {check['length']}, but is {len(response[check['property']])}"
 
     if check["assert"] == "contains":
         assert_partly_in(check['data'], response, check['property'])
@@ -73,10 +74,14 @@ def assert_test(check, response):
     if check["assert"] == "not_contains":
         assert_not_in(check['data'], response, check['property'])
 
-    if check["assert"] == "is_false":
-        assert not response[check['property']],\
-            f"Bad value of field {check['property']}" \
-            f"should be 'false', but is {response[check['property']]}"
+    if check["assert"] in ["is_true", "is_false"]:
+        prop = response[check['property']]
+        err_msg = f"Bad value of field {check['property']}" \
+                  f"should be 'false', but is {response[check['property']]}"
+        if check["assert"] == "is_false":
+            prop = not prop
+        assert prop, err_msg
+
 
 def prepare_query(query):
     """Remove all null values from the query."""
