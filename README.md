@@ -16,13 +16,13 @@ A few slides giving some examples can be found [here](https://nbisweden.github.i
 
 ### v101
 The tests expect the beacon to have a dataset called `GRCh38:beacon_test:2030-01-01`.
-This should correspond to content of [the test vcf file](testdata/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes_testset.vcf).
+This should correspond to content of [the test csv file](tests/testdata.csv).
 Before testing your beacon, load this into your database.
 To test multiple datasets, also load the same vcf file into a dataset called `GRCh38:beacon_test2:2030-01-01`.
 
 ### v110
 To test version v110, load the structural variants from
-[testdata_v110.vcf](testdata/testdat_v110) into the main dataset (`GRCh38:beacon_test:2030-01-01`).
+[testdata_mate.csv](tests/testdata_mate.csv) into the main dataset (`GRCh38:beacon_test:2030-01-01`).
 
 
 ## Running the test suite
@@ -106,12 +106,12 @@ SCHEMAS = 'schemas'
 
 ## Current tests:
 - v1.0.1:
-  - The `info` (`/`) endpoint answer. Json validation and the dataset counts `variantCount`, `callCount` and `sampleCount`.
+  - The `info` (`/`) endpoint answer. Json validation and the datasets in the answer.
   
   - Queries that are not allowed. Check that these return code `400`.
     See `tests/v101/test_errors.py`
   
-  - The structure and counts of some specific queries. See `tests/v101/test_counts.py`.
+  - The structure and answers of some specific queries. See `tests/test-v101-counts.yaml`.
   
   - Having multiple datasets.
 
@@ -120,9 +120,4 @@ SCHEMAS = 'schemas'
 
 ## Create new tests:
 To create more tests, see [adding_tests.md](docs/adding_tests.md).
-
-
-## TODO
-#### Overall
-
-- How exact should the `frequency` be? Rounding to more than 6 digits, will give errors for Swe vs. Fin.
+Contributions (in the form of pull requests) are very welcome!
