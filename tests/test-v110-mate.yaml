@@ -1,0 +1,45 @@
+# vim: tabstop=4 shiftwidth=2 expandtab
+# Testing breakends (aka BND, mates).
+# Check that they work and that we get the expected output.
+---
+- name: test_search_1
+  descr:
+    Test a mate query with referenceBases=N. This should give two
+    answers, one for each direction.
+  query:
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
+    start: 321680
+    end: 123459
+    referenceName: "2"
+    mateName: "13"
+    variantType: BND
+    referenceBases: N
+  beacondata: testdata_mate.csv
+  results:
+    - property: datasetAlleleResponses
+      assert: length_eq
+      length: 2
+  vcf: testmatedata.vcf:bnd_w,bnd_X
+
+- name: test_search_2
+  descr:
+    Test a mate query with referenceBases set to A. This should
+    only give one hit.
+  query:
+    start: 123459
+    end: 321680
+    referenceName: "13"
+    mateName: "2"
+    referenceBases: A
+    variantType: BND
+    assemblyId: GRCh38
+    includeDatasetResponses: HIT
+  beacondata: testdata_mate.csv
+  results:
+    - property: datasetAlleleResponses
+      assert: length_eq
+      length: 1
+  vcf: testmatedata.vcf:bnd_w,bnd_X

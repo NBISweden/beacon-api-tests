@@ -13,6 +13,7 @@ import yaml
 
 import config.config
 import utils.errors as err
+import utils.jsonschemas
 
 
 VERSIONS = {'v101': {'ga4gh': 'v1.0.1', 'CSCfi': 'v1.1.0-rc1'},
@@ -50,6 +51,7 @@ class Settings():
     errors = 0
     warnings = []
     query_warnings = []
+    tests = []
 
     def __init__(self):
         """Initialize."""
@@ -66,6 +68,9 @@ class Settings():
         else:
             # default, use local host
             self.host = config.config.HOSTS.get('local')
+
+        for pathname in c_args.test:
+            self.tests += utils.jsonschemas.load_and_validate_test(pathname)
 
         self.check_result = not c_args.only_structure
         self.start_pos = int(c_args.one_based)
