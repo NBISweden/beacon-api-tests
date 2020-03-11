@@ -221,5 +221,6 @@ definitions:
                 assert:
                   enum:
                     - is_false
+                    - is_true
               required:
                 - property
