@@ -43,3 +43,6 @@ for this test to pass. This file might look like this:
 
 For a more detailed description of the tests, see the [markdown schema](schema.md) or
 the [yaml schema](../tests/schema.yaml).
+
+You can validate the structure of your test by running:
+`python3 beacon_api_tester.py --validate_tests tests/my_new_test.yaml`
