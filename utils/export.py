@@ -137,3 +137,15 @@ def vcf_match_id(line, ids):
     except IndexError:
         logging.warning(f'Could not find id in vcf line {line}')
     return ids.intersection(lineids)
+
+
+def show_data_files(testfiles):
+    """Print all names of all test data files used by the given tests."""
+    datafiles = set()
+    for testfile in testfiles:
+        testdir = Path(testfile).parent
+        testyaml = utils.jsonschemas.load_and_validate_test(testfile)
+        for test in testyaml:
+            if 'beacondata' in test:
+                datafiles.add(str(testdir / test['beacondata']))
+    print('\n'.join(datafiles))
