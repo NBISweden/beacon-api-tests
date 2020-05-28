@@ -25,8 +25,9 @@ def run_test(test):
             query = prepare_query(test['query'])
             resp = call_beacon(query=query, code=status_code, ignore_schemas=ignore_schemas)
 
-        for check in test['results']:
-            assert_test(check, resp)
+        if settings.check_result:
+            for check in test['results']:
+                assert_test(check, resp)
 
     except err.ResponseError as r_error:
         # errors from the comparisons of a response, contains a list of errors to report

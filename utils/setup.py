@@ -86,15 +86,19 @@ class Settings():
                 with open(spec_path) as stream:
                     self.openapi = parse_spec(stream)
             else:
-                logging.info('Downloading Beacon specification')
                 try:
-                    spec_url = SPEC_URL.format(version=spec_versions['ga4gh'])
-                    spec_path = urllib.request.urlopen(spec_url).read()
-                    self.openapi = parse_spec(spec_path)
+                    logging.info(f'Requesting spec {config.config.SPEC}')
+                    parse_spec(urllib.request.urlopen(config.config.SPEC).read())
                 except urllib.error.URLError:
-                    logging.warning('Could not download %s.'
-                                    'Will not validate against the OpenAPI Specification.',
-                                    spec_url)
+                    logging.info('Downloading default Beacon specification')
+                    try:
+                        spec_url = SPEC_URL.format(version=spec_versions['ga4gh'])
+                        spec_path = urllib.request.urlopen(spec_url).read()
+                        self.openapi = parse_spec(spec_path)
+                    except urllib.error.URLError:
+                        logging.warning('Could not download %s.'
+                                        'Will not validate against the OpenAPI Specification.',
+                                        spec_url)
                     spec_path = ''
 
         if spec_path:
