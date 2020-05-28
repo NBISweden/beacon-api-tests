@@ -52,7 +52,13 @@ def validate(req, resp, path, query):
         validator = ResponseValidator(settings.openapi)
         result = validator.validate(req, resp)
         settings.warnings += map(str, result.errors)
-        warnings.extend(['OpenAPI: ' + str(x) for x in result.errors])
+        for error in result.errors:
+            if isinstance(error, InvalidSchemaValue):
+                warning = f'OpenAPI:\n\tAt object {error.value}\n\t'
+                warning += "\n\t".join(prettify_schemaerror(error))
+                warnings.append(warning)
+            else:
+                warnings.append(f'OpenAPI: {str(error)}')
 
     if settings.use_json_schemas:
         if path != '/' and query is not None:
@@ -160,3 +166,9 @@ def make_offset(args):
         if settings.start_pos == 1:
             if key in args and args[key] != 0:
                 args[key] = args[key]+1
+
+
+def prettify_schemaerror(error):
+    """Render a readable string from InvalidSchemaValue errrors."""
+    for serr in error.schema_errors:
+        yield f"{'.'.join([str(x) for x in serr.path])} {serr.message}"
