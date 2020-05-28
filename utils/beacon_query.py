@@ -8,8 +8,10 @@ import logging
 import urllib.request
 import urllib.parse
 
+from openapi_core.unmarshalling.schemas.exceptions import InvalidSchemaValue
 from openapi_core.shortcuts import RequestValidator, ResponseValidator
-from openapi_core.wrappers.base import BaseOpenAPIRequest, BaseOpenAPIResponse
+from openapi_core.validation.request.datatypes import OpenAPIRequest
+from openapi_core.validation.response.datatypes import OpenAPIResponse
 from werkzeug.datastructures import ImmutableMultiDict
 
 import utils.errors as err
@@ -69,7 +71,7 @@ def validate(req, resp, path, query):
     return json.loads(resp.data)
 
 
-class BeaconRequest(BaseOpenAPIRequest):
+class BeaconRequest(OpenAPIRequest):
     """Wrapper for a Request.
 
     The url can be opened using the open method
@@ -128,7 +130,7 @@ class BeaconRequest(BaseOpenAPIRequest):
         return res
 
 
-class BeaconResponse(BaseOpenAPIResponse):
+class BeaconResponse(OpenAPIResponse):
     """Wrapper for a Response.
 
     Stores the response body, error code and the content type
