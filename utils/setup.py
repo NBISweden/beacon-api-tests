@@ -80,29 +80,10 @@ class Settings():
         if c_args.no_openapi:
             spec_path = ''
         else:
-            if os.path.isfile(config.config.SPEC):
-                logging.info('Using Beacon specification in %s', config.config.SPEC)
-                spec_path = config.config.SPEC
-                with open(spec_path) as stream:
-                    self.openapi = parse_spec(stream)
-            else:
-                try:
-                    logging.info(f'Requesting spec {config.config.SPEC}')
-                    parse_spec(urllib.request.urlopen(config.config.SPEC).read())
-                except urllib.error.URLError:
-                    logging.warning(f'Could not open {config.config.SPEC}')
-                    logging.info('Downloading default Beacon specification')
-                    try:
-                        spec_url = SPEC_URL.format(version=spec_versions['ga4gh'])
-                        spec_path = urllib.request.urlopen(spec_url).read()
-                        self.openapi = parse_spec(spec_path)
-                    except urllib.error.URLError:
-                        logging.warning('Could not download %s. '
-                                        'Will not validate against the OpenAPI Specification.',
-                                        spec_url)
-                    spec_path = ''
+            spec_path = get_spec_content(spec_versions)
 
         if spec_path:
+            self.openapi = parse_spec(spec_path)
             server = openapi_core.schema.servers.models.Server(self.host)
             self.openapi.servers.append(server)
 
@@ -125,6 +106,43 @@ class Settings():
                 self.json_schemas['query'] = load_url('query')
                 self.json_schemas['info'] = load_url('info')
         logging.info('\n')
+
+
+def get_spec_content(versions):
+    """
+    Try to read the spec and return its content.
+
+    Strategy:
+    1. If there is a file path in the config, try read and return it.
+    2. If there is a url in the config, try load and return it.
+    3. Try to load the default url and return it.
+    4. Return an empty string.
+    """
+    if not config.config.SPEC:
+        return load_default_spec(versions)
+
+    if os.path.isfile(config.config.SPEC):
+        logging.info('Using Beacon specification in %s', config.config.SPEC)
+        return open(config.config.SPEC)
+    try:
+        logging.info(f'Requesting spec {config.config.SPEC}')
+        return urllib.request.urlopen(config.config.SPEC).read()
+    except urllib.error.URLError:
+        logging.warning(f'Could not open {config.config.SPEC}')
+        return load_default_spec(versions)
+
+
+def load_default_spec(versions):
+    """Download the default api spec."""
+    logging.info('Downloading default Beacon specification')
+    try:
+        spec_url = SPEC_URL.format(version=versions['ga4gh'])
+        return urllib.request.urlopen(spec_url).read()
+    except urllib.error.URLError:
+        logging.warning('Could not download %s. '
+                        'Will not validate against the OpenAPI Specification.',
+                        spec_url)
+        return ''
 
 
 def load_local_schema(name):
