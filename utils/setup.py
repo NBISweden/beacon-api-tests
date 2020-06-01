@@ -5,11 +5,11 @@ import os
 import urllib.error
 import urllib.request
 
-import jsonschema.exceptions
-from openapi_core import create_spec
+import jsonschema.exceptions as json_exceptions
 import openapi_core.schema.servers.models
-import openapi_spec_validator
+import openapi_spec_validator.exceptions as spec_exceptions
 import yaml
+from openapi_core import create_spec
 
 import config.config
 import utils.errors as err
@@ -90,13 +90,14 @@ class Settings():
                     logging.info(f'Requesting spec {config.config.SPEC}')
                     parse_spec(urllib.request.urlopen(config.config.SPEC).read())
                 except urllib.error.URLError:
+                    logging.warning(f'Could not open {config.config.SPEC}')
                     logging.info('Downloading default Beacon specification')
                     try:
                         spec_url = SPEC_URL.format(version=spec_versions['ga4gh'])
                         spec_path = urllib.request.urlopen(spec_url).read()
                         self.openapi = parse_spec(spec_path)
                     except urllib.error.URLError:
-                        logging.warning('Could not download %s.'
+                        logging.warning('Could not download %s. '
                                         'Will not validate against the OpenAPI Specification.',
                                         spec_url)
                     spec_path = ''
@@ -138,10 +139,16 @@ def parse_spec(inp_file):
     try:
         y_spec = yaml.load(inp_file, Loader=yaml.SafeLoader)
         spec = create_spec(y_spec)
-    except jsonschema.exceptions.RefResolutionError:
+    except json_exceptions.RefResolutionError:
         logging.error("Could not load specification. Check your network or try again")
         raise err.BeaconTestError()
-    except openapi_spec_validator.exceptions.OpenAPIValidationError:
-        logging.error("Could not read specification. Check tat your file is valid")
+    except spec_exceptions.OpenAPIValidationError as specerr:
+        logging.error(f"Error in specificaton: {specerr}")
+        logging.error("Could not read specification. Check that your file is valid")
         raise err.BeaconTestError()
+    except Exception as exc:
+        logging.error('Could not read specification, unknown error:')
+        logging.exception(exc)
+        raise err.BeaconTestError()
+
     return spec
