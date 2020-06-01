@@ -11,21 +11,16 @@ def export_csv_testdata(filepaths):
     sep = get_separator('csv')
     schema_path = config.config.TEST_SPEC
     schema = yaml.load(open(schema_path), Loader=yaml.SafeLoader)
-    #metadata_headers = schema['definitions']['query_metadata']['properties']\
-    #                         ['datasets']['items']['properties']['dataset']\
-    #                         ['properties'].keys()
     variants_headers = schema['definitions']['datafields'].keys()
 
-    metadata = variants_headers
-    metadata, variants = [], []
+    variants = []
     for testfile in filepaths:
         testyaml = utils.jsonschemas.load_and_validate_test(testfile)
         variant = extract_data(testyaml, variants_headers, sep)
         variants += variant
 
-    meta_header = [f"# {sep.join(metadata_headers)}"]
     variant_header = [f"# {sep.join(variants_headers)}"]
-    output = '\n'.join(meta_header + list(set(metadata)) + variant_header + list(set(variants)))
+    output = '\n'.join(variant_header + list(set(variants)))
     return output
 
 
