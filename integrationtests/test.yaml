@@ -1,0 +1,83 @@
+---
+- name: ok
+  descr:
+    Test a standard query with alternateBases, start and end.
+  query: &the_query
+    includeDatasetResponses: HIT
+    datasetIds:
+      - GRCh38:beacon_test:2030-01-01
+    assemblyId: GRCh38
+    referenceName: "22"
+    start: 16050074
+    end: 16050075
+    referenceBases: A
+    alternateBases: G
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test:2030-01-01
+        exists: true
+    - property: exists
+      assert: is_true
+    - property: datasetAlleleResponses
+      assert: length_eq
+      length: 1
+    - property: datasetAlleleResponses
+      assert: length_gt
+      length: 0
+    - property: datasetAlleleResponses
+      assert: length_lt
+      length: 2
+    - assert: status_code
+      ignore_schemas: true
+      status_code: 200
+  beacondata: testdata.csv
+
+
+- name: bad
+  descr:
+    Test bad stuff
+  query: *the_query
+  results:
+    - property: datasetAlleleResponses
+      assert: contains
+      data:
+        datasetId: GRCh38:beacon_test2:2030-01-01
+        exists: true
+  beacondata: testdata.csv
+
+- name: bad
+  descr: hej
+  query: *the_query
+  results:
+    - property: exists
+      assert: is_false
+  beacondata: testdata.csv
+
+- name: bad
+  descr: hej
+  query: *the_query
+  results:
+    - property: datasetAlleleResponses
+      assert: length_eq
+      length: 2
+  beacondata: testdata.csv
+
+- name: bad
+  descr: hej
+  query: *the_query
+  results:
+    - property: datasetAlleleResponses
+      assert: length_lt
+      length: 1
+  beacondata: testdata.csv
+
+- name: bad
+  descr: hej
+  query: *the_query
+  results:
+    - assert: status_code
+      ignore_schemas: true
+      status_code: 400
+  beacondata: testdata.csv
