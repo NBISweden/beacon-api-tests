@@ -47,11 +47,12 @@ MOCK_RESPONSE = {
 }
 
 
-def generate_bad_tests():
+def generate_failing_tests():
     """Read the test yaml, validate it agaist the schema, return the tests."""
     tests_file = 'integrationtests/test.yaml'
     schema_file = 'integrationtests/beacon_spec.yaml'
     # Since we need to use parameterized.expand, each element must be in its own tuple
+    # (only tests with `expand` will be executed with unittest, according to the docs)
     return [(x,) for x in utils.jsonschemas.load_and_validate_test(tests_file, schema_file)]
 
 
@@ -62,7 +63,7 @@ class TestFullTest(unittest.TestCase):
     @patch('utils.beacon_query.BeaconRequest')
     @patch('utils.beacon_query.BeaconResponse', **MOCK_RESPONSE)
     @patch('config.config', **{'return_value.SPEC': 'integrationtests/beacon_spec.yaml'})
-    def test_pass_ok_tests(self, _config, _resp, _req, error):
+    def test_pass_ok_tests(self, mock_config, mock_resp, mock_req, mock_log_error):
         """Load a test and spec file, test all the positive cases without any error being logged."""
         logging.getLogger().setLevel(logging.CRITICAL)  # hide output
         tests_file = 'integrationtests/test.yaml'
@@ -71,9 +72,9 @@ class TestFullTest(unittest.TestCase):
         for test in tests:
             utils.run_test.run_test(test)
             if test['name'] == 'ok':
-                error.assert_not_called()
+                mock_log_error.assert_not_called()
 
-    @parameterized.expand(generate_bad_tests())
+    @parameterized.expand(generate_failing_tests())
     def test_warn_on_exception(self, test):
         """
         Load a test and spec file, test all the negative cases.
@@ -85,8 +86,7 @@ class TestFullTest(unittest.TestCase):
         # Use context managers instead of decorators to avoid bug on errors:
         # https://github.com/wolever/parameterized/issues/66
         with patch('config.config'), patch('utils.beacon_query.BeaconResponse', **MOCK_RESPONSE),\
-            patch('utils.beacon_query.BeaconRequest'),patch('logging.error') as mock_error:
+            patch('utils.beacon_query.BeaconRequest'),patch('logging.error') as mock_log_error:
                 utils.run_test.run_test(test)
                 if test['name'] != 'ok':
-                    mock_error.assert_called()
-                    mock_error.reset_mock()
+                    mock_log_error.assert_called()

@@ -1,7 +1,7 @@
 ---
 - name: ok
   descr:
-    Test a standard query with alternateBases, start and end.
+    Test mulitple properties for a standard query.
   query: &the_query
     includeDatasetResponses: HIT
     datasetIds:
@@ -35,9 +35,9 @@
   beacondata: testdata.csv
 
 
-- name: bad
+- name: fail
   descr:
-    Test bad stuff
+    Test the same query, but with wrong dataset in result (contains works)
   query: *the_query
   results:
     - property: datasetAlleleResponses
@@ -47,16 +47,16 @@
         exists: true
   beacondata: testdata.csv
 
-- name: bad
-  descr: hej
+- name: fail
+  descr: Test that is_false works
   query: *the_query
   results:
     - property: exists
       assert: is_false
   beacondata: testdata.csv
 
-- name: bad
-  descr: hej
+- name: fail
+  descr: Test that length_eq works
   query: *the_query
   results:
     - property: datasetAlleleResponses
@@ -64,8 +64,8 @@
       length: 2
   beacondata: testdata.csv
 
-- name: bad
-  descr: hej
+- name: fail
+  descr: Test that lenght_lt works
   query: *the_query
   results:
     - property: datasetAlleleResponses
@@ -73,8 +73,8 @@
       length: 1
   beacondata: testdata.csv
 
-- name: bad
-  descr: hej
+- name: fail
+  descr: Test that status_code check works
   query: *the_query
   results:
     - assert: status_code
