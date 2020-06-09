@@ -8,8 +8,10 @@ import logging
 import urllib.request
 import urllib.parse
 
+from openapi_core.unmarshalling.schemas.exceptions import InvalidSchemaValue
 from openapi_core.shortcuts import RequestValidator, ResponseValidator
-from openapi_core.wrappers.base import BaseOpenAPIRequest, BaseOpenAPIResponse
+from openapi_core.validation.request.datatypes import OpenAPIRequest
+from openapi_core.validation.response.datatypes import OpenAPIResponse
 from werkzeug.datastructures import ImmutableMultiDict
 
 import utils.errors as err
@@ -50,7 +52,13 @@ def validate(req, resp, path, query):
         validator = ResponseValidator(settings.openapi)
         result = validator.validate(req, resp)
         settings.warnings += map(str, result.errors)
-        warnings.extend(['OpenAPI: ' + str(x) for x in result.errors])
+        for error in result.errors:
+            if isinstance(error, InvalidSchemaValue):
+                warning = f'OpenAPI:\n\tAt object {error.value}\n\t'
+                warning += "\n\t".join(prettify_schemaerror(error))
+                warnings.append(warning)
+            else:
+                warnings.append(f'OpenAPI: {str(error)}')
 
     if settings.use_json_schemas:
         if path != '/' and query is not None:
@@ -69,7 +77,7 @@ def validate(req, resp, path, query):
     return json.loads(resp.data)
 
 
-class BeaconRequest(BaseOpenAPIRequest):
+class BeaconRequest(OpenAPIRequest):
     """Wrapper for a Request.
 
     The url can be opened using the open method
@@ -128,7 +136,7 @@ class BeaconRequest(BaseOpenAPIRequest):
         return res
 
 
-class BeaconResponse(BaseOpenAPIResponse):
+class BeaconResponse(OpenAPIResponse):
     """Wrapper for a Response.
 
     Stores the response body, error code and the content type
@@ -158,3 +166,9 @@ def make_offset(args):
         if settings.start_pos == 1:
             if key in args and args[key] != 0:
                 args[key] = args[key]+1
+
+
+def prettify_schemaerror(error):
+    """Render a readable string from InvalidSchemaValue errrors."""
+    for serr in error.schema_errors:
+        yield f"{'.'.join([str(x) for x in serr.path])} {serr.message}"

@@ -4,7 +4,7 @@ This project contains tests that can be used for any Beacon implemention using a
 The Beacon's responses are validated against the 
 [GA4GH's OpenAPI specification](https://github.com/ga4gh-beacon/specification/blob/master/beacon.yaml)
 and against JSON schemas by [CSCfi](https://github.com/CSCfi/beacon-python/tree/master/beacon_api/schemas).
-Apart from this, the counts returned by the beacon are also checked.
+Apart from this, the values returned by the beacon are also checked.
 
 The project uses [openapi-core](https://github.com/p1c2u/openapi-core) and [jsonschemas](https://python-jsonschema.readthedocs.io/en/latest/).
 
@@ -21,12 +21,12 @@ To run, install dependencies:
 
 Then run tests from a test file: 
 
-`python3 beacon_api_tester.py --host http://localhost:5050 --test tests/test-v101-counts.yaml`
+`python3 beacon_api_tester.py --host http://localhost:5050 --test tests/test-v101-variants.yaml`
 
 This assumes that you have a beacon running on the `host` specified. The beacon should contain the test data
 specified in the tests. By running
 
-`python3 beacon_api_tester.py --show_data_files tests/test-v101-counts.yaml`
+`python3 beacon_api_tester.py --show_data_files tests/test-v101-variants.yaml`
 
 you can see the file names containing the data needed. See more about test data below.
 
@@ -47,7 +47,7 @@ comma separated format.
   - Queries that are not allowed. Check that these return code `400`.
     See `tests/v101/test_errors.py`
 
-  - The structure and answers of some specific queries. See `tests/test-v101-counts.yaml`.
+  - The structure and answers of some specific queries. See `tests/test-v101-variants.yaml`.
 
   - Having multiple datasets.
 

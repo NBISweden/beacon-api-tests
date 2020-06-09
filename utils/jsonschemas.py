@@ -73,7 +73,7 @@ def load_and_validate_test(filepath, schema=''):
     try:
         validator = jsonschema.Draft7Validator(json_schema)
         validator.validate(json_test)
-    except:
+    except Exception:
         logging.error(f'The test {filepath} is not valid:')
         raise
     logging.debug(f'Return {json_test}')

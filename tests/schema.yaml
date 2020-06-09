@@ -160,6 +160,7 @@ definitions:
             - not_contains
             - status_code
             - is_false
+            - is_true
             - length_eq
             - length_gt
             - length_lt

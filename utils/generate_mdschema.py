@@ -1,4 +1,4 @@
-"""Generate markdown information about tests from the test schema."""
+"""Generate markdown (docs/schema.md) information about tests from the test schema."""
 from datetime import datetime
 import sys
 import yaml
@@ -9,12 +9,12 @@ except ModuleNotFoundError:
 
 
 def generate(schema):
-    """TODO."""
+    """Generate markdown from a given schema."""
     generate_meta()
     print('# Defining tests')
     try:
         schema = schema or config.config.TEST_SPEC
-    except:
+    except Exception:
         print('Could not find test schema', sys.stderr)
         exit(1)
     with open(schema) as fileh:
@@ -25,6 +25,7 @@ def generate(schema):
 
 
 def generate_main(schema):
+    """Generate information about the different fields."""
     info = {'standard': {}, 'optional': {}, 'advanced': {}}
     for key, val in schema['items']['properties'].items():
         info_type = val.get('value')
@@ -44,6 +45,7 @@ def generate_main(schema):
 
 
 def generate_query(schema):
+    """Generate information about a query."""
     print('## Query\n')
     query = schema['definitions']['query']
     print(query.get('title'))
@@ -60,6 +62,7 @@ def generate_query(schema):
 
 
 def generate_result(schema):
+    """Generate information about comparisons."""
     print('## Comparisons')
     for choice in schema['definitions']['results']['items']['allOf'][0]['oneOf']:
         ac = ' | '.join([f'`{c}`' for c in choice['properties']['assert'].get('enum')])
